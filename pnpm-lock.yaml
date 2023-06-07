@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@hocuspocus/provider': ^2.1.0
   '@vitejs/plugin-vue': ^4.1.0
   '@vueup/vue-quill': ^1.2.0
   quill: ^1.3.7
@@ -14,6 +15,7 @@ specifiers:
   yjs: ^13.6.1
 
 dependencies:
+  '@hocuspocus/provider': 2.1.0_yjs@13.6.1
   '@vueup/vue-quill': 1.2.0_vue@3.3.4
   quill: 1.3.7
   quill-cursors: 4.0.2
@@ -251,8 +253,34 @@ packages:
     dev: true
     optional: true
 
+  /@hocuspocus/common/2.1.0:
+    resolution: {integrity: sha512-K8f4TQfP5TJakGBKJR9bGg5EHM8QkM5zxjrT3iv0k/jvNF4M9gh0zFSJrCQgF55/tkLCvBCOSWMLPX9TSjlW5w==}
+    dependencies:
+      lib0: 0.2.78
+    dev: false
+
+  /@hocuspocus/provider/2.1.0_yjs@13.6.1:
+    resolution: {integrity: sha512-Hg6OLlxt0RFrZ7pS6p2pnqWhxeqq4tRVcbyA34E8/Braj40S+q+H5+0UIYyXTLGknRrChcjIN/P51C8gGAA9sQ==}
+    peerDependencies:
+      y-protocols: ^1.0.5
+      yjs: ^13.5.29
+    dependencies:
+      '@hocuspocus/common': 2.1.0
+      '@lifeomic/attempt': 3.0.3
+      lib0: 0.2.78
+      ws: 7.5.9
+      yjs: 13.6.1
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
   /@jridgewell/sourcemap-codec/1.4.15:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
+
+  /@lifeomic/attempt/3.0.3:
+    resolution: {integrity: sha512-GlM2AbzrErd/TmLL3E8hAHmb5Q7VhDJp35vIbyPVA5Rz55LZuRr8pwL3qrwwkVNo05gMX1J44gURKb4MHQZo7w==}
+    dev: false
 
   /@vitejs/plugin-vue/4.2.3_vite@4.3.9+vue@3.3.4:
     resolution: {integrity: sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==}
@@ -1025,6 +1053,19 @@ packages:
       async-limiter: 1.0.1
     dev: false
     optional: true
+
+  /ws/7.5.9:
+    resolution: {integrity: sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==}
+    engines: {node: '>=8.3.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
 
   /xtend/4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}

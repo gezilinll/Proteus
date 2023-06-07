@@ -1,9 +1,12 @@
-import { Hocuspocus } from "@hocuspocus/server";
+import { Server } from "@hocuspocus/server";
 
-// Configure the server …
-const server = new Hocuspocus({
+const server = Server.configure({
   port: 1234,
+  name: "example-document",
+
+  async onConnect(data) {
+    console.log("connections:", server.getConnectionsCount());
+  },
 });
 
-// … and run it!
 server.listen();
