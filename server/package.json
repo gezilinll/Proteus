@@ -1,0 +1,14 @@
+{
+  "name": "byte-talk-server",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {},
+  "license": "GPL-3.0-or-later",
+  "author": "gezilinll",
+  "dependencies": {
+    "@hocuspocus/server": "^2.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.2"
+  }
+}

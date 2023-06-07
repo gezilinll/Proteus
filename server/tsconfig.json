@@ -1,0 +1,24 @@
+{
+  "compilerOptions": 
+   {
+     "module": "commonjs",
+     "strict": true,
+     "esModuleInterop": true,
+     "target": "es6",
+     "moduleResolution": "node",
+     "sourceMap": true,
+     "outDir": "dist",
+     "baseUrl": ".",
+     "skipLibCheck": true,
+     "experimentalDecorators": true,
+     "allowJs": true, // source code can contains ts and js files
+     "noImplicitAny": true, // checks all declared function arguments, they should all have types or at least any as a type.
+     "lib": ["es2015","es2020"],
+     "paths": 
+      {
+         "*": ["node_modules/*"]
+       }
+    },
+"include": 
+      ["src/**/*"]
+}
