@@ -18,22 +18,23 @@ export class Graphics {
     this._path.strokeWidth = Math.random() * 15;
   }
 
-  replaceWithSVG(svg: string) {
-    const strokeColor = this._path.strokeColor;
-    const strokeWidth = this._path.strokeWidth;
-
+  importData(data: Map<string, any>) {
     this._path.remove();
-    this._path = new paper.Path(svg);
-    this._path.strokeColor = strokeColor;
-    this._path.strokeWidth = strokeWidth;
+    this._path = new paper.Path(data.get("path"));
+    this._path.strokeColor = new paper.Color(data.get("strokeColor"));
+    this._path.strokeWidth = data.get("strokeWidth");
+  }
+
+  exportData() {
+    const result = new Map();
+    result.set("path", this._path.pathData);
+    result.set("strokeWidth", this._path.strokeWidth);
+    result.set("strokeColor", this._path.strokeColor!.toString());
+    return result;
   }
 
   addPoint(x: number, y: number) {
     this._path.add(new paper.Point(x, y));
     this._path.smooth();
-  }
-
-  get pathData() {
-    return this._path.pathData;
   }
 }

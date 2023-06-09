@@ -12,21 +12,21 @@ export class YBinding {
     this._origin = uuidv4();
     this._doc = doc;
     this._yElementMap = this._doc.getMap("elements");
-    this._yElementMap.observe((event, transaction) => {
+    this._yElementMap.observe((_event, transaction) => {
       if (transaction.origin !== this._origin) {
-        transaction.changed.forEach((value, key) => {
+        transaction.changed.forEach((value, _key) => {
           value.forEach((value) => {
             let element = this._elementMap.get(value!);
             if (!element) {
               element = new Graphics(value!);
-              this._elementMap.set(element.id, element);
               this.addElement(element);
             }
-            element.replaceWithSVG(
-              (this._yElementMap.get(value!)! as Y.Map<unknown>).get(
-                "path"
-              ) as string
+            const data = new Map();
+            this._YMapToMap(
+              this._yElementMap.get(value!)! as Y.Map<unknown>,
+              data
             );
+            element.importData(data);
           });
         });
       }
@@ -35,19 +35,19 @@ export class YBinding {
 
   addElement(element: Graphics) {
     this._elementMap.set(element.id, element);
-
-    const yElement = new Y.Map();
-    yElement.set("svg", element.pathData);
-    yElement.observe((event, transaction) => {
-      if (transaction.origin !== this._origin) {
-        element.replaceWithSVG(
-          (this._yElementMap.get(element.id) as Y.Map<unknown>).get(
-            "path"
-          ) as string
-        );
-      }
-    });
     this._doc.transact(() => {
+      const yElement = new Y.Map();
+      this._mapToYMap(element.exportData(), yElement);
+      yElement.observe((_event, transaction) => {
+        if (transaction.origin !== this._origin) {
+          const data = new Map();
+          this._YMapToMap(
+            this._yElementMap.get(element.id) as Y.Map<unknown>,
+            data
+          );
+          element.importData(data);
+        }
+      });
       this._yElementMap.set(element.id, yElement);
     }, this._origin);
   }
@@ -55,7 +55,19 @@ export class YBinding {
   updateElement(element: Graphics) {
     const yElement = this._yElementMap.get(element.id) as Y.Map<unknown>;
     this._doc.transact(() => {
-      yElement.set("path", element.pathData);
+      this._mapToYMap(element.exportData(), yElement);
     }, this._origin);
+  }
+
+  private _mapToYMap(source: Map<string, any>, dst: Y.Map<unknown>) {
+    source.forEach((value, key) => {
+      dst.set(key, value);
+    });
+  }
+
+  private _YMapToMap(source: Y.Map<unknown>, dst: Map<string, any>) {
+    source.forEach((value, key) => {
+      dst.set(key, value);
+    });
   }
 }
