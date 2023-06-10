@@ -22,6 +22,7 @@
     "yjs": "^13.6.1"
   },
   "devDependencies": {
+    "@types/uuid": "^9.0.2",
     "@vitejs/plugin-vue": "^4.1.0",
     "typescript": "^5.0.2",
     "vite": "^4.3.9",

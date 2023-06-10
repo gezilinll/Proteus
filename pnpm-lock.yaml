@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@hocuspocus/provider': ^2.1.0
+  '@types/uuid': ^9.0.2
   '@vitejs/plugin-vue': ^4.1.0
   install: ^0.13.0
   less: ^4.1.3
@@ -27,6 +28,7 @@ dependencies:
   yjs: 13.6.1
 
 devDependencies:
+  '@types/uuid': 9.0.2
   '@vitejs/plugin-vue': 4.2.3_vite@4.3.9+vue@3.3.4
   typescript: 5.0.4
   vite: 4.3.9_less@4.1.3
@@ -645,6 +647,10 @@ packages:
   /@types/offscreencanvas/2019.7.0:
     resolution: {integrity: sha512-PGcyveRIpL1XIqK8eBsmRBt76eFgtzuPiSTyKHZxnGemp2yzGzWpjYKAfK3wIMiU7eH+851yEpiuP8JZerTmWg==}
     dev: false
+
+  /@types/uuid/9.0.2:
+    resolution: {integrity: sha512-kNnC1GFBLuhImSnV7w4njQkUiJi0ZXUycu1rUaouPqiKlXkh77JKgdRnTAp1x5eBwcIwbtI+3otwzuIDEuDoxQ==}
+    dev: true
 
   /@vitejs/plugin-vue/4.2.3_vite@4.3.9+vue@3.3.4:
     resolution: {integrity: sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==}
