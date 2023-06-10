@@ -5,6 +5,8 @@ export class Graphics {
     id: string;
 
     private _path: paper.Path;
+    private _lastPoint: paper.Point | null = null;
+    private static MIN_DISTANCE = 5;
 
     constructor(uuid?: string) {
         this.id = uuid ?? uuidv4();
@@ -24,12 +26,24 @@ export class Graphics {
         const result = new Map();
         result.set('path', this._path.pathData);
         result.set('strokeWidth', this._path.strokeWidth);
-        result.set('strokeColor', this._path.strokeColor!.toString());
+        result.set('strokeColor', this._path.strokeColor!.toCSS(false));
         return result;
     }
 
     addPoint(x: number, y: number) {
-        this._path.add(new paper.Point(x, y));
-        this._path.smooth();
+        if (
+            !this._lastPoint ||
+            this._calculateDistance(x, y, this._lastPoint.x, this._lastPoint.y) >=
+                Graphics.MIN_DISTANCE
+        ) {
+            this._lastPoint = new paper.Point(x, y);
+            this._path.add(this._lastPoint);
+            this._path.smooth();
+        }
+    }
+
+    private _calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
+        const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        return distance;
     }
 }

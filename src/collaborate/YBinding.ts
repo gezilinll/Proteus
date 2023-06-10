@@ -7,6 +7,7 @@ export class YBinding {
     private _doc: Y.Doc;
     private _yElementMap: Y.Map<unknown>;
     private _elementMap: Map<string, Graphics> = new Map();
+    private _sendFlag = 0;
 
     constructor(doc: Y.Doc) {
         this._origin = uuidv4();
@@ -20,10 +21,11 @@ export class YBinding {
                         if (!element) {
                             element = new Graphics(value!);
                             this.addElement(element);
+                            const data = new Map();
+                            this._YMapToMap(this._yElementMap.get(value!)! as Y.Map<unknown>, data);
+                            console.log('map updated', transaction.origin, this._origin);
+                            element.importData(data);
                         }
-                        const data = new Map();
-                        this._YMapToMap(this._yElementMap.get(value!)! as Y.Map<unknown>, data);
-                        element.importData(data);
                     });
                 });
             }
@@ -37,6 +39,7 @@ export class YBinding {
             this._mapToYMap(element.exportData(), yElement);
             yElement.observe((_event, transaction) => {
                 if (transaction.origin !== this._origin) {
+                    console.log('element updated', transaction.origin, this._origin);
                     const data = new Map();
                     this._YMapToMap(this._yElementMap.get(element.id) as Y.Map<unknown>, data);
                     element.importData(data);
@@ -46,11 +49,13 @@ export class YBinding {
         }, this._origin);
     }
 
-    updateElement(element: Graphics) {
+    updateElement(element: Graphics, force: boolean) {
         const yElement = this._yElementMap.get(element.id) as Y.Map<unknown>;
-        this._doc.transact(() => {
-            this._mapToYMap(element.exportData(), yElement);
-        }, this._origin);
+        if (force || this._sendFlag++ % 10 === 0) {
+            this._doc.transact(() => {
+                this._mapToYMap(element.exportData(), yElement);
+            }, this._origin);
+        }
     }
 
     private _mapToYMap(source: Map<string, any>, dst: Y.Map<unknown>) {

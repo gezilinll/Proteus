@@ -40,14 +40,15 @@ function onMouseDown(e: MouseEvent) {
 function onMouseMove(e: MouseEvent) {
     if (currentElement) {
         currentElement.addPoint(e.offsetX, e.offsetY);
-        binding.updateElement(currentElement);
+        binding.updateElement(currentElement, false);
     }
 }
 
 function onMouseUp(e: MouseEvent) {
     if (currentElement) {
         currentElement.addPoint(e.offsetX, e.offsetY);
-        binding.updateElement(currentElement);
+        binding.updateElement(currentElement, true);
+        console.log('onMouseUp');
     }
     currentElement = null;
 }
