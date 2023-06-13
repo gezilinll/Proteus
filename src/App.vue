@@ -12,7 +12,9 @@
             <div class="app-sidebar app-sidebar-left">Left Sidebar</div>
             <div class="app-sidebar app-sidebar-right">Right Sidebar</div>
         </div>
-        <div class="app-footer">Footer</div>
+        <div class="app-footer">
+            <video autoplay></video>
+        </div>
     </div>
 </template>
 
@@ -56,6 +58,16 @@ function onMouseUp(e: MouseEvent) {
 onMounted(() => {
     const _paper = new paper.PaperScope();
     _paper.setup(document.getElementById('renderTarget') as HTMLCanvasElement);
+
+    navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+            const video = document.querySelector('video')!;
+            video.srcObject = stream;
+        })
+        .catch((error) => {
+            console.error('getUserMedia error: ', error);
+        });
 });
 </script>
 
