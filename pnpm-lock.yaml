@@ -2,11 +2,13 @@ lockfileVersion: 5.4
 
 specifiers:
   '@hocuspocus/provider': ^2.1.0
+  '@types/js-cookie': ^3.0.3
   '@types/protoo-client': ^4.0.1
   '@types/random-string': ^0.0.28
   '@types/uuid': ^9.0.2
   '@vitejs/plugin-vue': ^4.1.0
   install: ^0.13.0
+  js-cookie: ^3.0.5
   less: ^4.1.3
   mediasoup-client: ^3.6.84
   paper: ^0.12.17
@@ -24,6 +26,7 @@ specifiers:
 dependencies:
   '@hocuspocus/provider': 2.1.0_yjs@13.6.1
   install: 0.13.0
+  js-cookie: 3.0.5
   less: 4.1.3
   mediasoup-client: 3.6.84
   paper: 0.12.17
@@ -36,6 +39,7 @@ dependencies:
   yjs: 13.6.1
 
 devDependencies:
+  '@types/js-cookie': 3.0.3
   '@types/protoo-client': 4.0.1
   '@types/random-string': 0.0.28
   '@types/uuid': 9.0.2
@@ -660,6 +664,10 @@ packages:
     resolution: {integrity: sha512-w8oigUCDjElRHRRrMvn/spybSMyX8MTkKA5Dv+tS1IE/TgmNZPqUYtvYBXGY8cieSE66gm+szeK+bnbxC2xHTQ==}
     dev: false
 
+  /@types/js-cookie/3.0.3:
+    resolution: {integrity: sha512-Xe7IImK09HP1sv2M/aI+48a20VX+TdRJucfq4vfRVy6nWN8PYPOEnlMRSgxJAgYQIXJVL8dZ4/ilAM7dWNaOww==}
+    dev: true
+
   /@types/ms/0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
@@ -1167,6 +1175,11 @@ packages:
 
   /isomorphic.js/0.2.5:
     resolution: {integrity: sha512-PIeMbHqMt4DnUP3MA/Flc0HElYjMXArsw1qwJZcm9sqR8mq3l8NYizFMty0pWwE/tzIGH3EKK5+jes5mAr85yw==}
+    dev: false
+
+  /js-cookie/3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
     dev: false
 
   /less/4.1.3:

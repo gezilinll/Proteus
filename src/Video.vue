@@ -17,6 +17,10 @@ import { onMounted } from 'vue';
 import protooClient from 'protoo-client';
 import * as mediasoupClient from 'mediasoup-client';
 import randomString from 'random-string';
+import jsCookie from 'js-cookie';
+
+const USER_COOKIE = 'mediasoup-demo.user';
+const DEVICES_COOKIE = 'mediasoup-demo.devices';
 
 let mediasoupDevice: any;
 let sendTransport: any;
@@ -30,8 +34,9 @@ let webcamProducer: any;
 
 function getProtooUrl() {
     const hostname = 'gezilinll.com';
+    const peerId = randomString({ length: 8 }).toLowerCase();
 
-    return `wss://${hostname}:15025/?roomId=pel4u3xs&peerId=xhvwbe9o&consumerReplicas=undefined`;
+    return `wss://${hostname}:15025/?roomId=pel4u3xs&peerId=${peerId}&consumerReplicas=undefined`;
 }
 
 function setProducerVideo(videoTrack: MediaStreamTrack) {
@@ -43,9 +48,42 @@ function setProducerVideo(videoTrack: MediaStreamTrack) {
     videoElem.srcObject = stream;
 }
 
+async function join() {
+    const protooTransport = new protooClient.WebSocketTransport(getProtooUrl());
+
+    const protoo = new protooClient.Peer(protooTransport);
+
+    protoo.on('open', () => {
+        console.log('protooClient open');
+        joinRoom(protoo);
+    });
+
+    protoo.on('failed', () => {
+        console.log('protooClient failed');
+    });
+
+    protoo.on('disconnected', () => {
+        console.log('protooClient disconnected');
+    });
+
+    protoo.on('close', () => {
+        console.log('protooClient close');
+    });
+
+    protoo.on('request', async (request) => {
+        console.log('protooClient request', request.method);
+    });
+
+    protoo.on('notification', () => {
+        console.log('protooClient notification');
+    });
+}
+
 async function joinRoom(this: any, protoo: protooClient.Peer) {
     try {
-        mediasoupDevice = new mediasoupClient.Device();
+        mediasoupDevice = new mediasoupClient.Device({
+            handlerName: 'Chrome111',
+        });
         const routerRtpCapabilities = await protoo.request('getRouterRtpCapabilities');
 
         await mediasoupDevice.load({ routerRtpCapabilities });
@@ -224,7 +262,10 @@ async function joinRoom(this: any, protoo: protooClient.Peer) {
             });
             console.log('You are in the room!');
 
-            enableWebCam();
+            console.log('1111');
+            await enableWebCam();
+            console.log('2222');
+
             sendTransport.on('connectionstatechange', (connectionState: string) => {
                 console.log('connectionstatechange', connectionState);
             });
@@ -330,34 +371,7 @@ async function enableWebCam() {
 }
 
 onMounted(() => {
-    const protooTransport = new protooClient.WebSocketTransport(getProtooUrl());
-
-    const protoo = new protooClient.Peer(protooTransport);
-
-    protoo.on('open', () => {
-        console.log('protooClient open');
-        joinRoom(protoo);
-    });
-
-    protoo.on('failed', () => {
-        console.log('protooClient failed');
-    });
-
-    protoo.on('disconnected', () => {
-        console.log('protooClient disconnected');
-    });
-
-    protoo.on('close', () => {
-        console.log('protooClient close');
-    });
-
-    protoo.on('request', () => {
-        console.log('protooClient request');
-    });
-
-    protoo.on('notification', () => {
-        console.log('protooClient notification');
-    });
+    join();
 });
 </script>
 
