@@ -6,7 +6,7 @@
             <div class="app-sidebar app-sidebar-left">Left Sidebar</div>
             <div class="app-sidebar app-sidebar-right">Right Sidebar</div>
         </div>
-        <div class="app-footer">
+        <div id="video-container" class="app-footer">
             <video id="producer" autoplay></video>
         </div>
     </div>
@@ -70,8 +70,59 @@ async function join() {
         console.log('protooClient close');
     });
 
-    protoo.on('request', async (request) => {
+    protoo.on('request', async (request, accept) => {
         console.log('protooClient request', request.method);
+        switch (request.method) {
+            case 'newConsumer': {
+                const {
+                    peerId,
+                    producerId,
+                    id,
+                    kind,
+                    rtpParameters,
+                    type,
+                    appData,
+                    producerPaused,
+                } = request.data;
+
+                try {
+                    const consumer = await recvTransport.consume({
+                        id,
+                        producerId,
+                        kind,
+                        rtpParameters,
+                        // NOTE: Force streamId to be same in mic and webcam and different
+                        // in screen sharing so libwebrtc will just try to sync mic and
+                        // webcam streams from the same remote peer.
+                        streamId: `${peerId}-${appData.share ? 'share' : 'mic-webcam'}`,
+                        appData: { ...appData, peerId }, // Trick.
+                    });
+
+                    consumer.on('transportclose', () => {
+                        console.log('consumer transportclose');
+                    });
+
+                    const { spatialLayers, temporalLayers } = mediasoupClient.parseScalabilityMode(
+                        consumer.rtpParameters.encodings[0].scalabilityMode
+                    );
+
+                    const videoElem = document.createElement('video');
+                    videoElem.autoplay = true;
+                    const stream = new MediaStream();
+                    stream.addTrack(consumer.track);
+                    videoElem.srcObject = stream;
+                    document.getElementById('video-container')!.appendChild(videoElem);
+
+                    // We are ready. Answer the protoo request so the server will
+                    // resume this Consumer (which was paused for now if video).
+                    accept();
+                } catch (error) {
+                    console.log('"newConsumer" request failed:%o', error);
+                    throw error;
+                }
+                break;
+            }
+        }
     });
 
     protoo.on('notification', () => {
