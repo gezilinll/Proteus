@@ -13,7 +13,7 @@
             <div class="app-sidebar app-sidebar-right">Right Sidebar</div>
         </div>
         <div class="app-footer">
-            <video autoplay></video>
+            <Room></Room>
         </div>
     </div>
 </template>
@@ -24,6 +24,7 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import paper from 'paper';
 import { YBinding } from './collaborate/YBinding';
 import { Graphics } from './elements/Graphics';
+import { Room } from './components';
 
 const provider = new HocuspocusProvider({
     url: 'ws://47.119.150.226:3000',
@@ -50,7 +51,6 @@ function onMouseUp(e: MouseEvent) {
     if (currentElement) {
         currentElement.addPoint(e.offsetX, e.offsetY);
         binding.updateElement(currentElement, true);
-        console.log('onMouseUp');
     }
     currentElement = null;
 }
@@ -58,16 +58,6 @@ function onMouseUp(e: MouseEvent) {
 onMounted(() => {
     const _paper = new paper.PaperScope();
     _paper.setup(document.getElementById('renderTarget') as HTMLCanvasElement);
-
-    navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((stream) => {
-            const video = document.querySelector('video')!;
-            video.srcObject = stream;
-        })
-        .catch((error) => {
-            console.error('getUserMedia error: ', error);
-        });
 });
 </script>
 
@@ -109,6 +99,6 @@ body {
 
 .app-footer {
     background-color: #ddd;
-    flex-basis: 80px;
+    flex-basis: 200px;
 }
 </style>
