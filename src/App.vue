@@ -1,6 +1,6 @@
 <template>
     <div class="app-container">
-        <div class="app-header">Header</div>
+        <div class="app-header"></div>
         <div class="app-main">
             <canvas
                 id="renderTarget"
@@ -9,8 +9,7 @@
                 @mousemove="onMouseMove"
                 @mouseup="onMouseUp"
             ></canvas>
-            <div class="app-sidebar app-sidebar-left">Left Sidebar</div>
-            <div class="app-sidebar app-sidebar-right">Right Sidebar</div>
+            <LeftPanel class="app-sidebar"></LeftPanel>
         </div>
         <div class="app-footer">
             <Room></Room>
@@ -24,7 +23,7 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import paper from 'paper';
 import { YBinding } from './collaborate/YBinding';
 import { Graphics } from './elements/Graphics';
-import { Room } from './components';
+import { Room, LeftPanel } from './components';
 
 const provider = new HocuspocusProvider({
     url: 'ws://47.119.150.226:3000',
@@ -70,11 +69,10 @@ body {
 .app-container {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
 .app-header {
-    background-color: #ddd;
+    background: linear-gradient(70deg, #ced4f0, #8d9ef2);
     flex-basis: 32px;
 }
 
@@ -82,23 +80,22 @@ body {
     flex-grow: 1;
     display: flex;
     align-items: stretch;
+    flex-direction: row;
 }
 
 .app-content {
-    flex-grow: 1;
+    height: 100%;
 }
 
 .app-sidebar {
-    flex-basis: 200px;
-    background-color: #eee;
-}
-
-.app-sidebar-left {
+    flex-basis: 80px;
+    min-width: 80px;
+    background-color: #242527;
     order: -1;
 }
 
 .app-footer {
-    background-color: #ddd;
-    flex-basis: 200px;
+    background: linear-gradient(70deg, #ced4f0, #8d9ef2);
+    height: 220px;
 }
 </style>

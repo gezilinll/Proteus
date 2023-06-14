@@ -23,7 +23,6 @@ export const userRoomStore = defineStore('room', {
 
         addConsumer(user: User) {
             this.consumers.push(user);
-            console.log('addConsumer', this.consumers);
         },
     },
 });

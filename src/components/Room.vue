@@ -1,11 +1,19 @@
 <template>
     <div>
-        <div v-if="isSoloMode">
-            <input v-model="roomID" :placeholder="newRoomID" @keydown.space.prevent />
+        <span v-if="!isSoloMode">Room ID: {{ roomID }}</span>
+        <div v-if="isSoloMode" style="text-align: center">
+            <input
+                v-model="inputRoomID"
+                :placeholder="newRoomID"
+                @keydown.space.prevent
+                style="margin-top: 50px"
+            />
+            <br />
+            <br />
             <button @click="createOrJoinRoom">{{ buttonText }}</button>
         </div>
-        <div v-if="isWhiteboardMode">
-            <button @click="joinVideoChat">Join Video Chat</button>
+        <div v-if="isWhiteboardMode" style="text-align: center">
+            <button @click="joinVideoChat" style="margin-top: 100px">Join Video Chat</button>
         </div>
         <div v-if="isVideoChatMode" class="video-container">
             <video
@@ -49,9 +57,10 @@ watch(producer, () => {
 const room = new Room();
 
 const newRoomID = randomString({ length: 8 }).toLowerCase();
+const inputRoomID = ref<string>();
 const roomID = ref<string>();
 const buttonText = computed(() => {
-    return !roomID.value ? 'CREATE ROOM' : 'JOIN ROOM';
+    return !inputRoomID.value ? 'CREATE ROOM' : 'JOIN ROOM';
 });
 
 const isSoloMode = computed(() => {
@@ -65,7 +74,8 @@ const isVideoChatMode = computed(() => {
 });
 
 function createOrJoinRoom() {
-    room.join(roomID.value ?? newRoomID);
+    roomID.value = inputRoomID.value ?? newRoomID;
+    room.join(roomID.value);
 }
 
 function joinVideoChat() {
