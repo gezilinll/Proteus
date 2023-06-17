@@ -1,17 +1,17 @@
 <template>
-    <div class="app-container">
-        <div class="app-header"></div>
-        <div class="app-main">
+    <div class="container">
+        <div class="top-bar">顶部栏</div>
+        <div class="content">
+            <LeftPanel class="left-sidebar"></LeftPanel>
             <canvas
                 id="renderTarget"
-                class="app-content"
+                class="right-content"
                 @mousedown="onMouseDown"
                 @mousemove="onMouseMove"
                 @mouseup="onMouseUp"
             ></canvas>
-            <LeftPanel class="app-sidebar"></LeftPanel>
         </div>
-        <div class="app-footer">
+        <div class="bottom-bar">
             <Room></Room>
         </div>
     </div>
@@ -65,37 +65,34 @@ body {
     margin: 0px;
     overflow: hidden;
 }
-
-.app-container {
+.container {
     display: flex;
     flex-direction: column;
+    height: 100vh;
 }
 
-.app-header {
+.top-bar {
+    height: 88px;
+    background-color: #fff;
+}
+
+.bottom-bar {
+    height: 200px;
     background: linear-gradient(70deg, #ced4f0, #8d9ef2);
-    flex-basis: 32px;
 }
 
-.app-main {
-    flex-grow: 1;
+.content {
+    flex: 1;
     display: flex;
-    align-items: stretch;
-    flex-direction: row;
 }
 
-.app-content {
-    height: 100%;
+.left-sidebar {
+    width: 68px;
+    background-color: #1e1c1c;
 }
 
-.app-sidebar {
-    flex-basis: 80px;
-    min-width: 80px;
-    background-color: #242527;
-    order: -1;
-}
-
-.app-footer {
-    background: linear-gradient(70deg, #ced4f0, #8d9ef2);
-    height: 220px;
+.right-content {
+    flex: 1;
+    background-color: #f0f0f0;
 }
 </style>
