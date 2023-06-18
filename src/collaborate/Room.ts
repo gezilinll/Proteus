@@ -3,10 +3,14 @@ import protooClient from 'protoo-client';
 import * as mediasoupClient from 'mediasoup-client';
 import { Transport } from 'mediasoup-client/lib/types';
 import { RoomState, userRoomStore } from './Room.store';
+import { useEditorStore } from '../Editor.store';
+import { HocuspocusProvider } from '@hocuspocus/provider';
 
 export class Room {
     ID: string;
     peerID: string;
+
+    private _yjsProvider: HocuspocusProvider | undefined = undefined;
 
     private _protoo: protooClient.Peer | undefined = undefined;
     private _mediasoupDevice: mediasoupClient.Device | undefined = undefined;
@@ -14,6 +18,7 @@ export class Room {
     private _recvTransport: Transport | undefined = undefined;
 
     private _store = userRoomStore();
+    private _editor = useEditorStore();
 
     constructor() {
         this.ID = '';
@@ -22,8 +27,12 @@ export class Room {
 
     join(roomID: string) {
         this.ID = roomID;
+        this._yjsProvider = new HocuspocusProvider({
+            url: 'ws://47.119.150.226:3000',
+            name: roomID,
+        });
+        this._editor.editor.collaborate(this._yjsProvider.document);
         this._store.status = RoomState.WHITEBOARD;
-        console.log('roomID', this.ID);
     }
 
     async joinVideo() {

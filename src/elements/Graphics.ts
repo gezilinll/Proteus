@@ -1,7 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import paper from 'paper';
+import { Element } from './Element';
 
-export class Graphics {
+export class Graphics implements Element {
+    type: 'graphics' | 'image' = 'graphics';
+
     id: string;
 
     private _path: paper.Path;
@@ -13,6 +16,18 @@ export class Graphics {
         this._path = new paper.Path();
         this._path.strokeColor = new paper.Color(Math.random(), Math.random(), Math.random(), 1.0);
         this._path.strokeWidth = Math.random() * 15;
+    }
+
+    onMouseDown(e: MouseEvent) {
+        this._addPoint(e.offsetX, e.offsetY);
+    }
+
+    onMouseMove(e: MouseEvent) {
+        this._addPoint(e.offsetX, e.offsetY);
+    }
+
+    onMouseUp(e: MouseEvent) {
+        this._addPoint(e.offsetX, e.offsetY);
     }
 
     importData(data: Map<string, any>) {
@@ -30,7 +45,7 @@ export class Graphics {
         return result;
     }
 
-    addPoint(x: number, y: number) {
+    private _addPoint(x: number, y: number) {
         if (
             !this._lastPoint ||
             this._calculateDistance(x, y, this._lastPoint.x, this._lastPoint.y) >=

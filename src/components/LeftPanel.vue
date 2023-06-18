@@ -41,7 +41,12 @@
             ]"
             @click="useDrawFunction"
         >
-            <span :class="['function-item', isSelected ? 'function-item-selected' : '']">
+            <span
+                :class="[
+                    'function-item',
+                    selectedFunction === FunctionType.Draw ? 'function-item-selected' : '',
+                ]"
+            >
                 <svg
                     width="24"
                     height="24"

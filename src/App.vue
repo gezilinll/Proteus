@@ -19,39 +19,22 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { HocuspocusProvider } from '@hocuspocus/provider';
 import paper from 'paper';
-import { YBinding } from './collaborate/YBinding';
-import { Graphics } from './elements/Graphics';
 import { Room, LeftPanel } from './components';
+import { useEditorStore } from './Editor.store';
 
-const provider = new HocuspocusProvider({
-    url: 'ws://47.119.150.226:3000',
-    name: 'example-document',
-});
-const binding = new YBinding(provider.document);
-
-let currentElement: Graphics | null = null;
+const store = useEditorStore();
 
 function onMouseDown(e: MouseEvent) {
-    currentElement = new Graphics();
-    currentElement.addPoint(e.offsetX, e.offsetY);
-    binding.addElement(currentElement);
+    store.editor.onMouseDown(e);
 }
 
 function onMouseMove(e: MouseEvent) {
-    if (currentElement) {
-        currentElement.addPoint(e.offsetX, e.offsetY);
-        binding.updateElement(currentElement, false);
-    }
+    store.editor.onMouseMove(e);
 }
 
 function onMouseUp(e: MouseEvent) {
-    if (currentElement) {
-        currentElement.addPoint(e.offsetX, e.offsetY);
-        binding.updateElement(currentElement, true);
-    }
-    currentElement = null;
+    store.editor.onMouseUp(e);
 }
 
 onMounted(() => {

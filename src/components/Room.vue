@@ -6,14 +6,14 @@
                 v-model="inputRoomID"
                 :placeholder="newRoomID"
                 @keydown.space.prevent
-                style="margin-top: 50px"
+                style="margin-top: 30px"
             />
             <br />
             <br />
             <button @click="createOrJoinRoom">{{ buttonText }}</button>
         </div>
         <div v-if="isWhiteboardMode" style="text-align: center">
-            <button @click="joinVideoChat" style="margin-top: 100px">Join Video Chat</button>
+            <button @click="joinVideoChat" style="margin-top: 30px">Join Video Chat</button>
         </div>
         <div v-if="isVideoChatMode" class="video-container">
             <video
