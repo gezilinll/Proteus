@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="top-bar">顶部栏</div>
+        <div class="top-bar"></div>
         <div class="content">
             <LeftPanel class="left-sidebar"></LeftPanel>
             <canvas

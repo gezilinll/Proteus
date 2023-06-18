@@ -7,6 +7,7 @@ export enum FunctionType {
 }
 
 export enum DrawType {
+    None,
     Pen,
     Marker,
     Highlighter,
@@ -21,7 +22,7 @@ export const useEditorStore = defineStore('editor', {
         return {
             editor: new Editor(),
             selectedFunction: FunctionType.None,
-            draw: DrawType.Pen,
+            drawType: DrawType.None,
         };
     },
 });

@@ -1,37 +1,14 @@
 <template>
     <div style="position: relative">
-        <div
-            style="
-                position: absolute;
-                width: 150px;
-                top: 0;
-                bottom: 0;
-                left: 68px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            "
-        >
-            <div
-                v-if="selectedFunction === FunctionType.Draw"
-                style="
-                    margin-left: 8px;
-                    border-radius: 10px;
-                    position: absolute;
-                    background-color: #333;
-                    top: 50px;
-                    bottom: 50px;
-                    left: 00px;
-                    right: 0px;
-                    padding-top: 18px;
-                    padding-bottom: 18px;
-                "
-            >
-                <div style="-webkit-clip-path: polygon(0 0, 150% 0, 150% 100%, 0% 100%)">
-                    <span aria-hidden="true" class="brush-type">
-                        <img src="../assets/draw-pen.svg" />
-                    </span>
-                </div>
+        <div class="function-panel-container">
+            <div v-if="selectedFunction === FunctionType.Draw" class="draw-panel">
+                <span
+                    aria-hidden="true"
+                    :class="['brush-type', drawType === DrawType.Pen ? 'brush-type-selected' : '']"
+                    @click="drawType = DrawType.Pen"
+                >
+                    <img src="../assets/draw-pen.svg" />
+                </span>
             </div>
         </div>
         <div
@@ -39,7 +16,7 @@
                 'function-container',
                 selectedFunction === FunctionType.Draw ? 'function-container-selected' : '',
             ]"
-            @click="useDrawFunction"
+            @click="selectedFunction = FunctionType.Draw"
         >
             <span
                 :class="[
@@ -71,18 +48,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useEditorStore, FunctionType } from '../Editor.store';
+import { useEditorStore, FunctionType, DrawType } from '../Editor.store';
 import { storeToRefs } from 'pinia';
 
 const store = useEditorStore();
-const { selectedFunction } = storeToRefs(store);
-
-const isSelected = ref<boolean>(false);
-
-function useDrawFunction() {
-    selectedFunction.value = FunctionType.Draw;
-}
+const { selectedFunction, drawType } = storeToRefs(store);
 </script>
 
 <style>
@@ -105,12 +75,34 @@ function useDrawFunction() {
     color: #aaa;
 }
 
-.function-item:hover {
+.function-item:hover,
+.function-item-selected {
     color: #fff;
 }
 
-.function-item-selected {
-    color: #fff;
+.function-panel-container {
+    position: absolute;
+    width: 150px;
+    top: 0;
+    bottom: 0;
+    left: 68px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.draw-panel {
+    margin-left: 8px;
+    border-radius: 10px;
+    position: absolute;
+    background-color: #333;
+    top: 50px;
+    bottom: 50px;
+    left: 00px;
+    right: 0px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    -webkit-clip-path: polygon(0 0, 150% 0, 150% 100%, 0% 100%);
 }
 
 .brush-type {
@@ -120,7 +112,8 @@ function useDrawFunction() {
     transition: margin-left 100ms linear;
 }
 
-.brush-type:hover {
+.brush-type:hover,
+.brush-type-selected {
     margin-left: -20px;
 }
 </style>
