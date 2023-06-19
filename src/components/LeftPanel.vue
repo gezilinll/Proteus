@@ -9,6 +9,50 @@
                 >
                     <img src="../assets/draw-pen.svg" />
                 </span>
+                <br />
+                <br />
+                <span
+                    aria-hidden="true"
+                    :class="[
+                        'brush-type',
+                        drawType === DrawType.Marker ? 'brush-type-selected' : '',
+                    ]"
+                    @click="drawType = DrawType.Marker"
+                >
+                    <img src="../assets/draw-marker.svg" />
+                </span>
+                <br />
+                <br />
+                <span
+                    aria-hidden="true"
+                    :class="[
+                        'brush-type',
+                        drawType === DrawType.Highlighter ? 'brush-type-selected' : '',
+                    ]"
+                    @click="drawType = DrawType.Highlighter"
+                >
+                    <img src="../assets/draw-highlighter.svg" />
+                </span>
+                <br />
+                <br />
+                <span
+                    aria-hidden="true"
+                    :class="[
+                        'brush-type',
+                        drawType === DrawType.Eraser ? 'brush-type-selected' : '',
+                    ]"
+                    @click="drawType = DrawType.Eraser"
+                >
+                    <img src="../assets/draw-eraser.svg" />
+                </span>
+                <br />
+                <br />
+                <div class="brush-color"></div>
+                <br />
+                <br />
+                <span aria-hidden="true" class="brush-settings">
+                    <img src="../assets/draw-settings.svg" />
+                </span>
             </div>
         </div>
         <div
@@ -106,7 +150,6 @@ const { selectedFunction, drawType } = storeToRefs(store);
 }
 
 .brush-type {
-    color: rgb(45, 144, 235);
     margin-left: -70px;
     cursor: pointer;
     transition: margin-left 100ms linear;
@@ -114,6 +157,23 @@ const { selectedFunction, drawType } = storeToRefs(store);
 
 .brush-type:hover,
 .brush-type-selected {
-    margin-left: -20px;
+    margin-left: -10px;
+}
+
+.brush-color {
+    width: 48px;
+    height: 48px;
+    background-color: #eaeaea;
+    border-radius: 5px;
+    margin-left: 38px;
+    transition: box-shadow 0.3s ease;
+}
+
+.brush-color:hover {
+    box-shadow: inset 0px 0 0 4px #000;
+}
+
+.brush-settings {
+    margin-left: 38px;
 }
 </style>
