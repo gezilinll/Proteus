@@ -1,8 +1,8 @@
 import { YBinding } from './collaborate/YBinding';
 import * as Y from 'yjs';
 import { Element } from './elements/Element';
-import { useEditorStore, FunctionType } from './Editor.store';
-import { Graphics } from './elements/Graphics';
+import { useEditorStore, FunctionType, DrawType } from './Editor.store';
+import { Brush } from './elements/Brush';
 
 export class Editor {
     private _yBinding: YBinding | null = null;
@@ -10,7 +10,7 @@ export class Editor {
 
     currentElement: Element | null = null;
 
-    constructor() {}
+    constructor() { }
 
     collaborate(document: Y.Doc) {
         this._yBinding = new YBinding(document);
@@ -19,7 +19,23 @@ export class Editor {
     onMouseDown(e: MouseEvent) {
         if (!this.currentElement) {
             if (this._store.selectedFunction === FunctionType.Draw) {
-                this.currentElement = new Graphics();
+                this.currentElement = new Brush();
+                const brush = this.currentElement as Brush;
+                if (this._store.drawType === DrawType.Pen) {
+                    brush.color = this._store.penColor;
+                    brush.weight = this._store.penWeight;
+                    brush.transparency = this._store.penTransparency;
+                } else if (this._store.drawType === DrawType.Marker) {
+                    brush.color = this._store.markerColor;
+                    brush.weight = this._store.markerWeight;
+                    brush.transparency = this._store.markerTransparency;
+                } else if (this._store.drawType === DrawType.Highlighter) {
+                    brush.color = this._store.highlighterColor;
+                    brush.weight = this._store.highlighterWeight;
+                    brush.transparency = this._store.highlighterTransparency;
+                } else if (this._store.drawType === DrawType.Eraser) {
+
+                }
             }
         }
         this.currentElement?.onMouseDown(e);

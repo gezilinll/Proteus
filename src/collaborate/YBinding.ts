@@ -1,12 +1,12 @@
 import * as Y from 'yjs';
-import { Graphics } from '../elements/Graphics';
+import { Brush } from '../elements/Brush';
 import { v4 as uuidv4 } from 'uuid';
 
 export class YBinding {
     private _origin: string;
     private _doc: Y.Doc;
     private _yElementMap: Y.Map<unknown>;
-    private _elementMap: Map<string, Graphics> = new Map();
+    private _elementMap: Map<string, Brush> = new Map();
     private _sendFlag = 0;
 
     constructor(doc: Y.Doc) {
@@ -19,7 +19,7 @@ export class YBinding {
                     value.forEach((value) => {
                         let element = this._elementMap.get(value!);
                         if (!element) {
-                            element = new Graphics(value!);
+                            element = new Brush(value!);
                             this.addElement(element);
                             const data = new Map();
                             this._YMapToMap(this._yElementMap.get(value!)! as Y.Map<unknown>, data);
@@ -32,7 +32,7 @@ export class YBinding {
         });
     }
 
-    addElement(element: Graphics) {
+    addElement(element: Brush) {
         this._elementMap.set(element.id, element);
         this._doc.transact(() => {
             const yElement = new Y.Map();
@@ -49,7 +49,7 @@ export class YBinding {
         }, this._origin);
     }
 
-    updateElement(element: Graphics, force: boolean) {
+    updateElement(element: Brush, force: boolean) {
         const yElement = this._yElementMap.get(element.id) as Y.Map<unknown>;
         if (force || this._sendFlag++ % 10 === 0) {
             this._doc.transact(() => {

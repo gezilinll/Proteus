@@ -23,6 +23,15 @@ export const useEditorStore = defineStore('editor', {
             editor: new Editor(),
             selectedFunction: FunctionType.None,
             drawType: DrawType.None,
+            penColor: "#2d90eb",
+            penWeight: 4,
+            penTransparency: 100,
+            markerColor: "e7191f",
+            markerWeight: 12,
+            markerTransparency: 100,
+            highlighterColor: "#fff234",
+            highlighterWeight: 36,
+            highlighterTransparency: 50,
         };
     },
 });
