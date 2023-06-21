@@ -1,71 +1,19 @@
 <template>
     <div style="position: relative">
         <div class="function-panel-container">
-            <div v-if="selectedFunction === FunctionType.Draw" class="draw-panel">
-                <span
-                    aria-hidden="true"
-                    :class="['brush-type', drawType === DrawType.Pen ? 'brush-type-selected' : '']"
-                    @click="drawType = DrawType.Pen"
-                >
-                    <img src="../assets/draw-pen.svg" />
-                </span>
-                <br />
-                <br />
-                <span
-                    aria-hidden="true"
-                    :class="[
-                        'brush-type',
-                        drawType === DrawType.Marker ? 'brush-type-selected' : '',
-                    ]"
-                    @click="drawType = DrawType.Marker"
-                >
-                    <img src="../assets/draw-marker.svg" />
-                </span>
-                <br />
-                <br />
-                <span
-                    aria-hidden="true"
-                    :class="[
-                        'brush-type',
-                        drawType === DrawType.Highlighter ? 'brush-type-selected' : '',
-                    ]"
-                    @click="drawType = DrawType.Highlighter"
-                >
-                    <img src="../assets/draw-highlighter.svg" />
-                </span>
-                <br />
-                <br />
-                <span
-                    aria-hidden="true"
-                    :class="[
-                        'brush-type',
-                        drawType === DrawType.Eraser ? 'brush-type-selected' : '',
-                    ]"
-                    @click="drawType = DrawType.Eraser"
-                >
-                    <img src="../assets/draw-eraser.svg" />
-                </span>
-                <br />
-                <br />
-                <div class="brush-color"></div>
-                <br />
-                <br />
-                <span aria-hidden="true" class="brush-settings">
-                    <img src="../assets/draw-settings.svg" />
-                </span>
-            </div>
+            <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
         </div>
         <div
             :class="[
                 'function-container',
-                selectedFunction === FunctionType.Draw ? 'function-container-selected' : '',
+                selectedFunction === FunctionType.Brush ? 'function-container-selected' : '',
             ]"
-            @click="selectedFunction = FunctionType.Draw"
+            @click="selectedFunction = FunctionType.Brush"
         >
             <span
                 :class="[
                     'function-item',
-                    selectedFunction === FunctionType.Draw ? 'function-item-selected' : '',
+                    selectedFunction === FunctionType.Brush ? 'function-item-selected' : '',
                 ]"
             >
                 <svg
@@ -85,18 +33,19 @@
                     ></path>
                 </svg>
                 <br />
-                Draw
+                Brush
             </span>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { useEditorStore, FunctionType, DrawType } from '../Editor.store';
+import { useEditorStore, FunctionType } from '../Editor.store';
 import { storeToRefs } from 'pinia';
+import { BrushPanel } from '.';
 
 const store = useEditorStore();
-const { selectedFunction, drawType } = storeToRefs(store);
+const { selectedFunction } = storeToRefs(store);
 </script>
 
 <style>
@@ -133,47 +82,5 @@ const { selectedFunction, drawType } = storeToRefs(store);
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.draw-panel {
-    margin-left: 8px;
-    border-radius: 10px;
-    position: absolute;
-    background-color: #333;
-    top: 50px;
-    bottom: 50px;
-    left: 00px;
-    right: 0px;
-    padding-top: 18px;
-    padding-bottom: 18px;
-    -webkit-clip-path: polygon(0 0, 150% 0, 150% 100%, 0% 100%);
-}
-
-.brush-type {
-    margin-left: -70px;
-    cursor: pointer;
-    transition: margin-left 100ms linear;
-}
-
-.brush-type:hover,
-.brush-type-selected {
-    margin-left: -10px;
-}
-
-.brush-color {
-    width: 48px;
-    height: 48px;
-    background-color: #eaeaea;
-    border-radius: 5px;
-    margin-left: 38px;
-    transition: box-shadow 0.3s ease;
-}
-
-.brush-color:hover {
-    box-shadow: inset 0px 0 0 4px #000;
-}
-
-.brush-settings {
-    margin-left: 38px;
 }
 </style>
