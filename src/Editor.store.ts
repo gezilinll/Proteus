@@ -17,7 +17,7 @@ export enum BrushType {
 export enum BrushConfig {
     None,
     Color,
-    Settings,
+    Weight,
 }
 
 export const useEditorStore = defineStore('editor', {
@@ -29,12 +29,10 @@ export const useEditorStore = defineStore('editor', {
             brushConfig: BrushConfig.None,
             penColor: '#2d90eb',
             penWeight: 4,
-            penTransparency: 100,
             markerColor: '#e7191f',
             markerWeight: 12,
             highlighterColor: '#FFF234CB',
             highlighterWeight: 36,
-            highlighterTransparency: 50,
         };
     },
 });

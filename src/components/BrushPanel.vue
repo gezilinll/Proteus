@@ -471,8 +471,27 @@
             ></button>
             <br />
             <br />
-            <span aria-hidden="true" class="brush-settings">
-                <img src="../assets/draw-settings.svg" />
+            <span aria-hidden="true">
+                <img
+                    src="../assets/draw-settings.svg"
+                    :class="[
+                        brushType !== BrushType.Eraser && brushType !== BrushType.Selector
+                            ? 'brush-weight'
+                            : 'brush-weight-disabled',
+                        brushConfig === BrushConfig.Weight &&
+                        brushType !== BrushType.Eraser &&
+                        brushType !== BrushType.Selector
+                            ? 'brush-weight-selected'
+                            : '',
+                    ]"
+                    @click="
+                        brushConfig =
+                            brushConfig === BrushConfig.Weight
+                                ? BrushConfig.None
+                                : BrushConfig.Weight
+                    "
+                    :disabled="brushType === BrushType.Eraser || brushType === BrushType.Selector"
+                />
             </span>
         </div>
         <v-color-picker
@@ -505,6 +524,7 @@ watch(brushType, () => {
     } else if (brushType.value === BrushType.Highlighter) {
         brushColor.value = store.highlighterColor;
     }
+    brushConfig.value = BrushConfig.None;
 });
 watch(brushColor, () => {
     console.log(brushColor);
@@ -524,9 +544,9 @@ watch(brushColor, () => {
     border-radius: 10px;
     position: absolute;
     background-color: #333;
-    top: 50px;
-    bottom: 50px;
-    left: 00px;
+    top: 10px;
+    bottom: 220px;
+    left: 0px;
     right: 0px;
     padding-top: 18px;
     padding-bottom: 18px;
@@ -566,7 +586,18 @@ watch(brushColor, () => {
     box-shadow: inset 0px 0 0 4px #000;
 }
 
-.brush-settings {
+.brush-weight {
     margin-left: 38px;
+    padding: 5px;
+}
+.brush-weight-disabled {
+    margin-left: 38px;
+    padding: 5px;
+}
+.brush-weight:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+.brush-weight-selected {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 </style>
