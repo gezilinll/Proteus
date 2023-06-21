@@ -32,8 +32,7 @@ export const useEditorStore = defineStore('editor', {
             penTransparency: 100,
             markerColor: '#e7191f',
             markerWeight: 12,
-            markerTransparency: 100,
-            highlighterColor: '#fff234',
+            highlighterColor: '#FFF234CB',
             highlighterWeight: 36,
             highlighterTransparency: 50,
         };
