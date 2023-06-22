@@ -19,20 +19,18 @@ export class Editor {
     onMouseDown(e: MouseEvent) {
         if (!this.currentElement) {
             if (this._store.selectedFunction === FunctionType.Brush) {
+                this._store.disablePanelEvents = true;
                 this.currentElement = new Brush();
                 const brush = this.currentElement as Brush;
                 if (this._store.brushType === BrushType.Pen) {
                     brush.color = this._store.penColor;
                     brush.weight = this._store.penWeight;
-                    brush.transparency = this._store.penTransparency;
                 } else if (this._store.brushType === BrushType.Marker) {
                     brush.color = this._store.markerColor;
                     brush.weight = this._store.markerWeight;
-                    brush.transparency = this._store.markerTransparency;
                 } else if (this._store.brushType === BrushType.Highlighter) {
                     brush.color = this._store.highlighterColor;
                     brush.weight = this._store.highlighterWeight;
-                    brush.transparency = this._store.highlighterTransparency;
                 } else if (this._store.brushType === BrushType.Eraser) {
                 }
             }
@@ -47,5 +45,6 @@ export class Editor {
     onMouseUp(e: MouseEvent) {
         this.currentElement?.onMouseUp(e);
         this.currentElement = null;
+        this._store.disablePanelEvents = false;
     }
 }

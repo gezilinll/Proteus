@@ -1,9 +1,17 @@
 <template>
     <div>
-        <div class="brush-panel">
+        <div
+            class="brush-panel"
+            :class="{
+                'disable-mouse-event': disablePanelEvents,
+            }"
+        >
             <span
                 aria-hidden="true"
-                :class="['brush-type', brushType === BrushType.Pen ? 'brush-type-selected' : '']"
+                class="brush-type"
+                :class="{
+                    'brush-type-selected': brushType === BrushType.Pen,
+                }"
                 :style="{ color: penColor }"
                 @click="brushType = BrushType.Pen"
                 title="Pen"
@@ -500,6 +508,9 @@
             </span>
         </div>
         <v-color-picker
+            :class="{
+                'disable-mouse-event': disablePanelEvents,
+            }"
             style="position: absolute; left: 200px; top: 200px"
             v-model="brushColor"
             elevation="10"
@@ -511,6 +522,9 @@
         ></v-color-picker>
         <v-card
             class="mx-auto"
+            :class="{
+                'disable-mouse-event': disablePanelEvents,
+            }"
             style="position: absolute; left: 200px; top: 280px; width: 400px"
             elevation="10"
             v-if="
@@ -567,7 +581,12 @@ const {
     penWeight,
     markerWeight,
     highlighterWeight,
+    disablePanelEvents,
 } = storeToRefs(store);
+
+watch(disablePanelEvents, () => {
+    console.log(disablePanelEvents.value);
+});
 
 const brushColor = ref(store.penColor);
 watch(brushColor, () => {
@@ -670,5 +689,9 @@ watch(brushType, () => {
 }
 .brush-weight-selected {
     background-color: rgba(255, 255, 255, 0.15);
+}
+
+.disable-mouse-event {
+    pointer-events: none;
 }
 </style>

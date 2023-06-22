@@ -24,6 +24,7 @@ export const useEditorStore = defineStore('editor', {
     state: () => {
         return {
             editor: new Editor(),
+
             selectedFunction: FunctionType.None,
             brushType: BrushType.Pen,
             brushConfig: BrushConfig.None,
@@ -33,6 +34,8 @@ export const useEditorStore = defineStore('editor', {
             markerWeight: 12,
             highlighterColor: '#FFF234CB',
             highlighterWeight: 36,
+
+            disablePanelEvents: false,
         };
     },
 });
