@@ -6,6 +6,7 @@
                 :class="['brush-type', brushType === BrushType.Pen ? 'brush-type-selected' : '']"
                 :style="{ color: penColor }"
                 @click="brushType = BrushType.Pen"
+                title="Pen"
             >
                 <svg
                     width="185"
@@ -171,6 +172,7 @@
                 :class="['brush-type', brushType === BrushType.Marker ? 'brush-type-selected' : '']"
                 :style="{ color: markerColor }"
                 @click="brushType = BrushType.Marker"
+                title="Marker"
             >
                 <svg
                     width="184"
@@ -322,6 +324,7 @@
                 ]"
                 :style="{ color: highlighterColor }"
                 @click="brushType = BrushType.Highlighter"
+                title="Highlighter"
             >
                 <svg
                     width="183"
@@ -447,6 +450,7 @@
                 aria-hidden="true"
                 :class="['brush-type', brushType === BrushType.Eraser ? 'brush-type-selected' : '']"
                 @click="brushType = BrushType.Eraser"
+                title="Eraser"
             >
                 <img src="../assets/draw-eraser.svg" />
             </span>
@@ -468,10 +472,11 @@
                         brushConfig === BrushConfig.Color ? BrushConfig.None : BrushConfig.Color
                 "
                 :disabled="brushType === BrushType.Eraser || brushType === BrushType.Selector"
+                title="Color"
             ></button>
             <br />
             <br />
-            <span aria-hidden="true">
+            <span aria-hidden="true" title="Weight">
                 <img
                     src="../assets/draw-settings.svg"
                     :class="[
@@ -504,6 +509,53 @@
                 brushType !== BrushType.Selector
             "
         ></v-color-picker>
+        <v-card
+            class="mx-auto"
+            style="position: relative; left: 290px; top: 100px; width: 400px"
+            elevation="10"
+            v-if="
+                brushConfig === BrushConfig.Weight &&
+                brushType !== BrushType.Eraser &&
+                brushType !== BrushType.Selector
+            "
+        >
+            <v-card-text>
+                <v-row justify="space-between">
+                    <v-col class="text-left">
+                        <span v-text="brushWeight" style="font-size: 48px"></span>
+                        <span class="subheading font-weight-light me-1">PX</span>
+                    </v-col>
+                </v-row>
+                <v-slider
+                    v-model="brushWeight"
+                    track-color="grey"
+                    min="4"
+                    max="100"
+                    :step="1"
+                    thumb-size="0px"
+                >
+                    <template v-slot:prepend>
+                        <v-btn
+                            size="small"
+                            variant="text"
+                            icon="mdi-minus"
+                            :color="'indigo'"
+                            @click="weightDecrement"
+                        ></v-btn>
+                    </template>
+
+                    <template v-slot:append>
+                        <v-btn
+                            size="small"
+                            variant="text"
+                            icon="mdi-plus"
+                            :color="'indigo'"
+                            @click="weightIncrement"
+                        ></v-btn>
+                    </template>
+                </v-slider>
+            </v-card-text>
+        </v-card>
     </div>
 </template>
 
@@ -513,21 +565,19 @@ import { useEditorStore, BrushType, BrushConfig } from '../Editor.store';
 import { storeToRefs } from 'pinia';
 
 const store = useEditorStore();
-const { brushType, brushConfig, penColor, markerColor, highlighterColor } = storeToRefs(store);
+const {
+    brushType,
+    brushConfig,
+    penColor,
+    markerColor,
+    highlighterColor,
+    penWeight,
+    markerWeight,
+    highlighterWeight,
+} = storeToRefs(store);
 
 const brushColor = ref(store.penColor);
-watch(brushType, () => {
-    if (brushType.value === BrushType.Pen) {
-        brushColor.value = store.penColor;
-    } else if (brushType.value === BrushType.Marker) {
-        brushColor.value = store.markerColor;
-    } else if (brushType.value === BrushType.Highlighter) {
-        brushColor.value = store.highlighterColor;
-    }
-    brushConfig.value = BrushConfig.None;
-});
 watch(brushColor, () => {
-    console.log(brushColor);
     if (brushType.value === BrushType.Pen) {
         penColor.value = brushColor.value;
     } else if (brushType.value === BrushType.Marker) {
@@ -535,6 +585,37 @@ watch(brushColor, () => {
     } else if (brushType.value === BrushType.Highlighter) {
         highlighterColor.value = brushColor.value;
     }
+});
+
+const brushWeight = ref(penWeight.value);
+function weightDecrement() {
+    brushWeight.value -= 1;
+}
+function weightIncrement() {
+    brushWeight.value += 1;
+}
+watch(brushWeight, () => {
+    if (brushType.value === BrushType.Pen) {
+        penWeight.value = brushWeight.value;
+    } else if (brushType.value === BrushType.Marker) {
+        markerWeight.value = brushWeight.value;
+    } else if (brushType.value === BrushType.Highlighter) {
+        highlighterWeight.value = brushWeight.value;
+    }
+});
+
+watch(brushType, () => {
+    if (brushType.value === BrushType.Pen) {
+        brushColor.value = penColor.value;
+        brushWeight.value = penWeight.value;
+    } else if (brushType.value === BrushType.Marker) {
+        brushColor.value = markerColor.value;
+        brushWeight.value = markerWeight.value;
+    } else if (brushType.value === BrushType.Highlighter) {
+        brushColor.value = highlighterColor.value;
+        brushWeight.value = highlighterWeight.value;
+    }
+    brushConfig.value = BrushConfig.None;
 });
 </script>
 

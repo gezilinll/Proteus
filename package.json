@@ -28,6 +28,7 @@
         "yjs": "^13.6.1"
     },
     "devDependencies": {
+        "@mdi/font": "^7.2.96",
         "@types/js-cookie": "^3.0.3",
         "@types/protoo-client": "^4.0.1",
         "@types/random-string": "^0.0.28",
