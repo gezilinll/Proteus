@@ -1,29 +1,36 @@
 <template>
-    <div class="container">
-        <div class="top-bar"></div>
-        <div class="content">
-            <LeftPanel class="left-sidebar"></LeftPanel>
-            <canvas
-                id="renderTarget"
-                class="right-content"
-                @mousedown="onMouseDown"
-                @mousemove="onMouseMove"
-                @mouseup="onMouseUp"
-            ></canvas>
+    <v-app>
+        <div class="container">
+            <div class="top-bar"></div>
+            <div class="main-area">
+                <div class="canvas-container">
+                    <canvas
+                        id="renderTarget"
+                        style="width: 100%; height: 100%"
+                        @mousedown="onMouseDown"
+                        @mousemove="onMouseMove"
+                        @mouseup="onMouseUp"
+                    ></canvas>
+                </div>
+                <LeftPanel class="function-sidebar"></LeftPanel>
+                <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
+            </div>
+            <div class="bottom-bar">
+                <Room></Room>
+            </div>
         </div>
-        <div class="bottom-bar">
-            <Room></Room>
-        </div>
-    </div>
+    </v-app>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import paper from 'paper';
-import { Room, LeftPanel } from './components';
-import { useEditorStore } from './Editor.store';
+import { Room, LeftPanel, BrushPanel } from './components';
+import { useEditorStore, FunctionType } from './Editor.store';
+import { storeToRefs } from 'pinia';
 
 const store = useEditorStore();
+const { selectedFunction } = storeToRefs(store);
 
 function onMouseDown(e: MouseEvent) {
     store.editor.onMouseDown(e);
@@ -47,35 +54,51 @@ onMounted(() => {
 body {
     margin: 0px;
     overflow: hidden;
+    -webkit-user-select: none;
 }
+img {
+    -webkit-user-drag: none;
+}
+
 .container {
-    display: flex;
-    flex-direction: column;
+    position: absolute;
+    width: 100vw;
     height: 100vh;
 }
 
 .top-bar {
-    height: 88px;
-    background-color: #fff;
+    width: 100vw;
+    height: 46px;
+    background: linear-gradient(70deg, #ced4f0, #8d9ef2);
+    position: absolute;
 }
 
 .bottom-bar {
-    height: 200px;
-    background: linear-gradient(70deg, #ced4f0, #8d9ef2);
+    height: 120px;
+    background-color: #333;
+    position: absolute;
+    bottom: 0px;
+    width: 100vw;
 }
 
-.content {
-    flex: 1;
-    display: flex;
+.main-area {
+    position: absolute;
+    top: 46px;
+    bottom: 120px;
+    width: 100vw;
 }
 
-.left-sidebar {
+.function-sidebar {
+    position: absolute;
     width: 68px;
+    height: 100%;
     background-color: #1e1c1c;
 }
 
-.right-content {
-    flex: 1;
-    background-color: #f0f0f0;
+.canvas-container {
+    position: absolute;
+    left: 68px;
+    right: 0px;
+    height: 100%;
 }
 </style>

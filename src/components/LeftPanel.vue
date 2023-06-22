@@ -1,8 +1,5 @@
 <template>
-    <div style="position: relative">
-        <div class="function-panel-container">
-            <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
-        </div>
+    <div>
         <div
             :class="[
                 'function-container',
@@ -22,6 +19,7 @@
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    style="margin-left: 10px; margin-bottom: -8px; margin-top: 8px"
                 >
                     <path
                         d="M5.625 13.5H8.25a.75.75 0 0 0 0-1.5H5.625a2.625 2.625 0 1 0 0 5.25h10.5a1.125 1.125 0 0 1 0 2.25H11.25a.75.75 0 1 0 0 1.5h4.875a2.625 2.625 0 1 0 0-5.25h-10.5a1.125 1.125 0 0 1 0-2.25Z"
@@ -32,7 +30,6 @@
                         fill="currentColor"
                     ></path>
                 </svg>
-                <br />
                 Brush
             </span>
         </div>
@@ -42,7 +39,6 @@
 <script setup lang="ts">
 import { useEditorStore, FunctionType } from '../Editor.store';
 import { storeToRefs } from 'pinia';
-import { BrushPanel } from '.';
 
 const store = useEditorStore();
 const { selectedFunction } = storeToRefs(store);
@@ -50,37 +46,24 @@ const { selectedFunction } = storeToRefs(store);
 
 <style>
 .function-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 58px;
 }
-
 .function-container:hover {
     cursor: pointer;
 }
-
 .function-container-selected {
     background-color: #333;
 }
 
 .function-item {
+    position: absolute;
     color: #aaa;
+    position: absolute;
+    padding-left: 15%;
 }
-
 .function-item:hover,
 .function-item-selected {
     color: #fff;
-}
-
-.function-panel-container {
-    position: absolute;
-    width: 150px;
-    top: 0;
-    bottom: 0;
-    left: 68px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: #333;
 }
 </style>

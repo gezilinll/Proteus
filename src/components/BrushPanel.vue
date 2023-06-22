@@ -500,7 +500,7 @@
             </span>
         </div>
         <v-color-picker
-            style="position: relative; left: 240px; top: 95px"
+            style="position: absolute; left: 200px; top: 200px"
             v-model="brushColor"
             elevation="10"
             v-if="
@@ -511,7 +511,7 @@
         ></v-color-picker>
         <v-card
             class="mx-auto"
-            style="position: relative; left: 290px; top: 100px; width: 400px"
+            style="position: absolute; left: 200px; top: 280px; width: 400px"
             elevation="10"
             v-if="
                 brushConfig === BrushConfig.Weight &&
@@ -526,14 +526,7 @@
                         <span class="subheading font-weight-light me-1">PX</span>
                     </v-col>
                 </v-row>
-                <v-slider
-                    v-model="brushWeight"
-                    track-color="grey"
-                    min="4"
-                    max="100"
-                    :step="1"
-                    thumb-size="0px"
-                >
+                <v-slider v-model="brushWeight" track-color="grey" min="4" max="100" :step="1">
                     <template v-slot:prepend>
                         <v-btn
                             size="small"
@@ -621,16 +614,16 @@ watch(brushType, () => {
 
 <style>
 .brush-panel {
-    margin-left: 8px;
+    scale: 0.7;
     border-radius: 10px;
     position: absolute;
     background-color: #333;
-    top: 10px;
-    bottom: 220px;
-    left: 0px;
-    right: 0px;
-    padding-top: 18px;
-    padding-bottom: 18px;
+    left: 50px;
+    width: 160px;
+    top: -70px;
+    height: 500px;
+    padding-top: 16px;
+    padding-bottom: 16px;
     -webkit-clip-path: polygon(0 0, 150% 0, 150% 100%, 0% 100%);
 }
 
@@ -639,10 +632,9 @@ watch(brushType, () => {
     cursor: pointer;
     transition: margin-left 100ms linear;
 }
-
 .brush-type:hover,
 .brush-type-selected {
-    margin-left: -10px;
+    margin-left: 0px;
 }
 
 .brush-color {
@@ -650,29 +642,27 @@ watch(brushType, () => {
     height: 48px;
     background-color: v-bind(brushColor);
     border-radius: 5px;
-    margin-left: 38px;
+    margin-left: 56px;
     transition: box-shadow 0.3s ease;
 }
-
 .brush-color-disabled {
     width: 48px;
     height: 48px;
     background-color: grey;
     border-radius: 5px;
-    margin-left: 38px;
+    margin-left: 56px;
 }
-
 .brush-color:hover,
 .brush-color-selected {
     box-shadow: inset 0px 0 0 4px #000;
 }
 
 .brush-weight {
-    margin-left: 38px;
+    margin-left: 56px;
     padding: 5px;
 }
 .brush-weight-disabled {
-    margin-left: 38px;
+    margin-left: 56px;
     padding: 5px;
 }
 .brush-weight:hover {
