@@ -20,10 +20,16 @@ export enum BrushConfig {
     Weight,
 }
 
+export enum MouseType {
+    Select,
+    Drag,
+}
+
 export const useEditorStore = defineStore('editor', {
     state: () => {
         return {
             editor: new Editor(),
+            mouseType: MouseType.Select,
 
             selectedFunction: FunctionType.None,
             brushType: BrushType.Pen,
