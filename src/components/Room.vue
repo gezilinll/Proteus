@@ -1,38 +1,58 @@
 <template>
     <div>
-        <span v-if="!isSoloMode">Room ID: {{ roomID }}</span>
-        <div v-if="isSoloMode" style="text-align: center">
-            <input
-                v-model="inputRoomID"
-                :placeholder="newRoomID"
-                @keydown.space.prevent
-                style="margin-top: 30px"
-            />
-            <br />
-            <br />
-            <button @click="createOrJoinRoom">{{ buttonText }}</button>
+        <div style="padding-top: 15px; padding-left: 100px" v-if="isSoloMode">
+            <v-form>
+                <v-container>
+                    <v-row>
+                        <v-col cols="12" sm="5">
+                            <v-text-field
+                                label="YOUR NAME"
+                                counter
+                                maxlength="20"
+                                v-model="userName"
+                                placeholder="momo"
+                                persistent-placeholder
+                            ></v-text-field>
+                        </v-col>
+
+                        <v-col cols="12" sm="5">
+                            <v-text-field
+                                label="ROOM ID"
+                                counter
+                                maxlength="8"
+                                v-model="inputRoomID"
+                                :placeholder="newRoomID"
+                                persistent-placeholder
+                            ></v-text-field>
+                        </v-col>
+
+                        <v-col cols="12" sm="2">
+                            <v-btn
+                                style="margin-top: 10px; margin-left: 16px"
+                                elevation="2"
+                                @click="createOrJoinRoom"
+                            >
+                                {{ buttonText }}
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-form>
         </div>
-        <div v-if="isWhiteboardMode" style="text-align: center">
-            <button @click="joinVideoChat" style="margin-top: 30px">Join Video Chat</button>
+        <div style="display: flex" v-if="isWhiteboardMode">
+            <v-btn style="margin-top: 40px; margin-left: 15%" elevation="5" @click="joinVideoChat">
+                Join Chat
+            </v-btn>
+            <v-card style="margin-top: 10px; margin-left: 28px" elevation="0">
+                <template v-slot:title> Video Chat - {{ roomID }} </template>
+                <v-card-text>
+                    Now you can design your work with other people in this room({{ roomID }}), and
+                    you can chat them through video chat, which we hope you do this too ^_^.
+                </v-card-text>
+            </v-card>
         </div>
-        <div v-if="isVideoChatMode" class="video-container">
-            <video
-                id="producer-video"
-                style="width: 180px; height: 180px; margin: 10px; object-fit: cover"
-                autoplay
-            ></video>
-            <div
-                style="
-                    width: 1px;
-                    height: 180px;
-                    background-color: rgb(111, 108, 108);
-                    margin-top: 10px;
-                    margin-bottom: 10px;
-                "
-            ></div>
-            <div v-for="item in consumers">
-                <PeerView :name="item.name" :track="item.track"></PeerView>
-            </div>
+        <div v-for="item in consumers" v-if="isVideoChatMode">
+            <PeerView :name="item.name" :track="item.track!"></PeerView>
         </div>
     </div>
 </template>
@@ -60,8 +80,13 @@ const newRoomID = randomString({ length: 8 }).toLowerCase();
 const inputRoomID = ref<string>();
 const roomID = ref<string>();
 const buttonText = computed(() => {
-    return !inputRoomID.value ? 'CREATE ROOM' : 'JOIN ROOM';
+    console.log(inputRoomID.value);
+    if (inputRoomID && inputRoomID.value && inputRoomID.value.length === 8) {
+        return 'CREATE ROOM';
+    }
+    return 'JOIN ROOM';
 });
+const userName = ref<string>('');
 
 const isSoloMode = computed(() => {
     return store.status === RoomState.SOLO;
@@ -74,7 +99,7 @@ const isVideoChatMode = computed(() => {
 });
 
 function createOrJoinRoom() {
-    roomID.value = inputRoomID.value ?? newRoomID;
+    roomID.value = buttonText.value === 'CREATE ROOM' ? inputRoomID.value! : newRoomID;
     room.join(roomID.value);
 }
 

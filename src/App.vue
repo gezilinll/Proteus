@@ -75,7 +75,8 @@ img {
 
 .bottom-bar {
     height: 120px;
-    background-color: #333;
+    background-color: #fff;
+    box-shadow: inset 0px 0 0 4px #000;
     position: absolute;
     bottom: 0px;
     width: 100vw;
