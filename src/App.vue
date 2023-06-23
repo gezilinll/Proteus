@@ -4,13 +4,21 @@
             <div class="top-bar"></div>
             <div class="main-area">
                 <div class="canvas-container">
-                    <canvas
-                        id="renderTarget"
-                        style="width: 100%; height: 100%"
+                    <div
                         @mousedown="onMouseDown"
                         @mousemove="onMouseMove"
                         @mouseup="onMouseUp"
-                    ></canvas>
+                        style="position: relative; width: 100%; height: 100%"
+                    >
+                        <canvas
+                            id="canvasForPixi"
+                            style="width: 100%; height: 100%; position: absolute"
+                        ></canvas>
+                        <!-- <canvas
+                            id="canvasForPaper"
+                            style="width: 100%; height: 100%; position: absolute"
+                        ></canvas> -->
+                    </div>
                 </div>
                 <LeftPanel class="function-sidebar"></LeftPanel>
                 <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
@@ -24,7 +32,6 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import paper from 'paper';
 import { Room, LeftPanel, BrushPanel } from './components';
 import { useEditorStore, FunctionType } from './Editor.store';
 import { storeToRefs } from 'pinia';
@@ -45,8 +52,8 @@ function onMouseUp(e: MouseEvent) {
 }
 
 onMounted(() => {
-    const _paper = new paper.PaperScope();
-    _paper.setup(document.getElementById('renderTarget') as HTMLCanvasElement);
+    store.editor.pixi(document.getElementById('canvasForPixi') as HTMLCanvasElement);
+    // store.editor.paper(document.getElementById('canvasForPaper') as HTMLCanvasElement);
 });
 </script>
 

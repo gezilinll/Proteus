@@ -80,7 +80,6 @@ const newRoomID = randomString({ length: 8 }).toLowerCase();
 const inputRoomID = ref<string>();
 const roomID = ref<string>();
 const buttonText = computed(() => {
-    console.log(inputRoomID.value);
     if (inputRoomID && inputRoomID.value && inputRoomID.value.length === 8) {
         return 'CREATE ROOM';
     }

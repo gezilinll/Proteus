@@ -584,10 +584,6 @@ const {
     disablePanelEvents,
 } = storeToRefs(store);
 
-watch(disablePanelEvents, () => {
-    console.log(disablePanelEvents.value);
-});
-
 const brushColor = ref(store.penColor);
 watch(brushColor, () => {
     if (brushType.value === BrushType.Pen) {
