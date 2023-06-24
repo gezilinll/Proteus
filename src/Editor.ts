@@ -11,7 +11,7 @@ export class Editor {
     private _store = useEditorStore();
 
     private _pixi: PIXI.Application | null = null;
-    private _background: Background;
+    private _background: Background | null = null;
     private _paper: paper.PaperScope | null = null;
 
     currentElement: Element | null = null;
@@ -33,12 +33,24 @@ export class Editor {
         // @ts-ignore
         globalThis.__PIXI_APP__ = app;
         console.log(canvas.width, canvas.height);
-        this._background = new Background(this._pixi, canvas.width, canvas.height);
+        this._background = new Background(
+            this._pixi,
+            canvas.width / devicePixelRatio,
+            canvas.height / devicePixelRatio
+        );
     }
 
     paper(canvas: HTMLCanvasElement) {
         this._paper = new paper.PaperScope();
         this._paper.setup(canvas);
+    }
+
+    translateViewport(deltaX: number, deltaY: number) {
+        this._background!.translate(deltaX, deltaY);
+    }
+
+    zoom(target: number) {
+        this._background!.zoom(target);
     }
 
     onMouseDown(e: MouseEvent) {

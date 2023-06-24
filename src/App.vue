@@ -9,7 +9,7 @@
                         mouseType === MouseType.Select ? 'mouse-cursor-selected' : 'mouse-cursor',
                     ]"
                     @click="mouseType = MouseType.Select"
-                    style="right: 100px"
+                    style="right: 400px"
                 >
                     <svg
                         width="44"
@@ -33,7 +33,7 @@
                         mouseType === MouseType.Drag ? 'mouse-cursor-selected' : 'mouse-cursor',
                     ]"
                     @click="mouseType = MouseType.Drag"
-                    style="right: 56px"
+                    style="right: 360px"
                 >
                     <svg
                         width="44"
@@ -50,6 +50,23 @@
                         ></path>
                     </svg>
                 </span>
+                <div style="position: absolute; right: 30px">
+                    <v-slider
+                        :max="300"
+                        :min="10"
+                        step="1"
+                        v-model="zoom"
+                        hide-details
+                        thumb-size="16px"
+                        style="width: 300px; margin-top: 5px"
+                    >
+                        <template v-slot:append>
+                            <span style="font-weight: bold; color: rgba(1, 0, 0, 0.6)">{{
+                                zoom + '%'
+                            }}</span>
+                        </template>
+                    </v-slider>
+                </div>
             </div>
             <div class="main-area">
                 <div class="canvas-container">
@@ -61,12 +78,12 @@
                     >
                         <canvas
                             id="canvasForPixi"
-                            style="width: 100%; height: 100%; position: absolute"
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"
                         ></canvas>
-                        <!-- <canvas
+                        <canvas
                             id="canvasForPaper"
-                            style="width: 100%; height: 100%; position: absolute"
-                        ></canvas> -->
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"
+                        ></canvas>
                     </div>
                 </div>
                 <LeftPanel class="function-sidebar"></LeftPanel>
@@ -87,7 +104,7 @@ import { storeToRefs } from 'pinia';
 import { watch } from 'vue';
 
 const store = useEditorStore();
-const { selectedFunction, mouseType } = storeToRefs(store);
+const { selectedFunction, mouseType, zoom } = storeToRefs(store);
 
 watch(mouseType, () => {
     if (mouseType.value === MouseType.Select) {
@@ -97,27 +114,37 @@ watch(mouseType, () => {
     }
 });
 
+watch(zoom, () => {
+    store.editor.zoom(zoom.value / 100.0);
+});
+
 function onMouseDown(e: MouseEvent) {
     if (mouseType.value === MouseType.Drag) {
         document.getElementsByTagName('body')[0].style.cursor = 'grabbing';
+    } else {
+        store.editor.onMouseDown(e);
     }
-    store.editor.onMouseDown(e);
 }
 
 function onMouseMove(e: MouseEvent) {
-    store.editor.onMouseMove(e);
+    if (document.getElementsByTagName('body')[0].style.cursor === 'grabbing') {
+        store.editor.translateViewport(e.movementX, e.movementY);
+    } else {
+        store.editor.onMouseMove(e);
+    }
 }
 
 function onMouseUp(e: MouseEvent) {
     if (mouseType.value === MouseType.Drag) {
         document.getElementsByTagName('body')[0].style.cursor = 'grab';
+    } else {
+        store.editor.onMouseUp(e);
     }
-    store.editor.onMouseUp(e);
 }
 
 onMounted(() => {
     store.editor.pixi(document.getElementById('canvasForPixi') as HTMLCanvasElement);
-    // store.editor.paper(document.getElementById('canvasForPaper') as HTMLCanvasElement);
+    store.editor.paper(document.getElementById('canvasForPaper') as HTMLCanvasElement);
 });
 </script>
 
@@ -129,6 +156,9 @@ body {
 }
 img {
     -webkit-user-drag: none;
+}
+span {
+    font-family: Andale Mono, monospace;
 }
 
 .container {

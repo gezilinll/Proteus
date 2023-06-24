@@ -30,6 +30,7 @@ export const useEditorStore = defineStore('editor', {
         return {
             editor: new Editor(),
             mouseType: MouseType.Select,
+            zoom: 100,
 
             selectedFunction: FunctionType.None,
             brushType: BrushType.Pen,
