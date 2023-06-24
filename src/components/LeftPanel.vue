@@ -1,11 +1,12 @@
 <template>
     <div>
         <div
-            :class="[
-                'function-container',
-                selectedFunction === FunctionType.Brush ? 'function-container-selected' : '',
-            ]"
-            @click="selectedFunction = FunctionType.Brush"
+            class="function-container"
+            @click="
+                selectedFunction === FunctionType.Brush
+                    ? (selectedFunction = FunctionType.None)
+                    : (selectedFunction = FunctionType.Brush)
+            "
         >
             <span
                 :class="[
@@ -51,12 +52,8 @@ const { selectedFunction } = storeToRefs(store);
 .function-container:hover {
     cursor: pointer;
 }
-.function-container-selected {
-    background-color: #333;
-}
 
 .function-item {
-    position: absolute;
     color: #aaa;
     position: absolute;
     padding-left: 15%;
