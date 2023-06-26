@@ -6,4 +6,6 @@ export interface Element {
     onMouseMove(e: MouseEvent): void;
 
     onMouseUp(e: MouseEvent): void;
+
+    render(): void;
 }

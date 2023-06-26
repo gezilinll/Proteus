@@ -70,21 +70,17 @@
             </div>
             <div class="main-area">
                 <div class="canvas-container">
-                    <div
+                    <canvas
+                        id="canvasForPixi"
+                        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0"
                         @mousedown="onMouseDown"
                         @mousemove="onMouseMove"
                         @mouseup="onMouseUp"
-                        style="position: relative; width: 100%; height: 100%"
-                    >
-                        <canvas
-                            id="canvasForPixi"
-                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"
-                        ></canvas>
-                        <canvas
+                    ></canvas>
+                    <!-- <canvas
                             id="canvasForPaper"
                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"
-                        ></canvas>
-                    </div>
+                        ></canvas> -->
                 </div>
                 <LeftPanel class="function-sidebar"></LeftPanel>
                 <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
@@ -144,7 +140,7 @@ function onMouseUp(e: MouseEvent) {
 
 onMounted(() => {
     store.editor.pixi(document.getElementById('canvasForPixi') as HTMLCanvasElement);
-    store.editor.paper(document.getElementById('canvasForPaper') as HTMLCanvasElement);
+    // store.editor.paper(document.getElementById('canvasForPaper') as HTMLCanvasElement);
 });
 </script>
 

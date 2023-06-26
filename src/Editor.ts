@@ -15,6 +15,7 @@ export class Editor {
     private _paper: paper.PaperScope | null = null;
 
     currentElement: Element | null = null;
+    private _elements: Element[] = [];
 
     constructor() {}
 
@@ -38,6 +39,7 @@ export class Editor {
             canvas.width / devicePixelRatio,
             canvas.height / devicePixelRatio
         );
+        this._pixi.ticker.add(this._onPixiRender, this);
     }
 
     paper(canvas: HTMLCanvasElement) {
@@ -57,7 +59,8 @@ export class Editor {
         if (!this.currentElement) {
             if (this._store.selectedFunction === FunctionType.Brush) {
                 this._store.disablePanelEvents = true;
-                this.currentElement = new Brush();
+                this.currentElement = new Brush(this._pixi!);
+                this._elements.push(this.currentElement);
                 const brush = this.currentElement as Brush;
                 if (this._store.brushType === BrushType.Pen) {
                     brush.color = this._store.penColor;
@@ -83,5 +86,12 @@ export class Editor {
         this.currentElement?.onMouseUp(e);
         this.currentElement = null;
         this._store.disablePanelEvents = false;
+    }
+
+    private _onPixiRender() {
+        console.log('_onPixiRender');
+        for (const element of this._elements) {
+            element.render();
+        }
     }
 }
