@@ -90,7 +90,6 @@ export class Editor {
     }
 
     private _onPixiRender() {
-        console.log('_onPixiRender');
         for (const element of this._elements) {
             element.render();
         }
