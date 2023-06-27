@@ -18,39 +18,20 @@ export class Brush implements Element {
     constructor(pixi: PIXI.Application, uuid?: string) {
         this.id = uuid ?? uuidv4();
         this._graphics = new PIXI.Graphics();
-        // this._graphics.lineStyle(8, 0x000000, 1);
-        // this._graphics.moveTo(500, 500); // moveTo lineTo 绘制线段
-        // this._graphics.lineTo(580, 580);
-        // this._graphics.lineTo(1000, 580);
-        // this._graphics.lineTo(1211, 339);
-        // this._graphics.lineTo(1321, 826);
-        // this._graphics.x = 120;
-        // this._graphics.y = 30;
         pixi.stage.addChild(this._graphics);
-
-        // this._path = new paper.Path();
-        // this._path.strokeColor = new paper.Color(Math.random(), Math.random(), Math.random(), 1.0);
-        // this._path.strokeWidth = Math.random() * 15;
     }
 
     onMouseDown(e: MouseEvent) {
         console.log('onMouseDown', e.offsetX, e.offsetY);
-        // this._graphics.moveTo(e.offsetX, e.offsetY);
-        // this._graphics.lineTo(e.offsetX, e.offsetY);
-        this._points.push(new PIXI.Point(e.offsetX / 2, e.offsetY / 2));
-        // this._addPoint(e.offsetX, e.offsetY);
+        this._points.push(new PIXI.Point(e.offsetX, e.offsetY));
     }
 
     onMouseMove(e: MouseEvent) {
-        console.log('onMouseMove', e.offsetX, e.offsetY);
-        // this._graphics.lineTo(e.offsetX, e.offsetY);
-        this._points.push(new PIXI.Point(e.offsetX / 2, e.offsetY / 2));
-        // this._addPoint(e.offsetX, e.offsetY);
+        this._points.push(new PIXI.Point(e.offsetX, e.offsetY));
     }
 
     onMouseUp(e: MouseEvent) {
-        // this._graphics.endFill();
-        // this._addPoint(e.offsetX, e.offsetY);
+        this._points.push(new PIXI.Point(e.offsetX, e.offsetY));
     }
 
     set color(color: string) {
@@ -82,18 +63,6 @@ export class Brush implements Element {
         return result;
     }
 
-    private _addPoint(x: number, y: number) {
-        if (
-            !this._lastPoint ||
-            this._calculateDistance(x, y, this._lastPoint.x, this._lastPoint.y) >=
-                Brush.MIN_DISTANCE
-        ) {
-            this._lastPoint = new paper.Point(x, y);
-            this._path.add(this._lastPoint);
-            this._path.smooth();
-        }
-    }
-
     private _calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
         const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
         return distance;
@@ -104,8 +73,13 @@ export class Brush implements Element {
             // this._graphics.clear();
             this._graphics.lineStyle(8, 0x000000, 1);
             this._graphics.moveTo(this._points[0].x, this._points[0].y);
-            for (let index = 1; index < this._points.length; index++) {
-                this._graphics.lineTo(this._points[index].x, this._points[index].y);
+            for (let index = 1; index < this._points.length - 1; index++) {
+                let control = this._points[index];
+                let end = new PIXI.Point(
+                    (this._points[index].x + this._points[index + 1].x) / 2,
+                    (this._points[index].y + this._points[index + 1].y) / 2
+                );
+                this._graphics.quadraticCurveTo(control.x, control.y, end.x, end.y);
             }
         }
     }

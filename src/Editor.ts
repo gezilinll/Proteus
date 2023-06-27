@@ -24,16 +24,17 @@ export class Editor {
     }
 
     pixi(canvas: HTMLCanvasElement) {
+        console.log(window.devicePixelRatio);
         this._pixi = new PIXI.Application({
             view: canvas,
             background: '#fff',
             antialias: true,
-            resizeTo: window,
+            resizeTo: canvas.parentElement!,
             resolution: window.devicePixelRatio,
         });
         // @ts-ignore
         globalThis.__PIXI_APP__ = app;
-        console.log(canvas.width, canvas.height);
+        console.log(canvas.width, canvas.height, canvas.style.width, canvas.style.height);
         this._background = new Background(
             this._pixi,
             canvas.width / devicePixelRatio,
