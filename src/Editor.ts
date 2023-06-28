@@ -18,28 +18,28 @@ export class Editor {
     selectedElement: Element | undefined = undefined;
     private _elements: Element[] = [];
 
-    constructor() {}
+    constructor() { }
 
     collaborate(document: Y.Doc) {
         this._yBinding = new YBinding(document);
     }
 
     pixi(canvas: HTMLCanvasElement) {
-        console.log(window.devicePixelRatio);
         this._pixi = new PIXI.Application({
             view: canvas,
             background: '#fff',
             antialias: true,
+            autoDensity: true,
             resizeTo: canvas.parentElement!,
             resolution: window.devicePixelRatio,
         });
         // @ts-ignore
         globalThis.__PIXI_APP__ = app;
-        console.log(canvas.width, canvas.height, canvas.style.width, canvas.style.height);
+        console.log(window.devicePixelRatio, canvas.width, canvas.height, canvas.style.width, canvas.style.height);
         this._background = new Background(
             this._pixi,
-            canvas.width / devicePixelRatio,
-            canvas.height / devicePixelRatio
+            canvas.width,
+            canvas.height
         );
         this._pixi.ticker.add(this._onPixiRender, this);
     }

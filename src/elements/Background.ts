@@ -16,6 +16,9 @@ export class Background {
         this._canvas = document.createElement('canvas');
         this._canvas.width = this._fullWidth;
         this._canvas.height = this._fullHeight;
+        this._canvas.style.width = (this._fullWidth / window.devicePixelRatio) + "px";
+        this._canvas.style.height = (this._fullHeight / window.devicePixelRatio) + "px";
+
         this._sprite = PIXI.Sprite.from(this._canvas);
         this._sprite.name = 'background';
         pixi.stage.addChild(this._sprite);
@@ -43,6 +46,8 @@ export class Background {
         ctx.beginPath();
         const startY = this._fullHeight / 2.0 + this._translateY;
         const startX = this._fullWidth / 2.0 + this._translateX;
+        const canvas = this._canvas;
+        console.log(canvas.width, canvas.height, canvas.style.width, canvas.style.height);
         ctx.moveTo(0, startY);
         ctx.lineTo(this._fullWidth, startY);
         ctx.moveTo(startX, 0);

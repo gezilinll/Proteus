@@ -65,7 +65,7 @@ export class Brush implements Element {
         if (
             !this._lastPoint ||
             this._calculateDistance(x, y, this._lastPoint.x, this._lastPoint.y) >=
-                Brush.MIN_DISTANCE
+            Brush.MIN_DISTANCE
         ) {
             this._points.push(new PIXI.Point(x, y));
             this._dirty = true;
