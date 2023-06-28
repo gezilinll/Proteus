@@ -15,6 +15,7 @@ export class Editor {
     private _paper: paper.PaperScope | null = null;
 
     currentElement: Element | null = null;
+    selectedElement: Element | undefined = undefined;
     private _elements: Element[] = [];
 
     constructor() {}
@@ -57,7 +58,12 @@ export class Editor {
     }
 
     onMouseDown(e: MouseEvent) {
-        if (!this.currentElement) {
+        this.selectedElement = this._elements.find((element) => {
+            return element.inHitArea(e.offsetX, e.offsetY);
+        });
+        if (this.selectedElement) {
+            console.log('选中了！');
+        } else if (!this.currentElement) {
             if (this._store.selectedFunction === FunctionType.Brush) {
                 this._store.disablePanelEvents = true;
                 this.currentElement = new Brush(this._pixi!);

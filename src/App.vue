@@ -76,10 +76,6 @@
                         @mousemove="onMouseMove"
                         @mouseup="onMouseUp"
                     ></canvas>
-                    <!-- <canvas
-                            id="canvasForPaper"
-                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"
-                        ></canvas> -->
                 </div>
                 <LeftPanel class="function-sidebar"></LeftPanel>
                 <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>

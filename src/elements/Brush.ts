@@ -77,6 +77,10 @@ export class Brush implements Element {
         return distance;
     }
 
+    inHitArea(x: number, y: number): boolean {
+        return this._graphics.getBounds().contains(x, y);
+    }
+
     render(): void {
         if (this._dirty && this._points.length > 3) {
             console.log(this._weight, this._color);
