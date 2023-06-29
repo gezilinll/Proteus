@@ -76,7 +76,7 @@
                         @mousemove="onMouseMove"
                         @mouseup="onMouseUp"
                     ></canvas>
-                    <ElementBox v-if="elementSelected" :box="elementBox"></ElementBox>
+                    <ElementBox v-if="showElementBox" :box="elementBox"></ElementBox>
                 </div>
                 <LeftPanel class="function-sidebar"></LeftPanel>
                 <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
@@ -96,7 +96,7 @@ import { storeToRefs } from 'pinia';
 import { watch } from 'vue';
 
 const store = useEditorStore();
-const { selectedFunction, mouseType, zoom, elementSelected, elementBox } = storeToRefs(store);
+const { selectedFunction, mouseType, zoom, showElementBox, elementBox } = storeToRefs(store);
 
 watch(mouseType, () => {
     if (mouseType.value === MouseType.Select) {

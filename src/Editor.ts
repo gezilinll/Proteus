@@ -18,7 +18,7 @@ export class Editor {
     selectedElement: Element | undefined = undefined;
     private _elements: Element[] = [];
 
-    constructor() {}
+    constructor() { }
 
     collaborate(document: Y.Doc) {
         this._yBinding = new YBinding(document);
@@ -64,10 +64,10 @@ export class Editor {
             return element.inHitArea(e.offsetX, e.offsetY);
         });
         if (this.selectedElement) {
-            this._store.elementSelected = true;
+            this._store.showElementBox = true;
             this._store.elementBox = this.selectedElement.getBox();
         } else {
-            this._store.elementSelected = false;
+            this._store.showElementBox = false;
             if (!this.currentElement) {
                 if (this._store.selectedFunction === FunctionType.Brush) {
                     this._store.disablePanelEvents = true;
@@ -92,10 +92,15 @@ export class Editor {
     }
 
     onMouseMove(e: MouseEvent) {
+        if (this.selectedElement) {
+            this._store.elementBox.x += e.movementX;
+            this._store.elementBox.y += e.movementY;
+        }
         this.currentElement?.onMouseMove(e);
     }
 
     onMouseUp(e: MouseEvent) {
+        this.selectedElement = undefined;
         this.currentElement?.onMouseUp(e);
         this.currentElement = null;
         this._store.disablePanelEvents = false;

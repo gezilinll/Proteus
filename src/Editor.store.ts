@@ -50,7 +50,7 @@ export const useEditorStore = defineStore('editor', {
             highlighterWeight: 36,
 
             disablePanelEvents: false,
-            elementSelected: false,
+            showElementBox: false,
             elementBox: {} as ElementBox,
         };
     },

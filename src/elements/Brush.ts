@@ -35,6 +35,11 @@ export class Brush implements Element {
         this._addPoint(e.offsetX, e.offsetY);
     }
 
+    move(x: number, y: number) {
+        this._graphics.position.x += x;
+        this._graphics.position.y += y;
+    }
+
     set color(color: string) {
         this._color = color;
         this._dirty = true;
@@ -66,7 +71,7 @@ export class Brush implements Element {
         if (
             !this._lastPoint ||
             this._calculateDistance(x, y, this._lastPoint.x, this._lastPoint.y) >=
-                Brush.MIN_DISTANCE
+            Brush.MIN_DISTANCE
         ) {
             this._points.push(new PIXI.Point(x, y));
             this._dirty = true;

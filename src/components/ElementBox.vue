@@ -2,6 +2,7 @@
     <div
         :style="{
             position: 'absolute',
+            pointerEvents: 'none',
             left: props.box.x + 'px',
             top: props.box.y + 'px',
             width: props.box.width + 'px',
@@ -17,4 +18,5 @@ import { ElementBox } from '../Editor.store';
 const props = defineProps<{
     box: ElementBox;
 }>();
+
 </script>
