@@ -25,6 +25,13 @@ export enum MouseType {
     Drag,
 }
 
+export interface ElementBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
 export const useEditorStore = defineStore('editor', {
     state: () => {
         return {
@@ -43,6 +50,8 @@ export const useEditorStore = defineStore('editor', {
             highlighterWeight: 36,
 
             disablePanelEvents: false,
+            elementSelected: false,
+            elementBox: {} as ElementBox,
         };
     },
 });

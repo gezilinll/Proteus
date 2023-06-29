@@ -1,3 +1,5 @@
+import { ElementBox } from '../Editor.store';
+
 export interface Element {
     type: 'graphics' | 'image';
 
@@ -10,4 +12,6 @@ export interface Element {
     render(): void;
 
     inHitArea(x: number, y: number): boolean;
+
+    getBox(): ElementBox;
 }

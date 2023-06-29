@@ -76,6 +76,7 @@
                         @mousemove="onMouseMove"
                         @mouseup="onMouseUp"
                     ></canvas>
+                    <ElementBox v-if="elementSelected" :box="elementBox"></ElementBox>
                 </div>
                 <LeftPanel class="function-sidebar"></LeftPanel>
                 <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
@@ -88,14 +89,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { Room, LeftPanel, BrushPanel } from './components';
+import { onMounted, ref } from 'vue';
+import { Room, LeftPanel, BrushPanel, ElementBox } from './components';
 import { useEditorStore, FunctionType, MouseType } from './Editor.store';
 import { storeToRefs } from 'pinia';
 import { watch } from 'vue';
 
 const store = useEditorStore();
-const { selectedFunction, mouseType, zoom } = storeToRefs(store);
+const { selectedFunction, mouseType, zoom, elementSelected, elementBox } = storeToRefs(store);
 
 watch(mouseType, () => {
     if (mouseType.value === MouseType.Select) {

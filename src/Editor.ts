@@ -18,7 +18,7 @@ export class Editor {
     selectedElement: Element | undefined = undefined;
     private _elements: Element[] = [];
 
-    constructor() { }
+    constructor() {}
 
     collaborate(document: Y.Doc) {
         this._yBinding = new YBinding(document);
@@ -35,12 +35,14 @@ export class Editor {
         });
         // @ts-ignore
         globalThis.__PIXI_APP__ = app;
-        console.log(window.devicePixelRatio, canvas.width, canvas.height, canvas.style.width, canvas.style.height);
-        this._background = new Background(
-            this._pixi,
+        console.log(
+            window.devicePixelRatio,
             canvas.width,
-            canvas.height
+            canvas.height,
+            canvas.style.width,
+            canvas.style.height
         );
+        this._background = new Background(this._pixi, canvas.width, canvas.height);
         this._pixi.ticker.add(this._onPixiRender, this);
     }
 
@@ -62,23 +64,27 @@ export class Editor {
             return element.inHitArea(e.offsetX, e.offsetY);
         });
         if (this.selectedElement) {
-            console.log('选中了！');
-        } else if (!this.currentElement) {
-            if (this._store.selectedFunction === FunctionType.Brush) {
-                this._store.disablePanelEvents = true;
-                this.currentElement = new Brush(this._pixi!);
-                this._elements.push(this.currentElement);
-                const brush = this.currentElement as Brush;
-                if (this._store.brushType === BrushType.Pen) {
-                    brush.color = this._store.penColor;
-                    brush.weight = this._store.penWeight;
-                } else if (this._store.brushType === BrushType.Marker) {
-                    brush.color = this._store.markerColor;
-                    brush.weight = this._store.markerWeight;
-                } else if (this._store.brushType === BrushType.Highlighter) {
-                    brush.color = this._store.highlighterColor;
-                    brush.weight = this._store.highlighterWeight;
-                } else if (this._store.brushType === BrushType.Eraser) {
+            this._store.elementSelected = true;
+            this._store.elementBox = this.selectedElement.getBox();
+        } else {
+            this._store.elementSelected = false;
+            if (!this.currentElement) {
+                if (this._store.selectedFunction === FunctionType.Brush) {
+                    this._store.disablePanelEvents = true;
+                    this.currentElement = new Brush(this._pixi!);
+                    this._elements.push(this.currentElement);
+                    const brush = this.currentElement as Brush;
+                    if (this._store.brushType === BrushType.Pen) {
+                        brush.color = this._store.penColor;
+                        brush.weight = this._store.penWeight;
+                    } else if (this._store.brushType === BrushType.Marker) {
+                        brush.color = this._store.markerColor;
+                        brush.weight = this._store.markerWeight;
+                    } else if (this._store.brushType === BrushType.Highlighter) {
+                        brush.color = this._store.highlighterColor;
+                        brush.weight = this._store.highlighterWeight;
+                    } else if (this._store.brushType === BrushType.Eraser) {
+                    }
                 }
             }
         }

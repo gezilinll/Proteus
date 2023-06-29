@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Element } from './Element';
 import * as PIXI from 'pixi.js';
+import { ElementBox } from '../Editor.store';
 
 export class Brush implements Element {
     type: 'graphics' | 'image' = 'graphics';
@@ -65,7 +66,7 @@ export class Brush implements Element {
         if (
             !this._lastPoint ||
             this._calculateDistance(x, y, this._lastPoint.x, this._lastPoint.y) >=
-            Brush.MIN_DISTANCE
+                Brush.MIN_DISTANCE
         ) {
             this._points.push(new PIXI.Point(x, y));
             this._dirty = true;
@@ -79,6 +80,16 @@ export class Brush implements Element {
 
     inHitArea(x: number, y: number): boolean {
         return this._graphics.getBounds().contains(x, y);
+    }
+
+    getBox(): ElementBox {
+        const bounds = this._graphics.getBounds();
+        return {
+            x: bounds.x,
+            y: bounds.y,
+            width: bounds.width,
+            height: bounds.height,
+        };
     }
 
     render(): void {
