@@ -89,7 +89,12 @@ export class Room {
                         // resume this Consumer (which was paused for now if video).
                         accept();
 
-                        this._store.addConsumer({ name: 'consumer', track: consumer.track });
+                        this._store.addConsumer({
+                            name: 'consumer',
+                            track: consumer.track,
+                            audio: true,
+                            video: true,
+                        });
                     } catch (error) {
                         console.log('"newConsumer" request failed:%o', error);
                         throw error;
@@ -327,7 +332,12 @@ export class Room {
                 codec,
             });
 
-            this._store.setProducer({ name: 'produce', track: webcamProducer.track });
+            this._store.setProducer({
+                name: 'produce',
+                track: webcamProducer.track,
+                audio: true,
+                video: true,
+            });
 
             webcamProducer.on('transportclose', () => {
                 console.log('Webcam transportclose!');

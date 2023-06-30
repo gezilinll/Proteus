@@ -13,10 +13,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ElementBox } from '../Editor.store';
+import { ElementBox } from '../../Editor.store';
 
 const props = defineProps<{
     box: ElementBox;
 }>();
-
 </script>

@@ -1,16 +1,18 @@
 <template>
-    <video
-        :id="props.name"
-        style="
-            width: 180px;
-            height: 180px;
-            margin-left: 5px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            object-fit: cover;
-        "
-        autoplay
-    ></video>
+    <div>
+        <video
+            :id="props.name"
+            style="
+                position: absolute;
+                left: 10px;
+                top: 10px;
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+            "
+            autoplay
+        ></video>
+    </div>
 </template>
 
 <script setup lang="ts">

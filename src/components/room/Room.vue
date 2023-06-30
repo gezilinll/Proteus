@@ -51,8 +51,18 @@
                 </v-card-text>
             </v-card>
         </div>
-        <div v-for="item in consumers" v-if="isVideoChatMode">
-            <PeerView :name="item.name" :track="item.track!"></PeerView>
+        <div
+            style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"
+            v-if="isVideoChatMode"
+        >
+            <ProducerView
+                :user="producer!"
+                @switch-audio="switchAudio"
+                @switch-video="switchVideo"
+            ></ProducerView>
+            <div v-for="item in consumers">
+                <ConsumerView :name="item.name" :track="item.track!"></ConsumerView>
+            </div>
         </div>
     </div>
 </template>
@@ -62,19 +72,22 @@ import { computed, ref, watch } from 'vue';
 import { userRoomStore, RoomState } from '../../collaborate/Room.store';
 import randomString from 'random-string';
 import { Room } from '../../collaborate/Room';
-import { PeerView } from '..';
+import { ConsumerView, ProducerView } from '..';
 import { storeToRefs } from 'pinia';
+import { User } from '../../collaborate/User';
 
 const store = userRoomStore();
 const { producer, consumers } = storeToRefs(store);
-watch(producer, () => {
-    const stream = new MediaStream();
-    const videoElement = document.getElementById('producer-video') as HTMLVideoElement;
-    stream.addTrack(producer.value!.track!);
-    videoElement.srcObject = stream;
-});
 
 const room = new Room();
+
+function switchAudio(user: User) {
+    producer.value!.audio = !producer.value!.audio;
+}
+
+function switchVideo(user: User) {
+    producer.value!.video = !producer.value!.video;
+}
 
 const newRoomID = randomString({ length: 8 }).toLowerCase();
 const inputRoomID = ref<string>();
@@ -94,7 +107,7 @@ const isWhiteboardMode = computed(() => {
     return store.status === RoomState.WHITEBOARD;
 });
 const isVideoChatMode = computed(() => {
-    return store.status === RoomState.VIDEO;
+    return store.status === RoomState.VIDEO && producer.value && producer.value.track;
 });
 
 function createOrJoinRoom() {

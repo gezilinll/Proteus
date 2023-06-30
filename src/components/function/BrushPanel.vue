@@ -460,7 +460,7 @@
                 @click="brushType = BrushType.Eraser"
                 title="Eraser"
             >
-                <img src="../assets/draw-eraser.svg" />
+                <img src="../../assets/draw-eraser.svg" />
             </span>
             <br />
             <br />
@@ -486,7 +486,7 @@
             <br />
             <span aria-hidden="true" title="Weight">
                 <img
-                    src="../assets/draw-settings.svg"
+                    src="../../assets/draw-settings.svg"
                     :class="[
                         brushType !== BrushType.Eraser && brushType !== BrushType.Selector
                             ? 'brush-weight'
