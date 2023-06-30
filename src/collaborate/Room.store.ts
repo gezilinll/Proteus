@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import { User } from './User';
+import { WhiteBoard } from './WhiteBoard';
+import { VideoChat } from './VideoChat';
 
 export enum RoomState {
     SOLO,
@@ -7,10 +9,12 @@ export enum RoomState {
     VIDEO,
 }
 
-export const userRoomStore = defineStore('room', {
+export const useRoomStore = defineStore('room', {
     state: () => {
         return {
             status: RoomState.SOLO,
+            whiteBoard: new WhiteBoard(),
+            videoChat: new VideoChat(),
             producer: null as User | null,
             consumers: [] as User[],
         };

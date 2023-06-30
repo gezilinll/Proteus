@@ -1,5 +1,3 @@
-import { YBinding } from './collaborate/YBinding';
-import * as Y from 'yjs';
 import { Element } from './elements/Element';
 import { useEditorStore, FunctionType, BrushType } from './Editor.store';
 import { Brush } from './elements/Brush';
@@ -7,7 +5,6 @@ import paper from 'paper';
 import * as PIXI from 'pixi.js';
 import { Background } from './elements/Background';
 export class Editor {
-    private _yBinding: YBinding | null = null;
     private _store = useEditorStore();
 
     private _pixi: PIXI.Application | null = null;
@@ -19,10 +16,6 @@ export class Editor {
     private _elements: Element[] = [];
 
     constructor() {}
-
-    collaborate(document: Y.Doc) {
-        this._yBinding = new YBinding(document);
-    }
 
     pixi(canvas: HTMLCanvasElement) {
         this._pixi = new PIXI.Application({

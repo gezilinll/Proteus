@@ -1,34 +1,48 @@
 import * as Y from 'yjs';
 import { Brush } from '../elements/Brush';
 import { v4 as uuidv4 } from 'uuid';
+import { HocuspocusProvider } from '@hocuspocus/provider';
 
-export class YBinding {
+export class WhiteBoard {
+    ID: string;
+    private _yjsProvider: HocuspocusProvider | undefined = undefined;
+
     private _origin: string;
     private _doc: Y.Doc;
     private _yElementMap: Y.Map<unknown>;
     private _elementMap: Map<string, Brush> = new Map();
     private _sendFlag = 0;
 
-    constructor(doc: Y.Doc) {
+    constructor() {
+        this.ID = '';
+
         this._origin = uuidv4();
-        this._doc = doc;
-        this._yElementMap = this._doc.getMap('elements');
-        this._yElementMap.observe((_event, transaction) => {
-            if (transaction.origin !== this._origin) {
-                transaction.changed.forEach((value, _key) => {
-                    value.forEach((value) => {
-                        let element = this._elementMap.get(value!);
-                        if (!element) {
-                            element = new Brush(value!);
-                            this.addElement(element);
-                            const data = new Map();
-                            this._YMapToMap(this._yElementMap.get(value!)! as Y.Map<unknown>, data);
-                            console.log('map updated', transaction.origin, this._origin);
-                            element.importData(data);
-                        }
-                    });
-                });
-            }
+        // this._doc = doc;
+        // this._yElementMap = this._doc.getMap('elements');
+        // this._yElementMap.observe((_event, transaction) => {
+        //     if (transaction.origin !== this._origin) {
+        //         transaction.changed.forEach((value, _key) => {
+        //             value.forEach((value) => {
+        //                 let element = this._elementMap.get(value!);
+        //                 if (!element) {
+        //                     element = new Brush(value!);
+        //                     this.addElement(element);
+        //                     const data = new Map();
+        //                     this._YMapToMap(this._yElementMap.get(value!)! as Y.Map<unknown>, data);
+        //                     console.log('map updated', transaction.origin, this._origin);
+        //                     element.importData(data);
+        //                 }
+        //             });
+        //         });
+        //     }
+        // });
+    }
+
+    join(roomID: string) {
+        this.ID = roomID;
+        this._yjsProvider = new HocuspocusProvider({
+            url: 'ws://47.119.150.226:3000',
+            name: roomID,
         });
     }
 
