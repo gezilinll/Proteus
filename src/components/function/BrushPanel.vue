@@ -568,7 +568,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useEditorStore, BrushType, BrushConfig } from '../Editor.store';
+import { useEditorStore, BrushType, BrushConfig } from '../../Editor.store';
 import { storeToRefs } from 'pinia';
 
 const store = useEditorStore();

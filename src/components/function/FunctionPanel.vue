@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { useEditorStore, FunctionType } from '../Editor.store';
+import { useEditorStore, FunctionType } from '../../Editor.store';
 import { storeToRefs } from 'pinia';
 
 const store = useEditorStore();

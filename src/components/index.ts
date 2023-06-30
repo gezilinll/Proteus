@@ -1,5 +1,5 @@
-export { default as Room } from './Room.vue';
-export { default as PeerView } from './PeerView.vue';
-export { default as BrushPanel } from './BrushPanel.vue';
-export { default as LeftPanel } from './LeftPanel.vue';
-export { default as ElementBox } from './ElementBox.vue';
+export { default as Room } from './room/Room.vue';
+export { default as PeerView } from './room/PeerView.vue';
+export { default as BrushPanel } from './function/BrushPanel.vue';
+export { default as FunctionPanel } from './function/FunctionPanel.vue';
+export { default as ElementBox } from './ui/ElementBox.vue';

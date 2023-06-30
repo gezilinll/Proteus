@@ -1,17 +1,22 @@
 import { ElementBox } from '../Editor.store';
+import * as PIXI from 'pixi.js';
 
-export interface Element {
-    type: 'graphics' | 'image';
+export abstract class Element {
+    protected abstract _sprite: PIXI.DisplayObject;
 
-    onMouseDown(e: MouseEvent): void;
+    move(x: number, y: number): void {
+        this._sprite.position.x += x;
+        this._sprite.position.y += y;
+    }
 
-    onMouseMove(e: MouseEvent): void;
+    isInHitArea(x: number, y: number) {
+        return this._sprite.getBounds().contains(x, y);
+    }
 
-    onMouseUp(e: MouseEvent): void;
+    get bbox(): ElementBox {
+        const bounds = this._sprite.getBounds();
+        return { x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height };
+    }
 
-    render(): void;
-
-    inHitArea(x: number, y: number): boolean;
-
-    getBox(): ElementBox;
+    abstract render(): void;
 }

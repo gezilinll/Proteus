@@ -59,10 +59,10 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { userRoomStore, RoomState } from '../collaborate/Room.store';
+import { userRoomStore, RoomState } from '../../collaborate/Room.store';
 import randomString from 'random-string';
-import { Room } from '../collaborate/Room';
-import { PeerView } from '.';
+import { Room } from '../../collaborate/Room';
+import { PeerView } from '..';
 import { storeToRefs } from 'pinia';
 
 const store = userRoomStore();

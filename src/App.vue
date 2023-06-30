@@ -78,7 +78,7 @@
                     ></canvas>
                     <ElementBox v-if="showElementBox" :box="elementBox"></ElementBox>
                 </div>
-                <LeftPanel class="function-sidebar"></LeftPanel>
+                <FunctionPanel class="function-sidebar"></FunctionPanel>
                 <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
             </div>
             <div class="bottom-bar">
@@ -89,8 +89,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { Room, LeftPanel, BrushPanel, ElementBox } from './components';
+import { onMounted } from 'vue';
+import { Room, FunctionPanel, BrushPanel, ElementBox } from './components';
 import { useEditorStore, FunctionType, MouseType } from './Editor.store';
 import { storeToRefs } from 'pinia';
 import { watch } from 'vue';
@@ -136,7 +136,6 @@ function onMouseUp(e: MouseEvent) {
 
 onMounted(() => {
     store.editor.pixi(document.getElementById('canvasForPixi') as HTMLCanvasElement);
-    // store.editor.paper(document.getElementById('canvasForPaper') as HTMLCanvasElement);
 });
 </script>
 

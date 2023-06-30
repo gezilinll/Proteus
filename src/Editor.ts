@@ -18,7 +18,7 @@ export class Editor {
     selectedElement: Element | undefined = undefined;
     private _elements: Element[] = [];
 
-    constructor() { }
+    constructor() {}
 
     collaborate(document: Y.Doc) {
         this._yBinding = new YBinding(document);
@@ -61,11 +61,11 @@ export class Editor {
 
     onMouseDown(e: MouseEvent) {
         this.selectedElement = this._elements.find((element) => {
-            return element.inHitArea(e.offsetX, e.offsetY);
+            return element.isInHitArea(e.offsetX, e.offsetY);
         });
         if (this.selectedElement) {
             this._store.showElementBox = true;
-            this._store.elementBox = this.selectedElement.getBox();
+            this._store.elementBox = this.selectedElement.bbox;
         } else {
             this._store.showElementBox = false;
             if (!this.currentElement) {
@@ -88,20 +88,27 @@ export class Editor {
                 }
             }
         }
-        this.currentElement?.onMouseDown(e);
+        if (this.currentElement instanceof Brush) {
+            this.currentElement.addPoint(e.offsetX, e.offsetY);
+        }
     }
 
     onMouseMove(e: MouseEvent) {
         if (this.selectedElement) {
+            this.selectedElement.move(e.movementX, e.movementY);
             this._store.elementBox.x += e.movementX;
             this._store.elementBox.y += e.movementY;
         }
-        this.currentElement?.onMouseMove(e);
+        if (this.currentElement instanceof Brush) {
+            this.currentElement.addPoint(e.offsetX, e.offsetY);
+        }
     }
 
     onMouseUp(e: MouseEvent) {
         this.selectedElement = undefined;
-        this.currentElement?.onMouseUp(e);
+        if (this.currentElement instanceof Brush) {
+            this.currentElement.addPoint(e.offsetX, e.offsetY);
+        }
         this.currentElement = null;
         this._store.disablePanelEvents = false;
     }
