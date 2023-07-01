@@ -120,7 +120,7 @@ function onMouseDown(e: MouseEvent) {
 
 function onMouseMove(e: MouseEvent) {
     if (document.getElementsByTagName('body')[0].style.cursor === 'grabbing') {
-        store.editor.translateViewport(e.movementX, e.movementY);
+        store.editor.move(e.movementX, e.movementY);
     } else {
         store.editor.onMouseMove(e);
     }

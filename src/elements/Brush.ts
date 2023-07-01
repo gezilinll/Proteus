@@ -3,7 +3,7 @@ import { Element } from './Element';
 import * as PIXI from 'pixi.js';
 
 export class Brush extends Element {
-    protected _sprite: PIXI.DisplayObject;
+    sprite: PIXI.DisplayObject;
     id: string;
 
     private _lastPoint: paper.Point | null = null;
@@ -14,11 +14,10 @@ export class Brush extends Element {
     private _weight: number = 10;
     private _dirty: boolean = false;
 
-    constructor(pixi: PIXI.Application, uuid?: string) {
+    constructor(uuid?: string) {
         super();
         this.id = uuid ?? uuidv4();
-        this._sprite = new PIXI.Graphics();
-        pixi.stage.addChild(this._sprite);
+        this.sprite = new PIXI.Graphics();
     }
 
     set color(color: string) {
@@ -81,6 +80,6 @@ export class Brush extends Element {
     }
 
     private get graphics() {
-        return this._sprite as PIXI.Graphics;
+        return this.sprite as PIXI.Graphics;
     }
 }

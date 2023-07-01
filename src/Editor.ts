@@ -1,19 +1,18 @@
 import { Element } from './elements/Element';
 import { useEditorStore, FunctionType, BrushType } from './Editor.store';
 import { Brush } from './elements/Brush';
-import paper from 'paper';
 import * as PIXI from 'pixi.js';
 import { Background } from './elements/Background';
+import { Viewport } from './elements/Viewport';
 export class Editor {
     private _store = useEditorStore();
 
     private _pixi: PIXI.Application | null = null;
+    private _viewport: Viewport | null = null;
     private _background: Background | null = null;
-    private _paper: paper.PaperScope | null = null;
 
     currentElement: Element | null = null;
     selectedElement: Element | undefined = undefined;
-    private _elements: Element[] = [];
 
     constructor() {}
 
@@ -26,6 +25,8 @@ export class Editor {
             resizeTo: canvas.parentElement!,
             resolution: window.devicePixelRatio,
         });
+        this._pixi.stage.cullable = true;
+        this._pixi.stage.eventMode = 'static';
         // @ts-ignore
         globalThis.__PIXI_APP__ = app;
         console.log(
@@ -36,26 +37,22 @@ export class Editor {
             canvas.style.height
         );
         this._background = new Background(this._pixi, canvas.width, canvas.height);
+        this._viewport = new Viewport(this._pixi);
         this._pixi.ticker.add(this._onPixiRender, this);
     }
 
-    paper(canvas: HTMLCanvasElement) {
-        this._paper = new paper.PaperScope();
-        this._paper.setup(canvas);
-    }
-
-    translateViewport(deltaX: number, deltaY: number) {
-        this._background!.translate(deltaX, deltaY);
+    move(deltaX: number, deltaY: number) {
+        this._background!.move(deltaX, deltaY);
+        this._viewport!.move(deltaX, deltaY);
     }
 
     zoom(target: number) {
         this._background!.zoom(target);
+        this._viewport!.zoom(target);
     }
 
     onMouseDown(e: MouseEvent) {
-        this.selectedElement = this._elements.find((element) => {
-            return element.isInHitArea(e.offsetX, e.offsetY);
-        });
+        this.selectedElement = this._viewport?.findElement(e.offsetX, e.offsetY);
         if (this.selectedElement) {
             this._store.showElementBox = true;
             this._store.elementBox = this.selectedElement.bbox;
@@ -64,8 +61,8 @@ export class Editor {
             if (!this.currentElement) {
                 if (this._store.selectedFunction === FunctionType.Brush) {
                     this._store.disablePanelEvents = true;
-                    this.currentElement = new Brush(this._pixi!);
-                    this._elements.push(this.currentElement);
+                    this.currentElement = new Brush();
+                    this._viewport!.addChild(this.currentElement);
                     const brush = this.currentElement as Brush;
                     if (this._store.brushType === BrushType.Pen) {
                         brush.color = this._store.penColor;
@@ -107,8 +104,6 @@ export class Editor {
     }
 
     private _onPixiRender() {
-        for (const element of this._elements) {
-            element.render();
-        }
+        this._viewport!.render();
     }
 }
