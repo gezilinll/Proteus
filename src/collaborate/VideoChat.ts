@@ -2,7 +2,7 @@ import randomString from 'random-string';
 import protooClient from 'protoo-client';
 import * as mediasoupClient from 'mediasoup-client';
 import { Transport } from 'mediasoup-client/lib/types';
-import { RoomState, useRoomStore } from './Room.store';
+import { useRoomStore } from './Room.store';
 
 export class VideoChat {
     ID: string;
@@ -12,6 +12,9 @@ export class VideoChat {
     private _mediasoupDevice: mediasoupClient.Device | undefined = undefined;
     private _sendTransport: Transport | undefined = undefined;
     private _recvTransport: Transport | undefined = undefined;
+
+    private _webcamProducer: mediasoupClient.types.Producer | undefined = undefined;
+    private _micProducer: mediasoupClient.types.Producer | undefined = undefined;
 
     private _store = useRoomStore();
 
@@ -64,6 +67,7 @@ export class VideoChat {
 
                         consumer.on('transportclose', () => {
                             console.log('consumer transportclose');
+                            this._store.consumers.delete(consumer.id);
                         });
 
                         mediasoupClient.parseScalabilityMode(
@@ -74,12 +78,22 @@ export class VideoChat {
                         // resume this Consumer (which was paused for now if video).
                         accept();
 
-                        this._store.addConsumer({
-                            name: 'consumer',
-                            track: consumer.track,
-                            audio: true,
-                            video: true,
-                        });
+                        console.log('new consumer', consumer.id, consumer.track.kind);
+                        if (!this._store.consumers.has(consumer.id)) {
+                            this._store.consumers.set(consumer.id, {
+                                audio: true,
+                                video: true,
+                                name: 'momo',
+                                videoTrack: null,
+                                audioTrack: null,
+                            });
+                        }
+                        const userInfo = this._store.consumers.get(consumer.id)!;
+                        if (consumer.track.kind === 'audio') {
+                            userInfo.audioTrack = consumer.track;
+                        } else {
+                            userInfo.videoTrack = consumer.track;
+                        }
                     } catch (error) {
                         console.log('"newConsumer" request failed:%o', error);
                         throw error;
@@ -89,8 +103,8 @@ export class VideoChat {
             }
         });
 
-        this._protoo.on('notification', () => {
-            console.log('protooClient notification');
+        this._protoo.on('notification', (notification) => {
+            console.log('protooClient notification', notification);
         });
     }
 
@@ -269,7 +283,16 @@ export class VideoChat {
     }
 
     private async _enableProducer() {
+        await this.enableWebcam();
+    }
+
+    async enableWebcam() {
         try {
+            if (!this.mediasoupDevice.canProduce('video')) {
+                console.error('enableWebcam() | cannot produce video');
+                return;
+            }
+
             const devices = await navigator.mediaDevices.enumerateDevices();
             const webcamDevice = devices[0];
 
@@ -310,35 +333,103 @@ export class VideoChat {
             });
 
             let codec;
-            const webcamProducer = await this.sendTransport.produce({
+            this._webcamProducer = await this.sendTransport.produce({
                 track,
                 encodings,
                 codecOptions,
                 codec,
             });
 
-            this._store.setProducer({
-                name: 'produce',
-                track: webcamProducer.track,
-                audio: true,
-                video: true,
-            });
+            this._store.producer.videoTrack = this.webcamProducer.track;
 
-            webcamProducer.on('transportclose', () => {
+            this.webcamProducer.on('transportclose', () => {
                 console.log('Webcam transportclose!');
+                this._webcamProducer = undefined;
             });
 
-            webcamProducer.on('trackended', () => {
+            this.webcamProducer.on('trackended', () => {
                 console.log('Webcam disconnected!');
+                this.disableWebcam().catch(() => {});
             });
         } catch (error) {
             console.log('enableWebcam() | failed:%o', error);
         }
     }
 
+    async disableWebcam() {
+        this.webcamProducer.close();
+
+        try {
+            await this.protoo.request('closeProducer', { producerId: this.webcamProducer.id });
+        } catch (error) {
+            console.log('Error closing server-side webcam Producer:', error);
+        }
+
+        this._webcamProducer = undefined;
+
+        this._store.producer.video = false;
+        this._store.producer.videoTrack = null;
+    }
+
+    async enableMic() {
+        if (!this.mediasoupDevice.canProduce('audio')) {
+            console.error('enableMic() | cannot produce audio');
+            return;
+        }
+
+        let track;
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            track = stream.getAudioTracks()[0];
+
+            this._micProducer = await this.sendTransport.produce({
+                track,
+                codecOptions: {
+                    opusStereo: true,
+                    opusDtx: true,
+                    opusFec: true,
+                    opusNack: true,
+                },
+                // NOTE: for testing codec selection.
+                // codec : this._mediasoupDevice.rtpCapabilities.codecs
+                // 	.find((codec) => codec.mimeType.toLowerCase() === 'audio/pcma')
+            });
+
+            this._store.producer.audioTrack = this._micProducer.track;
+
+            this._micProducer.on('transportclose', () => {
+                this._micProducer = undefined;
+            });
+
+            this._micProducer.on('trackended', () => {
+                console.log('Microphone disconnected!');
+                this.disableMic().catch(() => {});
+            });
+        } catch (error) {
+            console.error('enableMic() | failed:%o', error);
+
+            if (track) {
+                track.stop();
+            }
+        }
+    }
+
+    async disableMic() {
+        this.micProducer.close();
+
+        try {
+            await this.protoo.request('closeProducer', { producerId: this.micProducer.id });
+        } catch (error) {
+            console.log('Error closing server-side mic Producer:', error);
+        }
+
+        this._store.producer.audio = false;
+        this._micProducer = undefined;
+    }
+
     private _getProtooUrl() {
         const hostname = 'gezilinll.com';
-
         return `wss://${hostname}:15025/?roomId=${this.ID}&peerId=${this.peerID}&consumerReplicas=undefined`;
     }
 
@@ -356,5 +447,13 @@ export class VideoChat {
 
     private get recvTransport() {
         return this._recvTransport!;
+    }
+
+    private get webcamProducer() {
+        return this._webcamProducer!;
+    }
+
+    private get micProducer() {
+        return this._micProducer!;
     }
 }

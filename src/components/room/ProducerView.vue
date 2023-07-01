@@ -1,7 +1,7 @@
 <template>
     <div>
         <video
-            :id="props.user.name"
+            id="video-producer-player"
             style="
                 position: absolute;
                 left: 10px;
@@ -12,6 +12,7 @@
             "
             autoplay
         ></video>
+        <audio id="audio-producer-player" autoPlay playsInline :controls="false" />
         <img
             :src="props.user.audio ? 'mic.svg' : 'mic-off.svg'"
             class="peer-icon"
@@ -51,10 +52,15 @@ const props = defineProps<{
 const emits = defineEmits(['switchAudio', 'switchVideo']);
 
 onMounted(() => {
-    const stream = new MediaStream();
-    const videoElement = document.getElementById(props.user.name!) as HTMLVideoElement;
-    stream.addTrack(props.user.track!);
-    videoElement.srcObject = stream;
+    const videoStream = new MediaStream();
+    const videoElement = document.getElementById('video-producer-player') as HTMLVideoElement;
+    videoStream.addTrack(props.user.videoTrack!);
+    videoElement.srcObject = videoStream;
+
+    const audioStream = new MediaStream();
+    const audioElement = document.getElementById('audio-producer-player') as HTMLAudioElement;
+    audioStream.addTrack(props.user.audioTrack!);
+    audioElement.srcObject = audioStream;
 });
 </script>
 

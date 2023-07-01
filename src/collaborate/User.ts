@@ -1,6 +1,7 @@
 export interface User {
     name: string;
-    track: MediaStreamTrack | null;
+    videoTrack: MediaStreamTrack | null;
+    audioTrack: MediaStreamTrack | null;
     audio: boolean;
     video: boolean;
 }

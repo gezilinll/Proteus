@@ -56,12 +56,12 @@
             v-if="isVideoChatMode"
         >
             <ProducerView
-                :user="producer!"
+                :user="producer"
                 @switch-audio="switchAudio"
                 @switch-video="switchVideo"
             ></ProducerView>
             <div v-for="item in consumers">
-                <ConsumerView :name="item.name" :track="item.track!"></ConsumerView>
+                <ConsumerView :name="item[1].name" :track="item[1].videoTrack!"></ConsumerView>
             </div>
         </div>
     </div>
@@ -86,7 +86,11 @@ function switchAudio(user: User) {
 }
 
 function switchVideo(user: User) {
-    producer.value!.video = !producer.value!.video;
+    if (producer.value!.video) {
+        room.disableWebcam();
+    } else {
+        room.enableWebcam();
+    }
 }
 
 const newRoomID = randomString({ length: 8 }).toLowerCase();
