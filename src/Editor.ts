@@ -41,7 +41,7 @@ export class Editor {
     }
 
     move(deltaX: number, deltaY: number) {
-        this._background!.move(deltaX * window.devicePixelRatio, deltaY * window.devicePixelRatio);
+        this._background!.move(deltaX, deltaY);
         this._viewport!.move(deltaX, deltaY);
     }
 
@@ -51,7 +51,7 @@ export class Editor {
     }
 
     onMouseDown(e: MouseEvent) {
-        this.selectedElement = this._viewport?.findElement(e.offsetX, e.offsetY);
+        this.selectedElement = this._viewport!.findElement(e.offsetX, e.offsetY);
         if (this.selectedElement) {
             this._store.showElementBox = true;
             this._store.elementBox = this.selectedElement.bbox;
@@ -92,7 +92,7 @@ export class Editor {
             this._store.elementBox.y += e.movementY;
         }
         if (this.currentElement instanceof Brush) {
-            this.currentElement.addPoint(
+            this.currentElement.lineTo(
                 e.movementX / (this._store.zoom / 100.0),
                 e.movementY / (this._store.zoom / 100.0)
             );
@@ -102,7 +102,7 @@ export class Editor {
     onMouseUp(e: MouseEvent) {
         this.selectedElement = undefined;
         if (this.currentElement instanceof Brush) {
-            this.currentElement.addPoint(
+            this.currentElement.lineTo(
                 e.movementX / (this._store.zoom / 100.0),
                 e.movementY / (this._store.zoom / 100.0)
             );

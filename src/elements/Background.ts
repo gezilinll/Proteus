@@ -29,8 +29,8 @@ export class Background {
     }
 
     move(deltaX: number, deltaY: number) {
-        this._translateX += deltaX;
-        this._translateY += deltaY;
+        this._translateX += deltaX * window.devicePixelRatio;
+        this._translateY += deltaY * window.devicePixelRatio;
         this._render();
     }
 
@@ -44,7 +44,7 @@ export class Background {
 
         const ctx = this._canvas.getContext('2d')!;
         ctx.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
-        ctx.strokeStyle = '#000000';
+        ctx.strokeStyle = '#EEEEEE';
         ctx.beginPath();
         const startY = this._canvasHeight / 2.0 + this._translateY;
         const startX = this._canvasWidth / 2.0 + this._translateX;
@@ -52,9 +52,6 @@ export class Background {
         ctx.lineTo(this._canvasWidth, startY);
         ctx.moveTo(startX, 0);
         ctx.lineTo(startX, this._canvasHeight);
-        ctx.closePath();
-        ctx.stroke();
-        ctx.strokeStyle = '#EEEEEE';
         for (let yIndex = 1; ; yIndex++) {
             const upY = startY - yIndex * rectSize;
             const downY = startY + yIndex * rectSize;

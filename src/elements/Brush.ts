@@ -47,7 +47,7 @@ export class Brush extends Element {
         return result;
     }
 
-    addPoint(x: number, y: number) {
+    lineTo(x: number, y: number) {
         if (!this._lastPoint) {
             this._lastPoint = new PIXI.Point(0, 0);
         }
