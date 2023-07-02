@@ -87,7 +87,10 @@ export class Editor {
 
     onMouseMove(e: MouseEvent) {
         if (this.selectedElement) {
-            this.selectedElement.move(e.movementX, e.movementY);
+            this.selectedElement.move(
+                e.movementX / (this._store.zoom / 100.0),
+                e.movementY / (this._store.zoom / 100.0)
+            );
             this._store.elementBox.x += e.movementX;
             this._store.elementBox.y += e.movementY;
         }
