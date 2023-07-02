@@ -4,9 +4,14 @@ import * as PIXI from 'pixi.js';
 export abstract class Element {
     abstract sprite: PIXI.DisplayObject;
 
-    move(x: number, y: number): void {
+    move(x: number, y: number) {
         this.sprite.position.x += x;
         this.sprite.position.y += y;
+    }
+
+    moveTo(x: number, y: number) {
+        this.sprite.position.x = x;
+        this.sprite.position.y = y;
     }
 
     isInHitArea(x: number, y: number) {

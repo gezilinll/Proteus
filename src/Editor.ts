@@ -27,8 +27,7 @@ export class Editor {
         });
         this._pixi.stage.cullable = true;
         this._pixi.stage.eventMode = 'static';
-        // @ts-ignore
-        globalThis.__PIXI_APP__ = app;
+        (globalThis as any).__PIXI_APP__ = this._pixi;
         console.log(
             window.devicePixelRatio,
             canvas.width,
@@ -42,7 +41,7 @@ export class Editor {
     }
 
     move(deltaX: number, deltaY: number) {
-        this._background!.move(deltaX, deltaY);
+        this._background!.move(deltaX * window.devicePixelRatio, deltaY * window.devicePixelRatio);
         this._viewport!.move(deltaX, deltaY);
     }
 
@@ -79,7 +78,10 @@ export class Editor {
             }
         }
         if (this.currentElement instanceof Brush) {
-            this.currentElement.addPoint(e.offsetX, e.offsetY);
+            this.currentElement.moveTo(
+                (e.offsetX - this._viewport!.position.x) / (this._store.zoom / 100.0),
+                (e.offsetY - this._viewport!.position.y) / (this._store.zoom / 100.0)
+            );
         }
     }
 
@@ -90,14 +92,20 @@ export class Editor {
             this._store.elementBox.y += e.movementY;
         }
         if (this.currentElement instanceof Brush) {
-            this.currentElement.addPoint(e.offsetX, e.offsetY);
+            this.currentElement.addPoint(
+                e.movementX / (this._store.zoom / 100.0),
+                e.movementY / (this._store.zoom / 100.0)
+            );
         }
     }
 
     onMouseUp(e: MouseEvent) {
         this.selectedElement = undefined;
         if (this.currentElement instanceof Brush) {
-            this.currentElement.addPoint(e.offsetX, e.offsetY);
+            this.currentElement.addPoint(
+                e.movementX / (this._store.zoom / 100.0),
+                e.movementY / (this._store.zoom / 100.0)
+            );
         }
         this.currentElement = null;
         this._store.disablePanelEvents = false;

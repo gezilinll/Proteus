@@ -6,7 +6,7 @@ export class Brush extends Element {
     sprite: PIXI.DisplayObject;
     id: string;
 
-    private _lastPoint: paper.Point | null = null;
+    private _lastPoint: PIXI.Point | null = null;
     private static MIN_DISTANCE = 5;
 
     private _points: PIXI.Point[] = [];
@@ -48,14 +48,13 @@ export class Brush extends Element {
     }
 
     addPoint(x: number, y: number) {
-        if (
-            !this._lastPoint ||
-            this._calculateDistance(x, y, this._lastPoint.x, this._lastPoint.y) >=
-                Brush.MIN_DISTANCE
-        ) {
-            this._points.push(new PIXI.Point(x, y));
-            this._dirty = true;
+        if (!this._lastPoint) {
+            this._lastPoint = new PIXI.Point(0, 0);
         }
+        this._lastPoint = new PIXI.Point(this._lastPoint.x + x, this._lastPoint.y + y);
+
+        this._points.push(this._lastPoint);
+        this._dirty = true;
     }
 
     private _calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
@@ -66,8 +65,7 @@ export class Brush extends Element {
     render(): void {
         if (this._dirty && this._points.length > 3) {
             this.graphics.lineStyle(this._weight, this._color);
-            this.graphics.moveTo(this._points[0].x, this._points[0].y);
-            for (let index = 1; index < this._points.length - 1; index++) {
+            for (let index = 0; index < this._points.length - 1; index++) {
                 let control = this._points[index];
                 let end = new PIXI.Point(
                     (this._points[index].x + this._points[index + 1].x) / 2,
