@@ -1,10 +1,8 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Element } from './Element';
 import * as PIXI from 'pixi.js';
 
 export class Brush extends Element {
     sprite: PIXI.DisplayObject;
-    id: string;
 
     private _lastPoint: PIXI.Point | null = null;
     private static MIN_DISTANCE = 5;
@@ -15,8 +13,8 @@ export class Brush extends Element {
     private _dirty: boolean = false;
 
     constructor(uuid?: string) {
-        super();
-        this.id = uuid ?? uuidv4();
+        super(uuid);
+
         this.sprite = new PIXI.Graphics();
     }
 
@@ -25,9 +23,21 @@ export class Brush extends Element {
         this._dirty = true;
     }
 
+    get color() {
+        return this._color;
+    }
+
     set weight(value: number) {
         this._weight = value;
         this._dirty = true;
+    }
+
+    get weight() {
+        return this._weight;
+    }
+
+    get points() {
+        return this._points;
     }
 
     importData(data: Map<string, any>) {

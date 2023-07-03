@@ -1,8 +1,14 @@
 import { ElementBox } from '../Editor.store';
+import { v4 as uuidv4 } from 'uuid';
 import * as PIXI from 'pixi.js';
 
 export abstract class Element {
     abstract sprite: PIXI.DisplayObject;
+    id: string;
+
+    constructor(uuid?: string) {
+        this.id = uuid ?? uuidv4();
+    }
 
     move(x: number, y: number) {
         this.sprite.position.x += x;
