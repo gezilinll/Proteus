@@ -4,8 +4,10 @@ import { Brush } from './elements/Brush';
 import * as PIXI from 'pixi.js';
 import { Background } from './elements/Background';
 import { Viewport } from './elements/Viewport';
+import { useRoomStore } from './collaborate/Room.store';
 export class Editor {
     private _store = useEditorStore();
+    private _room = useRoomStore().room;
 
     private _pixi: PIXI.Application | null = null;
     private _viewport: Viewport | null = null;
@@ -14,7 +16,16 @@ export class Editor {
     currentElement: Element | null = null;
     selectedElement: Element | undefined = undefined;
 
-    constructor() {}
+    constructor() {
+        this._room.onNewOnlineElement((element) => {
+            this._viewport!.addChild(element);
+        });
+        this._room.onWhiteboardConnected(() => {
+            for (const element of this._viewport!.elements) {
+                this._room.syncNewElement(element);
+            }
+        });
+    }
 
     pixi(canvas: HTMLCanvasElement) {
         this._pixi = new PIXI.Application({
@@ -103,13 +114,16 @@ export class Editor {
     }
 
     onMouseUp(e: MouseEvent) {
-        this.selectedElement = undefined;
         if (this.currentElement instanceof Brush) {
             this.currentElement.lineTo(
                 e.movementX / (this._store.zoom / 100.0),
                 e.movementY / (this._store.zoom / 100.0)
             );
+            this._room.syncNewElement(this.currentElement);
+        } else if (this.selectedElement) {
+            this._room.syncModifiedElement(this.selectedElement);
         }
+        this.selectedElement = undefined;
         this.currentElement = null;
         this._store.disablePanelEvents = false;
     }

@@ -40,23 +40,6 @@ export class Brush extends Element {
         return this._points;
     }
 
-    importData(data: Map<string, any>) {
-        // this._path.remove();
-        // this._path = new paper.Path(data.get('path'));
-        // this._path.strokeColor = new paper.Color(data.get('color'));
-        // this._path.strokeWidth = data.get('weight');
-        // this._path.opacity = data.get('transparency');
-    }
-
-    exportData() {
-        const result = new Map();
-        // result.set('path', this._path.pathData);
-        // result.set('weight', this._path.strokeWidth);
-        // result.set('transparency', this._path.opacity);
-        // result.set('color', this._path.strokeColor!.toCSS(false));
-        return result;
-    }
-
     lineTo(x: number, y: number) {
         if (!this._lastPoint) {
             this._lastPoint = new PIXI.Point(0, 0);

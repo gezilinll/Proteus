@@ -68,18 +68,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoomStore, RoomState } from '../../collaborate/Room.store';
 import randomString from 'random-string';
-import { Room } from '../../collaborate/Room';
 import { ConsumerView, ProducerView } from '..';
 import { storeToRefs } from 'pinia';
 import { User } from '../../collaborate/User';
 
 const store = useRoomStore();
-const { producer, consumers } = storeToRefs(store);
+const { room, producer, consumers } = storeToRefs(store);
 
-const room = new Room();
 
 function switchAudio(user: User) {
     producer.value!.audio = !producer.value!.audio;
@@ -87,9 +85,9 @@ function switchAudio(user: User) {
 
 function switchVideo(user: User) {
     if (producer.value!.video) {
-        room.disableWebcam();
+        room.value.disableWebcam();
     } else {
-        room.enableWebcam();
+        room.value.enableWebcam();
     }
 }
 
@@ -116,12 +114,12 @@ const isVideoChatMode = computed(() => {
 
 function createOrJoinRoom() {
     roomID.value = buttonText.value === 'CREATE ROOM' ? inputRoomID.value! : newRoomID;
-    room.joinWhiteBoard(roomID.value);
+    room.value.joinWhiteBoard(roomID.value);
 }
 
 function joinVideoChat() {
     roomID.value = buttonText.value === 'CREATE ROOM' ? inputRoomID.value! : newRoomID;
-    room.joinVideoChat(roomID.value);
+    room.value.joinVideoChat(roomID.value);
 }
 </script>
 

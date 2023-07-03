@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { Element } from '../elements/Element';
 
-export declare type onNewElementCallback = (element: Element) => void;
+export declare type OnNewElementCallback = (element: Element) => void;
 
 export class WhiteBoard {
     ID: string;
@@ -14,8 +14,7 @@ export class WhiteBoard {
     private _doc: Y.Doc | undefined = undefined;
     private _yElementMap: Y.Map<unknown> | undefined = undefined;
     private _elementMap: Map<string, Element> = new Map();
-    private _callback: onNewElementCallback | undefined = undefined;
-    private _sendFlag = 0;
+    private _callback: OnNewElementCallback | undefined = undefined;
 
     constructor() {
         this.ID = '';
@@ -53,6 +52,10 @@ export class WhiteBoard {
     }
 
     addElement(element: Element) {
+        if (!this._doc) {
+            return;
+        }
+
         this._elementMap.set(element.id, element);
         this.doc.transact(() => {
             const yElement = new Y.Map();
@@ -72,16 +75,17 @@ export class WhiteBoard {
         }, this._origin);
     }
 
-    updateElement(element: Brush, force: boolean) {
-        // const yElement = this._yElementMap.get(element.id) as Y.Map<unknown>;
-        // if (force || this._sendFlag++ % 10 === 0) {
-        //     this._doc.transact(() => {
-        //         this._mapToYMap(element.exportData(), yElement);
-        //     }, this._origin);
-        // }
+    updateElement(element: Brush) {
+        if (!this._doc) {
+            return;
+        }
+        const yElement = this.yElementMap.get(element.id) as Y.Map<unknown>;
+        this._doc.transact(() => {
+            this._elementToY(element, yElement);
+        }, this._origin);
     }
 
-    onNewElement(cb: onNewElementCallback) {
+    onNewElement(cb: OnNewElementCallback) {
         this._callback = cb;
     }
 
@@ -107,9 +111,18 @@ export class WhiteBoard {
         y.set('points', yPoints);
     }
 
-    private _yToElement(y: Y.Map<unknown>, element: Element) {}
+    private _yToElement(y: Y.Map<unknown>, element: Element) {
+        element.moveTo(y.get('left') as number, y.get('top') as number);
+    }
 
-    private _yToBrush(y: Y.Map<unknown>, element: Brush) {}
+    private _yToBrush(y: Y.Map<unknown>, element: Brush) {
+        element.color = y.get('color') as string;
+        element.weight = y.get('weight') as number;
+        const points = y.get('points') as Y.Array<Y.Map<unknown>>;
+        for (const point of points) {
+            element.lineTo(point.get('x') as number, point.get('y') as number);
+        }
+    }
 
     private get doc() {
         return this._doc!;

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { User } from './User';
+import { Room } from './Room';
 
 export enum RoomState {
     SOLO,
@@ -10,6 +11,7 @@ export enum RoomState {
 export const useRoomStore = defineStore('room', {
     state: () => {
         return {
+            room: new Room(),
             status: RoomState.SOLO,
             producer: {
                 name: 'momo',
