@@ -42,5 +42,6 @@ export class Room {
     }
 
     syncModifiedElement(element: Element) {
+        this._whiteBoard.updateElement(element);
     }
 }

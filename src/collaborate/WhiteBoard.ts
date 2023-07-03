@@ -75,7 +75,7 @@ export class WhiteBoard {
         }, this._origin);
     }
 
-    updateElement(element: Brush) {
+    updateElement(element: Element) {
         if (!this._doc) {
             return;
         }
