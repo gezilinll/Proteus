@@ -91,7 +91,8 @@ import randomString from 'random-string';
 import { ConsumerView, ProducerView } from '..';
 import { storeToRefs } from 'pinia';
 import { User } from '../../collaborate/User';
-import { ElMessage } from 'element-plus';
+
+import { ElMessage } from 'element-plus'
 
 const store = useRoomStore();
 const { room, roomID, producer, consumers } = storeToRefs(store);
