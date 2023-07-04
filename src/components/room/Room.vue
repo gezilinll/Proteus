@@ -78,7 +78,6 @@ import { User } from '../../collaborate/User';
 const store = useRoomStore();
 const { room, producer, consumers } = storeToRefs(store);
 
-
 function switchAudio(user: User) {
     producer.value!.audio = !producer.value!.audio;
 }
@@ -96,9 +95,9 @@ const inputRoomID = ref<string>();
 const roomID = ref<string>();
 const buttonText = computed(() => {
     if (inputRoomID && inputRoomID.value && inputRoomID.value.length === 8) {
-        return 'CREATE ROOM';
+        return 'JOIN ROOM';
     }
-    return 'JOIN ROOM';
+    return 'CREATE ROOM';
 });
 const userName = ref<string>('');
 
@@ -113,12 +112,12 @@ const isVideoChatMode = computed(() => {
 });
 
 function createOrJoinRoom() {
-    roomID.value = buttonText.value === 'CREATE ROOM' ? inputRoomID.value! : newRoomID;
+    roomID.value = buttonText.value === 'CREATE ROOM' ? newRoomID : inputRoomID.value!;
     room.value.joinWhiteBoard(roomID.value);
 }
 
 function joinVideoChat() {
-    roomID.value = buttonText.value === 'CREATE ROOM' ? inputRoomID.value! : newRoomID;
+    roomID.value = buttonText.value === 'CREATE ROOM' ? newRoomID : inputRoomID.value!;
     room.value.joinVideoChat(roomID.value);
 }
 </script>

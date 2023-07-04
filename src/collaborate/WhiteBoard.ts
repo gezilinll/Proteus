@@ -3,6 +3,7 @@ import { Brush } from '../elements/Brush';
 import { v4 as uuidv4 } from 'uuid';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { Element } from '../elements/Element';
+import * as PIXI from 'pixi.js';
 
 export declare type OnNewElementCallback = (element: Element) => void;
 
@@ -11,39 +12,32 @@ export class WhiteBoard {
     private _yjsProvider: HocuspocusProvider | undefined = undefined;
 
     private _origin: string;
-    private _doc: Y.Doc | undefined = undefined;
-    private _yElementMap: Y.Map<unknown> | undefined = undefined;
+    private _doc: Y.Doc;
+    private _yElementMap: Y.Map<unknown>;
     private _elementMap: Map<string, Element> = new Map();
     private _callback: OnNewElementCallback | undefined = undefined;
 
     constructor() {
         this.ID = '';
         this._origin = uuidv4();
-    }
-
-    join(roomID: string) {
-        this.ID = roomID;
-        this._yjsProvider = new HocuspocusProvider({
-            url: 'ws://47.119.150.226:3000',
-            name: roomID,
-        });
-        this._doc = this._yjsProvider.document;
+        this._doc = new Y.Doc();
         this._yElementMap = this._doc.getMap('elements');
         this._yElementMap.observe((_event, transaction) => {
             if (transaction.origin !== this._origin) {
+                console.log(transaction.changed);
                 transaction.changed.forEach((value, _key) => {
                     value.forEach((value) => {
                         let element = this._elementMap.get(value!);
                         if (!element) {
-                            const yElement = this.yElementMap.get(value!)! as Y.Map<unknown>;
+                            const yElement = this._yElementMap.get(value!)! as Y.Map<unknown>;
                             if (yElement.get('type') === 'brush') {
                                 element = new Brush(value!);
                                 this._yToBrush(yElement, element as Brush);
                             }
                             this._yToElement(yElement, element!);
                             this._elementMap.set(element!.id, element!);
+                            this._observeElementUpdated(yElement, element!);
                             this._callback?.(element!);
-                            console.log('map updated', transaction.origin, this._origin);
                         }
                     });
                 });
@@ -51,27 +45,25 @@ export class WhiteBoard {
         });
     }
 
-    addElement(element: Element) {
-        if (!this._doc) {
-            return;
-        }
+    join(roomID: string) {
+        this.ID = roomID;
+        this._yjsProvider = new HocuspocusProvider({
+            url: 'ws://47.119.150.226:3000',
+            name: roomID,
+            document: this._doc,
+        });
+    }
 
+    addElement(element: Element) {
         this._elementMap.set(element.id, element);
-        this.doc.transact(() => {
+        this._doc.transact(() => {
             const yElement = new Y.Map();
             this._elementToY(element, yElement);
             if (element instanceof Brush) {
                 this._brushToY(element, yElement);
             }
-            yElement.observe((_event, transaction) => {
-                if (transaction.origin !== this._origin) {
-                    console.log('element updated', transaction.origin, this._origin);
-                    // const data = new Map();
-                    // this._YMapToMap(this._yElementMap.get(element.id) as Y.Map<unknown>, data);
-                    // element.importData(data);
-                }
-            });
-            this.yElementMap.set(element.id, yElement);
+            this._observeElementUpdated(yElement, element);
+            this._yElementMap.set(element.id, yElement);
         }, this._origin);
     }
 
@@ -79,7 +71,7 @@ export class WhiteBoard {
         if (!this._doc) {
             return;
         }
-        const yElement = this.yElementMap.get(element.id) as Y.Map<unknown>;
+        const yElement = this._yElementMap.get(element.id) as Y.Map<unknown>;
         this._doc.transact(() => {
             this._elementToY(element, yElement);
         }, this._origin);
@@ -119,16 +111,18 @@ export class WhiteBoard {
         element.color = y.get('color') as string;
         element.weight = y.get('weight') as number;
         const points = y.get('points') as Y.Array<Y.Map<unknown>>;
+        const result: PIXI.Point[] = [];
         for (const point of points) {
-            element.lineTo(point.get('x') as number, point.get('y') as number);
+            result.push(new PIXI.Point(point.get('x') as number, point.get('y') as number));
         }
+        element.points = result;
     }
 
-    private get doc() {
-        return this._doc!;
-    }
-
-    private get yElementMap() {
-        return this._yElementMap!;
+    private _observeElementUpdated(yElement: Y.Map<unknown>, element: Element) {
+        yElement.observe((_event, transaction) => {
+            if (transaction.origin !== this._origin) {
+                element.moveTo(yElement.get('left') as number, yElement.get('top') as number);
+            }
+        });
     }
 }

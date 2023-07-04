@@ -36,6 +36,11 @@ export class Brush extends Element {
         return this._weight;
     }
 
+    set points(value: PIXI.Point[]) {
+        this._points = value;
+        this._dirty = true;
+    }
+
     get points() {
         return this._points;
     }
