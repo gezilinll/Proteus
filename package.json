@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@hocuspocus/provider": "^2.1.0",
+        "element-plus": "^2.3.7",
         "install": "^0.13.0",
         "js-cookie": "^3.0.5",
         "less": "^4.1.3",

@@ -50,9 +50,17 @@
                     you can chat them through video chat, which we hope you do this too ^_^.
                 </v-card-text>
             </v-card>
+            <span
+                aria-hidden="true"
+                title="Invite"
+                class="invite-icon-whiteboard"
+                @click="copyRoomID"
+            >
+                <img src="../../assets/join-room-id.svg" style="width: 40px; height: 40px" />
+            </span>
         </div>
         <div
-            style="position: absolute; left: 0; top: 0; width: 100%; height: 100%"
+            style="position: absolute; left: 0; top: 0; right: 50px; height: 100%"
             v-if="isVideoChatMode"
         >
             <ProducerView
@@ -64,6 +72,15 @@
                 <ConsumerView :name="item[1].name" :track="item[1].videoTrack!"></ConsumerView>
             </div>
         </div>
+        <span
+            v-if="isVideoChatMode"
+            aria-hidden="true"
+            title="Invite"
+            class="invite-icon-video-chat"
+            @click="copyRoomID"
+        >
+            <img src="../../assets/join-room-id.svg" style="width: 40px; height: 40px" />
+        </span>
     </div>
 </template>
 
@@ -74,9 +91,10 @@ import randomString from 'random-string';
 import { ConsumerView, ProducerView } from '..';
 import { storeToRefs } from 'pinia';
 import { User } from '../../collaborate/User';
+import { ElMessage } from 'element-plus';
 
 const store = useRoomStore();
-const { room, producer, consumers } = storeToRefs(store);
+const { room, roomID, producer, consumers } = storeToRefs(store);
 
 function switchAudio(user: User) {
     producer.value!.audio = !producer.value!.audio;
@@ -92,7 +110,6 @@ function switchVideo(user: User) {
 
 const newRoomID = randomString({ length: 8 }).toLowerCase();
 const inputRoomID = ref<string>();
-const roomID = ref<string>();
 const buttonText = computed(() => {
     if (inputRoomID && inputRoomID.value && inputRoomID.value.length === 8) {
         return 'JOIN ROOM';
@@ -108,7 +125,7 @@ const isWhiteboardMode = computed(() => {
     return store.status === RoomState.WHITEBOARD;
 });
 const isVideoChatMode = computed(() => {
-    return store.status === RoomState.VIDEO && producer.value && producer.value.track;
+    return store.status === RoomState.VIDEO && producer.value && producer.value.videoTrack;
 });
 
 function createOrJoinRoom() {
@@ -117,8 +134,17 @@ function createOrJoinRoom() {
 }
 
 function joinVideoChat() {
-    roomID.value = buttonText.value === 'CREATE ROOM' ? newRoomID : inputRoomID.value!;
     room.value.joinVideoChat(roomID.value);
+}
+
+function copyRoomID() {
+    navigator.clipboard.writeText(roomID.value);
+    ElMessage({
+        showClose: false,
+        message: 'Room ID has copied.',
+        duration: 1000,
+        type: 'info',
+    });
 }
 </script>
 
@@ -128,5 +154,25 @@ function joinVideoChat() {
     display: flex;
     align-items: stretch;
 }
+
+.invite-icon-whiteboard {
+    margin-top: 45px;
+    margin-left: 16px;
+    width: 40px;
+    height: 40px;
+}
+.invite-icon-whiteboard:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.invite-icon-video-chat {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    width: 40px;
+    height: 40px;
+}
+.invite-icon-video-chat:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
 </style>
-../../collaborate/VideoChat

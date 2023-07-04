@@ -57,10 +57,10 @@ onMounted(() => {
     videoStream.addTrack(props.user.videoTrack!);
     videoElement.srcObject = videoStream;
 
-    const audioStream = new MediaStream();
-    const audioElement = document.getElementById('audio-producer-player') as HTMLAudioElement;
-    audioStream.addTrack(props.user.audioTrack!);
-    audioElement.srcObject = audioStream;
+    // const audioStream = new MediaStream();
+    // const audioElement = document.getElementById('audio-producer-player') as HTMLAudioElement;
+    // audioStream.addTrack(props.user.audioTrack!);
+    // audioElement.srcObject = audioStream;
 });
 </script>
 

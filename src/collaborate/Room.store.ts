@@ -12,6 +12,7 @@ export const useRoomStore = defineStore('room', {
     state: () => {
         return {
             room: new Room(),
+            roomID: '',
             status: RoomState.SOLO,
             producer: {
                 name: 'momo',
