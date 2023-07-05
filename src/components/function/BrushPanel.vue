@@ -13,7 +13,7 @@
                     'brush-type-selected': brushType === BrushType.Pen,
                 }"
                 :style="{ color: penColor }"
-                @click="brushType = BrushType.Pen"
+                @click="store.useBrush(BrushType.Pen)"
                 title="Pen"
             >
                 <svg
@@ -179,7 +179,7 @@
                 aria-hidden="true"
                 :class="['brush-type', brushType === BrushType.Marker ? 'brush-type-selected' : '']"
                 :style="{ color: markerColor }"
-                @click="brushType = BrushType.Marker"
+                @click="store.useBrush(BrushType.Marker)"
                 title="Marker"
             >
                 <svg
@@ -331,7 +331,7 @@
                     brushType === BrushType.Highlighter ? 'brush-type-selected' : '',
                 ]"
                 :style="{ color: highlighterColor }"
-                @click="brushType = BrushType.Highlighter"
+                @click="store.useBrush(BrushType.Highlighter)"
                 title="Highlighter"
             >
                 <svg
@@ -457,7 +457,7 @@
             <span
                 aria-hidden="true"
                 :class="['brush-type', brushType === BrushType.Eraser ? 'brush-type-selected' : '']"
-                @click="brushType = BrushType.Eraser"
+                @click="store.useBrush(BrushType.Eraser)"
                 title="Eraser"
             >
                 <img src="../../assets/draw-eraser.svg" />
@@ -466,12 +466,10 @@
             <br />
             <button
                 :class="[
-                    brushType !== BrushType.Eraser && brushType !== BrushType.Selector
-                        ? 'brush-color'
-                        : 'brush-color-disabled',
-                    brushConfig === BrushConfig.Color &&
-                    brushType !== BrushType.Eraser &&
-                    brushType !== BrushType.Selector
+                   isConfigDisabled
+                        ? 'brush-color-disabled'
+                        : 'brush-color',
+                    brushConfig === BrushConfig.Color && !isConfigDisabled
                         ? 'brush-color-selected'
                         : '',
                 ]"
@@ -479,7 +477,7 @@
                     brushConfig =
                         brushConfig === BrushConfig.Color ? BrushConfig.None : BrushConfig.Color
                 "
-                :disabled="brushType === BrushType.Eraser || brushType === BrushType.Selector"
+                :disabled="isConfigDisabled"
                 title="Color"
             ></button>
             <br />
@@ -488,12 +486,10 @@
                 <img
                     src="../../assets/draw-settings.svg"
                     :class="[
-                        brushType !== BrushType.Eraser && brushType !== BrushType.Selector
-                            ? 'brush-weight'
-                            : 'brush-weight-disabled',
-                        brushConfig === BrushConfig.Weight &&
-                        brushType !== BrushType.Eraser &&
-                        brushType !== BrushType.Selector
+                        isConfigDisabled 
+                            ? 'brush-weight-disabled'
+                            : 'brush-weight',
+                        brushConfig === BrushConfig.Weight && !isConfigDisabled
                             ? 'brush-weight-selected'
                             : '',
                     ]"
@@ -503,7 +499,7 @@
                                 ? BrushConfig.None
                                 : BrushConfig.Weight
                     "
-                    :disabled="brushType === BrushType.Eraser || brushType === BrushType.Selector"
+                    :disabled="isConfigDisabled"
                 />
             </span>
         </div>
@@ -515,9 +511,7 @@
             v-model="brushColor"
             elevation="10"
             v-if="
-                brushConfig === BrushConfig.Color &&
-                brushType !== BrushType.Eraser &&
-                brushType !== BrushType.Selector
+                brushConfig === BrushConfig.Color && !isConfigDisabled
             "
         ></v-color-picker>
         <v-card
@@ -528,9 +522,7 @@
             style="position: absolute; left: 200px; top: 280px; width: 400px"
             elevation="10"
             v-if="
-                brushConfig === BrushConfig.Weight &&
-                brushType !== BrushType.Eraser &&
-                brushType !== BrushType.Selector
+                brushConfig === BrushConfig.Weight && !isConfigDisabled
             "
         >
             <v-card-text>
@@ -567,12 +559,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useEditorStore, BrushType, BrushConfig } from '../../Editor.store';
 import { storeToRefs } from 'pinia';
+import { Brush } from '../../elements/Brush';
 
 const store = useEditorStore();
 const {
+    editor,
     brushType,
     brushConfig,
     penColor,
@@ -593,14 +587,27 @@ watch(brushColor, () => {
     } else if (brushType.value === BrushType.Highlighter) {
         highlighterColor.value = brushColor.value;
     }
+    if (editor.value.selectedElement && editor.value.selectedElement instanceof Brush) {
+        editor.value.selectedElement.color = brushColor.value;
+    }
+});
+
+const isConfigDisabled = computed(() => {
+    return brushType.value === BrushType.Eraser || (brushType.value === BrushType.Selector && !(editor.value.selectedElement instanceof Brush));
 });
 
 const brushWeight = ref(penWeight.value);
 function weightDecrement() {
     brushWeight.value -= 1;
+    if (editor.value.selectedElement && editor.value.selectedElement instanceof Brush) {
+        editor.value.selectedElement.weight = brushWeight.value;
+    }
 }
 function weightIncrement() {
     brushWeight.value += 1;
+    if (editor.value.selectedElement && editor.value.selectedElement instanceof Brush) {
+        editor.value.selectedElement.weight = brushWeight.value;
+    }
 }
 watch(brushWeight, () => {
     if (brushType.value === BrushType.Pen) {
@@ -609,6 +616,9 @@ watch(brushWeight, () => {
         markerWeight.value = brushWeight.value;
     } else if (brushType.value === BrushType.Highlighter) {
         highlighterWeight.value = brushWeight.value;
+    }
+    if (editor.value.selectedElement && editor.value.selectedElement instanceof Brush) {
+        editor.value.selectedElement.weight = brushWeight.value;
     }
 });
 

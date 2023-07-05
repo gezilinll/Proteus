@@ -62,6 +62,7 @@ export class Brush extends Element {
 
     render(): void {
         if (this._dirty && this._points.length > 3) {
+            this.graphics.clear();
             this.graphics.lineStyle(this._weight, this._color);
             for (let index = 0; index < this._points.length - 1; index++) {
                 let control = this._points[index];

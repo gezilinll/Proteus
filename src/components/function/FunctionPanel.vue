@@ -2,11 +2,7 @@
     <div>
         <div
             class="function-container"
-            @click="
-                selectedFunction === FunctionType.Brush
-                    ? (selectedFunction = FunctionType.None)
-                    : (selectedFunction = FunctionType.Brush)
-            "
+            @click="store.useFunction(selectedFunction === FunctionType.Brush ? FunctionType.None : FunctionType.Brush)"
         >
             <span
                 :class="[
@@ -43,6 +39,7 @@ import { storeToRefs } from 'pinia';
 
 const store = useEditorStore();
 const { selectedFunction } = storeToRefs(store);
+
 </script>
 
 <style>

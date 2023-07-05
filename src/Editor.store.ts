@@ -21,6 +21,7 @@ export enum BrushConfig {
 }
 
 export enum MouseType {
+    Brush,
     Select,
     Drag,
 }
@@ -40,7 +41,7 @@ export const useEditorStore = defineStore('editor', {
             zoom: 100,
 
             selectedFunction: FunctionType.None,
-            brushType: BrushType.Pen,
+            brushType: BrushType.Selector,
             brushConfig: BrushConfig.None,
             penColor: '#2d90eb',
             penWeight: 4,
@@ -53,5 +54,37 @@ export const useEditorStore = defineStore('editor', {
             showElementBox: false,
             elementBox: {} as ElementBox,
         };
+    },
+    actions: {
+        useFunction(type: FunctionType) {
+            if (type === FunctionType.Brush) {
+                if (this.brushType === BrushType.Selector) {
+                    this.useBrush(BrushType.Pen);
+                }
+                this.mouseType = MouseType.Brush;
+            } else {
+                this.mouseType = MouseType.Select;
+            }
+            this.selectedFunction = type;
+        },
+
+        useBrush(type: BrushType) {
+            if (type !== BrushType.Selector) {
+                this.mouseType = MouseType.Brush;
+            }
+            this.brushConfig = BrushConfig.None;
+            this.brushType = type;
+        },
+
+        useMouse(type: MouseType) {
+            if (type !== MouseType.Brush) {
+                this.useBrush(BrushType.Selector);
+            }
+            this.mouseType = type;
+        },
+
+        useCanvas() {
+            this.brushConfig = BrushConfig.None;
+        }
     },
 });

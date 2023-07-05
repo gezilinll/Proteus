@@ -15,6 +15,7 @@ export class Editor {
 
     currentElement: Element | null = null;
     selectedElement: Element | undefined = undefined;
+    private _selectedElementDouble: Element | undefined = undefined;
 
     constructor() {
         this._room.onNewOnlineElement((element) => {
@@ -62,30 +63,39 @@ export class Editor {
     }
 
     onMouseDown(e: MouseEvent) {
-        this.selectedElement = this._viewport!.findElement(e.offsetX, e.offsetY);
-        if (this.selectedElement) {
-            this._store.showElementBox = true;
-            this._store.elementBox = this.selectedElement.bbox;
+        this._store.useCanvas();
+        if (this._store.brushType === BrushType.Selector) {
+            this.selectedElement = this._viewport!.findElement(e.offsetX, e.offsetY);
+            if (this.selectedElement) {
+                this._store.showElementBox = true;
+                this._selectedElementDouble = this.selectedElement;
+                this._store.elementBox = this.selectedElement.bbox;
+                this._store.disablePanelEvents = true;
+            } else {
+                this._store.showElementBox = false;
+            }
         } else {
             this._store.showElementBox = false;
-            if (!this.currentElement) {
-                if (this._store.selectedFunction === FunctionType.Brush) {
-                    this._store.disablePanelEvents = true;
-                    this.currentElement = new Brush();
-                    this._viewport!.addChild(this.currentElement);
-                    const brush = this.currentElement as Brush;
-                    if (this._store.brushType === BrushType.Pen) {
-                        brush.color = this._store.penColor;
-                        brush.weight = this._store.penWeight;
-                    } else if (this._store.brushType === BrushType.Marker) {
-                        brush.color = this._store.markerColor;
-                        brush.weight = this._store.markerWeight;
-                    } else if (this._store.brushType === BrushType.Highlighter) {
-                        brush.color = this._store.highlighterColor;
-                        brush.weight = this._store.highlighterWeight;
-                    } else if (this._store.brushType === BrushType.Eraser) {
-                    }
+            this._selectedElementDouble = undefined;
+            if (this._store.selectedFunction === FunctionType.Brush) {
+                this._store.disablePanelEvents = true;
+                this.currentElement = new Brush();
+                this._viewport!.addChild(this.currentElement);
+                const brush = this.currentElement as Brush;
+                if (this._store.brushType === BrushType.Pen) {
+                    brush.color = this._store.penColor;
+                    brush.weight = this._store.penWeight;
+                } else if (this._store.brushType === BrushType.Marker) {
+                    brush.color = this._store.markerColor;
+                    brush.weight = this._store.markerWeight;
+                } else if (this._store.brushType === BrushType.Highlighter) {
+                    brush.color = this._store.highlighterColor;
+                    brush.weight = this._store.highlighterWeight;
+                } else if (this._store.brushType === BrushType.Eraser) {
                 }
+            } else {
+                this._store.showElementBox = true;
+                this.selectedElement = undefined;
             }
         }
         if (this.currentElement instanceof Brush) {
@@ -97,8 +107,8 @@ export class Editor {
     }
 
     onMouseMove(e: MouseEvent) {
-        if (this.selectedElement) {
-            this.selectedElement.move(
+        if (this._selectedElementDouble) {
+            this._selectedElementDouble.move(
                 e.movementX / (this._store.zoom / 100.0),
                 e.movementY / (this._store.zoom / 100.0)
             );
@@ -123,7 +133,7 @@ export class Editor {
         } else if (this.selectedElement) {
             this._room.syncModifiedElement(this.selectedElement);
         }
-        this.selectedElement = undefined;
+        this._selectedElementDouble = undefined;
         this.currentElement = null;
         this._store.disablePanelEvents = false;
     }

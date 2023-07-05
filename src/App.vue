@@ -8,7 +8,7 @@
                     :class="[
                         mouseType === MouseType.Select ? 'mouse-cursor-selected' : 'mouse-cursor',
                     ]"
-                    @click="mouseType = MouseType.Select"
+                    @click="store.useMouse(MouseType.Select)"
                     style="right: 400px"
                 >
                     <svg
@@ -32,7 +32,7 @@
                     :class="[
                         mouseType === MouseType.Drag ? 'mouse-cursor-selected' : 'mouse-cursor',
                     ]"
-                    @click="mouseType = MouseType.Drag"
+                    @click="store.useMouse(MouseType.Drag)"
                     style="right: 360px"
                 >
                     <svg
@@ -99,10 +99,10 @@ const store = useEditorStore();
 const { selectedFunction, mouseType, zoom, showElementBox, elementBox } = storeToRefs(store);
 
 watch(mouseType, () => {
-    if (mouseType.value === MouseType.Select) {
-        document.getElementsByTagName('body')[0].style.cursor = 'auto';
-    } else {
+    if (mouseType.value === MouseType.Drag) {
         document.getElementsByTagName('body')[0].style.cursor = 'grab';
+    } else {
+        document.getElementsByTagName('body')[0].style.cursor = 'auto';
     }
 });
 
@@ -196,13 +196,15 @@ span {
 }
 
 .mouse-cursor {
+    width: 40px;
     position: absolute;
-    background-color: rgba(128, 128, 128, 0.3);
+    background-color: rgba(128, 128, 128, 0.15);
 }
 .mouse-cursor:hover {
     background-color: rgba(128, 128, 128, 0.5);
 }
 .mouse-cursor-selected {
+    width: 40px;
     position: absolute;
     background-color: rgba(128, 128, 128, 0.8);
 }
