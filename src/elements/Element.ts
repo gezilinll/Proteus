@@ -29,5 +29,5 @@ export abstract class Element {
         return { x: bounds.left, y: bounds.top, width: bounds.width, height: bounds.height };
     }
 
-    abstract render(): void;
+    abstract render(): boolean;
 }

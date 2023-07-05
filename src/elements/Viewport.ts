@@ -49,10 +49,14 @@ export class Viewport {
         });
     }
 
-    render() {
+    render(): Element[] {
+        const dirtyElements = [];
         for (const element of this.elements) {
-            element.render();
+            if (element.render()) {
+                dirtyElements.push(element);
+            }
         }
+        return dirtyElements;
     }
 
     get position() {

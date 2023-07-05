@@ -12,6 +12,7 @@ export class Editor {
     private _pixi: PIXI.Application | null = null;
     private _viewport: Viewport | null = null;
     private _background: Background | null = null;
+    private _vpDirty: boolean = false;
 
     currentElement: Element | null = null;
     selectedElement: Element | undefined = undefined;
@@ -55,11 +56,13 @@ export class Editor {
     move(deltaX: number, deltaY: number) {
         this._background!.move(deltaX, deltaY);
         this._viewport!.move(deltaX, deltaY);
+        this._vpDirty = true;
     }
 
     zoom(target: number) {
         this._background!.zoom(target);
         this._viewport!.zoom(target);
+        this._vpDirty = true;
     }
 
     onMouseDown(e: MouseEvent) {
@@ -132,7 +135,17 @@ export class Editor {
     }
 
     private _onPixiRender() {
-        this._viewport!.render();
+        const dirtyElements = this._viewport!.render();
+        if (this.selectedElement && dirtyElements.length > 0) {
+            for (const element of dirtyElements) {
+                if (element.id === this.selectedElement.id) {
+                    this._store.elementBox = this.selectedElement.bbox;
+                }
+            }
+        } else if (this.selectedElement && this._vpDirty) {
+            this._store.elementBox = this.selectedElement.bbox;
+            this._vpDirty = false;
+        }
     }
 
     private _selectElement(x: number, y: number, onlyShowBox: boolean) {

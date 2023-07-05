@@ -60,7 +60,7 @@ export class Brush extends Element {
         return distance;
     }
 
-    render(): void {
+    render(): boolean {
         if (this._dirty && this._points.length > 3) {
             this.graphics.clear();
             this.graphics.lineStyle(this._weight, this._color);
@@ -73,6 +73,9 @@ export class Brush extends Element {
                 this.graphics.quadraticCurveTo(control.x, control.y, end.x, end.y);
             }
             this._dirty = false;
+            return true;
+        } else {
+            return false;
         }
     }
 
