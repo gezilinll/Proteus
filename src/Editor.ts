@@ -65,15 +65,7 @@ export class Editor {
     onMouseDown(e: MouseEvent) {
         this._store.useCanvas();
         if (this._store.brushType === BrushType.Selector) {
-            this.selectedElement = this._viewport!.findElement(e.offsetX, e.offsetY);
-            if (this.selectedElement) {
-                this._store.showElementBox = true;
-                this._selectedElementDouble = this.selectedElement;
-                this._store.elementBox = this.selectedElement.bbox;
-                this._store.disablePanelEvents = true;
-            } else {
-                this._store.showElementBox = false;
-            }
+            this._selectElement(e.offsetX, e.offsetY, false);
         } else {
             this._store.showElementBox = false;
             this._selectedElementDouble = undefined;
@@ -114,12 +106,13 @@ export class Editor {
             );
             this._store.elementBox.x += e.movementX;
             this._store.elementBox.y += e.movementY;
-        }
-        if (this.currentElement instanceof Brush) {
+        } else if (this.currentElement instanceof Brush) {
             this.currentElement.lineTo(
                 e.movementX / (this._store.zoom / 100.0),
                 e.movementY / (this._store.zoom / 100.0)
             );
+        } else if (this._store.brushType == BrushType.Selector && !this.selectedElement) {
+            this._selectElement(e.offsetX, e.offsetY, true);
         }
     }
 
@@ -140,5 +133,22 @@ export class Editor {
 
     private _onPixiRender() {
         this._viewport!.render();
+    }
+
+    private _selectElement(x: number, y: number, onlyShowBox: boolean) {
+        const element = this._viewport!.findElement(x, y);
+        if (element) {
+            if (!onlyShowBox) {
+                this.selectedElement = element;
+                this._selectedElementDouble = this.selectedElement;
+                this._store.disablePanelEvents = true;
+            }
+            this._store.showElementBox = true;
+            this._store.elementBox = element.bbox;
+        } else {
+            this.selectedElement = undefined;
+            this._store.showElementBox = false;
+            this._store.disablePanelEvents = false;
+        }
     }
 }
