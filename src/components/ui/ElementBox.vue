@@ -3,11 +3,11 @@
         :style="{
             position: 'absolute',
             pointerEvents: 'none',
-            left: props.box.x + 'px',
-            top: props.box.y + 'px',
-            width: props.box.width + 'px',
-            height: props.box.height + 'px',
-            border: '1px solid #000',
+            left: (props.box.x - 5) + 'px',
+            top: (props.box.y - 5) + 'px',
+            width: (props.box.width + 8) + 'px',
+            height: (props.box.height + 8) + 'px',
+            border: '2px solid #00F',
         }"
     ></div>
 </template>
