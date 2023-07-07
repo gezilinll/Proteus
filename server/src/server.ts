@@ -1,12 +1,34 @@
+var https = require('https');
+var fs = require('fs');
 import { Server } from '@hocuspocus/server';
 
-const server = Server.configure({
-    port: 3000,
-    name: 'example-document',
+var express = require('express');
+var expressWs = require('express-ws');
 
-    async onConnect(data) {
-        console.log('connections:', server.getConnectionsCount());
-    },
+var options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem'),
+};
+var app = express();
+var server = https.createServer(options, app);
+var expressWs = expressWs(app, server);
+
+app.use(function (req: any, res: any, next: any) {
+    console.log('middleware');
+    req.testing = 'testing';
+    return next();
 });
 
-server.listen();
+app.get('/', function (req: any, res: any, next: any) {
+    console.log('get route', req.testing);
+    res.end();
+});
+
+app.ws('/', function (ws: any, req: any) {
+    ws.on('message', function (msg: any) {
+        console.log(msg);
+    });
+    console.log('socket', req.testing);
+});
+
+server.listen(3000, () => console.log('Listening...'));
