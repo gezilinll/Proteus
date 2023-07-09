@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 dependencies:
   '@hocuspocus/provider':
     specifier: ^2.1.0
@@ -2396,3 +2392,7 @@ packages:
     dependencies:
       lib0: 0.2.78
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false

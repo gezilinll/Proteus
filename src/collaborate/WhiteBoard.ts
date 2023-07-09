@@ -47,9 +47,12 @@ export class WhiteBoard {
 
     join(roomID: string) {
         this.ID = roomID;
+        console.log(roomID);
+
         this._yjsProvider = new HocuspocusProvider({
-            url: 'ws://47.119.150.226:3000',
+            url: 'wss://47.119.150.226:3000',
             name: roomID,
+            parameters: { userID: uuidv4(), userName: uuidv4() },
             document: this._doc,
         });
     }
