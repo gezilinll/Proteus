@@ -11,6 +11,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@authing/guard-vue3": "^5.2.0",
         "@hocuspocus/provider": "^2.1.0",
         "element-plus": "^2.3.7",
         "install": "^0.13.0",

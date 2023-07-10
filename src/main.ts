@@ -10,6 +10,8 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi';
 
 import '@mdi/font/css/materialdesignicons.css';
 
+import { createGuard } from "@authing/guard-vue3";
+import "@authing/guard-vue3/dist/esm/guard.min.css";
 
 const vuetify = createVuetify({
     components,
@@ -28,4 +30,9 @@ const pinia = createPinia();
 const app = createApp(App);
 app.use(pinia);
 app.use(vuetify);
+app.use(
+    createGuard({
+        appId: "64aa24183e67595b66833fb1",
+    })
+);
 app.mount('#app');
