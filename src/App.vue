@@ -85,6 +85,7 @@
                 <Room></Room>
             </div>
         </div>
+        <div id="authing_container" class="authing_container"></div>
     </v-app>
 </template>
 
@@ -94,9 +95,13 @@ import { Room, FunctionPanel, BrushPanel, ElementBox } from './components';
 import { useEditorStore, FunctionType, MouseType } from './Editor.store';
 import { storeToRefs } from 'pinia';
 import { watch } from 'vue';
+import { useGuard } from "@authing/guard-vue3";
+import type { User } from "@authing/guard-vue3";
 
 const store = useEditorStore();
 const { selectedFunction, mouseType, zoom, showElementBox, elementBox } = storeToRefs(store);
+
+const guard = useGuard();
 
 watch(mouseType, () => {
     if (mouseType.value === MouseType.Drag) {
@@ -136,6 +141,9 @@ function onMouseUp(e: MouseEvent) {
 
 onMounted(() => {
     store.editor.pixi(document.getElementById('canvasForPixi') as HTMLCanvasElement);
+    guard.start("#authing_container").then((userInfo: User) => {
+        console.log("userInfo: ", userInfo);
+    });
 });
 </script>
 
@@ -207,5 +215,12 @@ span {
     width: 40px;
     position: absolute;
     background-color: rgba(128, 128, 128, 0.8);
+}
+
+.authing_container {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
