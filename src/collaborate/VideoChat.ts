@@ -81,18 +81,18 @@ export class VideoChat {
                         console.log('new consumer', consumer.id, consumer.track.kind);
                         if (!this._store.consumers.has(consumer.id)) {
                             this._store.consumers.set(consumer.id, {
+                                user: { id: "", nickname: "" },
                                 audio: true,
                                 video: true,
-                                name: 'momo',
                                 videoTrack: null,
                                 audioTrack: null,
                             });
                         }
-                        const userInfo = this._store.consumers.get(consumer.id)!;
+                        const userMedia = this._store.consumers.get(consumer.id)!;
                         if (consumer.track.kind === 'audio') {
-                            userInfo.audioTrack = consumer.track;
+                            userMedia.audioTrack = consumer.track;
                         } else {
-                            userInfo.videoTrack = consumer.track;
+                            userMedia.videoTrack = consumer.track;
                         }
                     } catch (error) {
                         console.log('"newConsumer" request failed:%o', error);
@@ -349,7 +349,7 @@ export class VideoChat {
 
             this.webcamProducer.on('trackended', () => {
                 console.log('Webcam disconnected!');
-                this.disableWebcam().catch(() => {});
+                this.disableWebcam().catch(() => { });
             });
         } catch (error) {
             console.log('enableWebcam() | failed:%o', error);
@@ -404,7 +404,7 @@ export class VideoChat {
 
             this._micProducer.on('trackended', () => {
                 console.log('Microphone disconnected!');
-                this.disableMic().catch(() => {});
+                this.disableMic().catch(() => { });
             });
         } catch (error) {
             console.error('enableMic() | failed:%o', error);

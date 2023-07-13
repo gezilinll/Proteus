@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { User } from './User';
+import { User, UserMedia } from './User';
 import { Room } from './Room';
 
 export enum RoomState {
@@ -13,15 +13,15 @@ export const useRoomStore = defineStore('room', {
         return {
             room: new Room(),
             roomID: '',
+            roomName: '',
             status: RoomState.SOLO,
-            producer: {
-                name: 'momo',
-                video: true,
-                audio: true,
-                videoTrack: null,
-                audioTrack: null,
+            user: {
+                id: "",
+                nickname: "",
             } as User,
-            consumers: new Map<string, User>(),
+            producer: {
+            } as UserMedia,
+            consumers: new Map<string, UserMedia>(),
         };
     },
 });

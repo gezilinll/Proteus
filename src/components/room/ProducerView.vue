@@ -44,10 +44,10 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { User } from '../../collaborate/User';
+import { UserMedia } from '../../collaborate/User';
 
 const props = defineProps<{
-    user: User;
+    user: UserMedia;
 }>();
 const emits = defineEmits(['switchAudio', 'switchVideo']);
 

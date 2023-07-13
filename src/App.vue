@@ -8,7 +8,7 @@
                     :class="[
                         mouseType === MouseType.Select ? 'mouse-cursor-selected' : 'mouse-cursor',
                     ]"
-                    @click="store.useMouse(MouseType.Select)"
+                    @click="editorStore.useMouse(MouseType.Select)"
                     style="right: 400px"
                 >
                     <svg
@@ -32,7 +32,7 @@
                     :class="[
                         mouseType === MouseType.Drag ? 'mouse-cursor-selected' : 'mouse-cursor',
                     ]"
-                    @click="store.useMouse(MouseType.Drag)"
+                    @click="editorStore.useMouse(MouseType.Drag)"
                     style="right: 360px"
                 >
                     <svg
@@ -82,10 +82,10 @@
                 <BrushPanel v-if="selectedFunction === FunctionType.Brush"></BrushPanel>
             </div>
             <div class="bottom-bar">
-                <Room></Room>
+                <Room @on-login-or-register="showFullMask" @after-login-or-register="hideFullMask"></Room>
             </div>
         </div>
-        <div id="authing_container" class="authing_container"></div>
+        <div id="fullMaskContainer" class="full_mask_container"></div>
     </v-app>
 </template>
 
@@ -93,15 +93,17 @@
 import { onMounted } from 'vue';
 import { Room, FunctionPanel, BrushPanel, ElementBox } from './components';
 import { useEditorStore, FunctionType, MouseType } from './Editor.store';
+import { useRoomStore } from './collaborate/Room.store';
 import { storeToRefs } from 'pinia';
 import { watch } from 'vue';
 import { useGuard } from "@authing/guard-vue3";
-import type { User } from "@authing/guard-vue3";
-
-const store = useEditorStore();
-const { selectedFunction, mouseType, zoom, showElementBox, elementBox } = storeToRefs(store);
+import type { AuthenticationClient, User } from "@authing/guard-vue3";
 
 const guard = useGuard();
+const roomStore = useRoomStore();
+
+const editorStore = useEditorStore();
+const { selectedFunction, mouseType, zoom, showElementBox, elementBox } = storeToRefs(editorStore);
 
 watch(mouseType, () => {
     if (mouseType.value === MouseType.Drag) {
@@ -112,22 +114,22 @@ watch(mouseType, () => {
 });
 
 watch(zoom, () => {
-    store.editor.zoom(zoom.value / 100.0);
+    editorStore.editor.zoom(zoom.value / 100.0);
 });
 
 function onMouseDown(e: MouseEvent) {
     if (mouseType.value === MouseType.Drag) {
         document.getElementsByTagName('body')[0].style.cursor = 'grabbing';
     } else {
-        store.editor.onMouseDown(e);
+        editorStore.editor.onMouseDown(e);
     }
 }
 
 function onMouseMove(e: MouseEvent) {
     if (document.getElementsByTagName('body')[0].style.cursor === 'grabbing') {
-        store.editor.move(e.movementX, e.movementY);
+        editorStore.editor.move(e.movementX, e.movementY);
     } else {
-        store.editor.onMouseMove(e);
+        editorStore.editor.onMouseMove(e);
     }
 }
 
@@ -135,15 +137,29 @@ function onMouseUp(e: MouseEvent) {
     if (mouseType.value === MouseType.Drag) {
         document.getElementsByTagName('body')[0].style.cursor = 'grab';
     } else {
-        store.editor.onMouseUp(e);
+        editorStore.editor.onMouseUp(e);
     }
 }
 
+function showFullMask() {
+    document.getElementById("fullMaskContainer")!.style.visibility = 'visible';
+}
+
+function hideFullMask() {
+    document.getElementById("fullMaskContainer")!.style.visibility = 'hidden';
+}
+
 onMounted(() => {
-    store.editor.pixi(document.getElementById('canvasForPixi') as HTMLCanvasElement);
-    guard.start("#authing_container").then((userInfo: User) => {
-        console.log("userInfo: ", userInfo);
+    guard.getAuthClient().then((client: AuthenticationClient) => {
+        client.getCurrentUser().then((user: User | null) => {
+            if (user) {
+                roomStore.user.id = user.id;
+                roomStore.user.nickname = user.nickname!.toString();
+            }
+        })
     });
+    hideFullMask();
+    editorStore.editor.pixi(document.getElementById('canvasForPixi') as HTMLCanvasElement);
 });
 </script>
 
@@ -217,7 +233,7 @@ span {
     background-color: rgba(128, 128, 128, 0.8);
 }
 
-.authing_container {
+.full_mask_container {
     position: absolute;
     width: 100vw;
     height: 100vh;

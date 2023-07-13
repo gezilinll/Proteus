@@ -1,12 +1,13 @@
 <template>
     <div>
+
         <div style="padding-top: 15px; padding-left: 100px" v-if="isSoloMode">
             <v-form>
                 <v-container>
                     <v-row>
                         <v-col cols="12" sm="5">
                             <v-text-field
-                                label="YOUR NAME"
+                                label="ROOM NAME"
                                 counter
                                 maxlength="20"
                                 v-model="userName"
@@ -69,7 +70,7 @@
                 @switch-video="switchVideo"
             ></ProducerView>
             <div v-for="item in consumers">
-                <ConsumerView :name="item[1].name" :track="item[1].videoTrack!"></ConsumerView>
+                <ConsumerView :name="item[1].user.nickname" :track="item[1].videoTrack!"></ConsumerView>
             </div>
         </div>
         <span
@@ -90,18 +91,23 @@ import { useRoomStore, RoomState } from '../../collaborate/Room.store';
 import randomString from 'random-string';
 import { ConsumerView, ProducerView } from '..';
 import { storeToRefs } from 'pinia';
-import { User } from '../../collaborate/User';
-
+import { UserMedia } from '../../collaborate/User';
+import { useGuard } from "@authing/guard-vue3";
+import type { User } from "@authing/guard-vue3";
 import { ElMessage } from 'element-plus'
 
-const store = useRoomStore();
-const { room, roomID, producer, consumers } = storeToRefs(store);
+const emits = defineEmits(['onLoginOrRegister', 'afterLoginOrRegister']);
 
-function switchAudio(user: User) {
+const guard = useGuard();
+
+const store = useRoomStore();
+const { room, roomID, producer, consumers, user } = storeToRefs(store);
+
+function switchAudio(user: UserMedia) {
     producer.value!.audio = !producer.value!.audio;
 }
 
-function switchVideo(user: User) {
+function switchVideo(user: UserMedia) {
     if (producer.value!.video) {
         room.value.disableWebcam();
     } else {
@@ -131,7 +137,17 @@ const isVideoChatMode = computed(() => {
 
 function createOrJoinRoom() {
     roomID.value = buttonText.value === 'CREATE ROOM' ? newRoomID : inputRoomID.value!;
-    room.value.joinWhiteBoard(roomID.value);
+    if (!user.value.id) {
+        emits('onLoginOrRegister');
+        guard.start("#fullMaskContainer").then((userInfo: User) => {
+            emits('afterLoginOrRegister');
+            user.value.id = userInfo.id;
+            user.value.nickname = userInfo.nickname!.toString();
+            room.value.joinWhiteBoard(roomID.value);
+        });
+    } else {
+        room.value.joinWhiteBoard(roomID.value);
+    }
 }
 
 function joinVideoChat() {
@@ -175,5 +191,12 @@ function copyRoomID() {
 }
 .invite-icon-video-chat:hover {
     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.authing_container {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 </style>

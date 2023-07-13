@@ -1,5 +1,10 @@
 export interface User {
-    name: string;
+    id: string;
+    nickname: string;
+}
+
+export interface UserMedia {
+    user: User;
     videoTrack: MediaStreamTrack | null;
     audioTrack: MediaStreamTrack | null;
     audio: boolean;
