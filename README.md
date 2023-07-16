@@ -7,7 +7,10 @@ Blitz is a collaborative whiteboard application capable of voice and video chatt
 
 ![Blitz](preview.gif)
 
+Online Website: https://blitz.gezilinll.com
+
 # Local development
+
 Run the following command in the root directory:
 ```javascript
 pnpm install
