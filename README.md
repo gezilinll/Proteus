@@ -5,7 +5,7 @@ Blitz is a collaborative whiteboard application capable of voice and video chatt
 
 # Preview
 
-Coming soon.
+![Blitz](preview.gif)
 
 # Local development
 Run the following command in the root directory:
@@ -16,6 +16,18 @@ pnpm run dev
 and you can visit the editor on `http://localhost:5173` , the port maybe different, the address will output on the console.
 
 # Server
+
+### Collaboration
+
+Run the following command in the `server` directory(on the server):
+
+```javascript
+pnpm install
+npx tsc
+node dist/whiteboard.js
+```
+
+### Media Stream
 
 Coming soon.
 
