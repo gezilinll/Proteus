@@ -1,10 +1,11 @@
 import https from 'https';
 import fs from 'fs';
-import express from 'express';
-import expressWs from 'express-ws';
 import urlib from 'url';
 import dotenv from 'dotenv';
 import { Server } from '@hocuspocus/server';
+
+var express = require('express');
+var expressWs = require('express-ws');
 
 dotenv.config();
 
@@ -34,7 +35,7 @@ const options = {
 };
 const app = express();
 const server = https.createServer(options, app);
-const a = expressWs(app, server);
+const appWs = expressWs(app, server);
 
 app.use(function (req: any, res: any, next: any) {
     return next();
@@ -44,7 +45,6 @@ app.get('/', function (req: any, res: any, next: any) {
     res.end();
 });
 
-//@ts-ignore
 app.ws('/', function (ws: any, req: any) {
     var url = urlib.parse(req.url, true);
     var userID = url.query.userID;

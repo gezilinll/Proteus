@@ -3,6 +3,7 @@ import protooClient from 'protoo-client';
 import * as mediasoupClient from 'mediasoup-client';
 import { Transport } from 'mediasoup-client/lib/types';
 import { useRoomStore } from './Room.store';
+import { v4 as uuidv4 } from 'uuid';
 
 export class VideoChat {
     ID: string;
@@ -81,7 +82,7 @@ export class VideoChat {
                         console.log('new consumer', consumer.id, consumer.track.kind);
                         if (!this._store.consumers.has(consumer.id)) {
                             this._store.consumers.set(consumer.id, {
-                                user: { id: "", nickname: "" },
+                                user: { id: uuidv4(), nickname: uuidv4() },
                                 audio: true,
                                 video: true,
                                 videoTrack: null,
@@ -349,7 +350,7 @@ export class VideoChat {
 
             this.webcamProducer.on('trackended', () => {
                 console.log('Webcam disconnected!');
-                this.disableWebcam().catch(() => { });
+                this.disableWebcam().catch(() => {});
             });
         } catch (error) {
             console.log('enableWebcam() | failed:%o', error);
@@ -404,7 +405,7 @@ export class VideoChat {
 
             this._micProducer.on('trackended', () => {
                 console.log('Microphone disconnected!');
-                this.disableMic().catch(() => { });
+                this.disableMic().catch(() => {});
             });
         } catch (error) {
             console.error('enableMic() | failed:%o', error);

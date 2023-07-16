@@ -4,7 +4,7 @@
             :id="props.name"
             style="
                 position: absolute;
-                left: 10px;
+                left: 150px;
                 top: 10px;
                 width: 100px;
                 height: 100px;
