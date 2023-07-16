@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 dependencies:
   '@authing/guard-vue3':
     specifier: ^5.2.0
@@ -3703,3 +3699,7 @@ packages:
     dependencies:
       lib0: 0.2.78
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
