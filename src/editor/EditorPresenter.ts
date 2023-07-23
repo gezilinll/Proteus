@@ -34,6 +34,8 @@ const usePresenter = () => {
         mouse.type = 'pressed';
         mouse.lastX = x;
         mouse.lastY = y;
+        if (type === 'brush') {
+        }
     };
 
     const onMouseMove = (type: FunctionItem, x: number, y: number) => {
@@ -44,6 +46,7 @@ const usePresenter = () => {
             bgService?.move(x - mouse.lastX, y - mouse.lastY);
             mouse.lastX = x;
             mouse.lastY = y;
+        } else if (mouse.type === 'dragging' && type === 'brush') {
         }
     };
 
