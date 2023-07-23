@@ -1,0 +1,112 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "git.branchProtection": ["master"],
+    "explorer.autoRevealExclude": {
+        "**/node_modules": false
+    },
+    "workbench.editor.highlightModifiedTabs": true,
+    "terminal.integrated.wordSeparators": " ()[]{}',，\"`─‘’“”<>（）【】{}《》「」:：",
+    "editor.codeActionsOnSave": {
+        "source.addMissingImports": false,
+        "source.fixAll.eslint": true,
+        "source.fixAll.stylelint": true,
+        "source.fixAll.markdownlint": true
+    },
+    "editor.formatOnSave": true,
+    "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:：'\",.<>/?，。‘’“”；（）【】{}《》「」",
+    "emmet.useInlineCompletions": true,
+    "editor.linkedEditing": true,
+    "html.autoClosingTags": true,
+    "search.exclude": {
+        "**/node_modules": true
+    },
+    "npm.packageManager": "npm",
+
+    "css.validate": false,
+    "less.validate": false,
+    "stylelint.enable": true,
+    "stylelint.packageManager": "npm",
+    "stylelint.validate": ["css", "less", "html", "vue"],
+
+    "eslint.enable": true,
+    "eslint.packageManager": "pnpm",
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+        "typescript",
+        "typescriptreact",
+        "vue",
+        "json",
+        "jsonc",
+        "html"
+    ],
+
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[less]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[xml]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[yaml]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[svg]": {
+        "editor.defaultFormatter": "jock.svg"
+    },
+
+    "cSpell.words": [
+        "bbox",
+        "cullable",
+        "gezilinll",
+        "Hocuspocus",
+        "iconsets",
+        "Insertable",
+        "libwebrtc",
+        "materialdesignicons",
+        "mediasoup",
+        "momo",
+        "pinia",
+        "PIXI",
+        "producedata",
+        "protoo",
+        "trackended",
+        "transportclose",
+        "urlib",
+        "uuidv",
+        "Vuetify"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
+}
