@@ -8,7 +8,7 @@ export class BrushElementService extends ElementService {
 
     private _dirty: boolean = false;
 
-    constructor(model: ElementModel) {
+    constructor(model: BrushElementModel) {
         super(model);
 
         this.sprite = new PIXI.Graphics();
