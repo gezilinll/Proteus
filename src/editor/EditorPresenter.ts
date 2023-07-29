@@ -56,6 +56,7 @@ const usePresenter = () => {
         }
         if (mouse.type === 'dragging' && type === 'grab') {
             bgService?.move(x - mouse.lastX, y - mouse.lastY);
+            editorService?.move(x - mouse.lastX, y - mouse.lastY);
         } else if (mouse.type === 'dragging' && type === 'brush') {
             if (editorModel.creatingElement.service) {
                 (editorModel.creatingElement.service as BrushElementService).lineTo(

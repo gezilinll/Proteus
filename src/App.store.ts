@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import { FunctionItem } from './Defines';
+import { FunctionPanelItem } from './Defines';
 
 export const useAppStore = defineStore('app', {
     state: () => {
         return {
-            functionType: 'selector' as FunctionItem,
+            selectedFunction: 'selector' as FunctionPanelItem,
         };
     },
 });

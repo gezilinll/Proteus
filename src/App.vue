@@ -2,12 +2,19 @@
     <div class="app-container">
         <EditorView></EditorView>
         <FunctionView></FunctionView>
+        <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
     </div>
 </template>
 
 <script setup lang="ts">
 import { EditorView } from './editor';
 import { FunctionView } from './function';
+import { BrushPanelView } from './function/brush';
+import { useAppStore } from './App.store';
+import { storeToRefs } from 'pinia';
+
+const store = useAppStore();
+const { selectedFunction } = storeToRefs(store);
 </script>
 
 <style lang="less">

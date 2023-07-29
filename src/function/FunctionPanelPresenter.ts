@@ -1,10 +1,9 @@
-import { watch } from 'vue';
-import { useModel } from './FunctionModel';
-import { FunctionService } from './FunctionService';
+import { useModel } from './FunctionPanelModel';
+import { FunctionPanelService } from './FunctionPanelService';
 
 const usePresenter = () => {
     const model = useModel();
-    const service = new FunctionService(model);
+    const service = new FunctionPanelService(model);
 
     const handleSelectorClicked = () => {
         service.handleItemClicked('selector');

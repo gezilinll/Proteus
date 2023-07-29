@@ -1,1 +1,1 @@
-export { default as FunctionView } from './FunctionView.vue';
+export { default as FunctionView } from './FunctionPanelView.vue';

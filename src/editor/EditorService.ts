@@ -23,6 +23,10 @@ export class EditorService {
         return { model, service };
     }
 
+    move(deltaX: number, deltaY: number) {
+        this._vpService.move(deltaX, deltaY);
+    }
+
     private _renderFrame() {
         this._vpService.render();
     }
