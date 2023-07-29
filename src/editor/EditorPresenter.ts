@@ -1,8 +1,10 @@
-import { watch } from 'vue';
 import { useModel as useBackgroundModel } from './background/BackgroundModel';
 import { BackgroundService } from './background/BackgroundService';
 import * as PIXI from 'pixi.js';
 import { FunctionItem } from '../Defines';
+import { useModel } from './EditorModel';
+import { EditorService } from './EditorService';
+import { BrushElementService } from './element/brush/BrushElementService';
 
 const usePresenter = () => {
     const mouse = {
@@ -12,6 +14,8 @@ const usePresenter = () => {
     };
 
     let bgService: BackgroundService | undefined = undefined;
+    const editorModel = useModel();
+    let editorService: EditorService | undefined = undefined;
 
     const setup = (canvas: HTMLCanvasElement) => {
         const pixi = new PIXI.Application({
@@ -28,13 +32,21 @@ const usePresenter = () => {
 
         const bgModel = useBackgroundModel();
         bgService = new BackgroundService(pixi, bgModel);
+
+        editorModel.viewport.canvasWidth = pixi.view.width;
+        editorModel.viewport.canvasHeight = pixi.view.height;
+        editorService = new EditorService(pixi, editorModel);
     };
 
     const onMouseDown = (type: FunctionItem, x: number, y: number) => {
         mouse.type = 'pressed';
         mouse.lastX = x;
         mouse.lastY = y;
-        if (type === 'brush') {
+        if (editorService) {
+            if (type === 'brush') {
+                editorModel.creatingElement = editorService.createElement(type);
+                editorModel.creatingElement.service?.moveTo(x, y);
+            }
         }
     };
 
@@ -44,17 +56,25 @@ const usePresenter = () => {
         }
         if (mouse.type === 'dragging' && type === 'grab') {
             bgService?.move(x - mouse.lastX, y - mouse.lastY);
-            mouse.lastX = x;
-            mouse.lastY = y;
         } else if (mouse.type === 'dragging' && type === 'brush') {
+            if (editorModel.creatingElement.service) {
+                (editorModel.creatingElement.service as BrushElementService).lineTo(
+                    x - mouse.lastX,
+                    y - mouse.lastY
+                );
+            }
         }
+        mouse.lastX = x;
+        mouse.lastY = y;
     };
 
     const onMouseUp = (type: FunctionItem) => {
         mouse.type = 'moving';
+        editorModel.creatingElement.model = undefined;
+        editorModel.creatingElement.service = undefined;
     };
 
-    return { setup, onMouseDown, onMouseMove, onMouseUp };
+    return { editorModel, setup, onMouseDown, onMouseMove, onMouseUp };
 };
 
 export default usePresenter;

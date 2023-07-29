@@ -7,12 +7,15 @@ export abstract class ElementService {
     protected _model: ElementModel;
 
     constructor(model: ElementModel) {
+        if (!model.uuid) {
+            throw new Error('ElementModel UUID is undefined.');
+        }
         this._model = model;
     }
 
-    move(x: number, y: number) {
-        this.sprite.position.x += x;
-        this.sprite.position.y += y;
+    move(deltaX: number, deltaY: number) {
+        this.sprite.position.x += deltaX;
+        this.sprite.position.y += deltaY;
 
         this._model.position.left = this.sprite.position.x;
         this._model.position.top = this.sprite.position.y;
@@ -25,6 +28,8 @@ export abstract class ElementService {
         this._model.position.left = this.sprite.position.x;
         this._model.position.top = this.sprite.position.y;
     }
+
+    scale(_x: number, _y: number) {}
 
     abstract render(): void;
 }

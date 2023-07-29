@@ -1,7 +1,25 @@
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue';
+import { ViewportModel } from './element/viewport/ViewportModel';
+import { ElementModel } from './element/ElementModel';
+import { ElementService } from './element/ElementService';
+
+export type Element = { model: undefined | ElementModel; service: undefined | ElementService };
 
 export const useModel = () => {
-    return {};
+    const viewport = reactive<ViewportModel>({
+        canvasWidth: 0,
+        canvasHeight: 0,
+        elements: [],
+        position: { left: 0, top: 0 },
+        scale: { x: 1, y: 1 },
+    });
+
+    const creatingElement = reactive<Element>({
+        model: undefined,
+        service: undefined,
+    });
+
+    return { viewport, creatingElement };
 };
 
-export type FunctionModel = ReturnType<typeof useModel>;
+export type EditorModel = ReturnType<typeof useModel>;

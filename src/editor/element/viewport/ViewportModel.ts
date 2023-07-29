@@ -1,4 +1,18 @@
 import { ElementModel } from '../ElementModel';
-import * as PIXI from 'pixi.js';
 
-export class ViewportModel extends ElementModel {}
+export class ViewportModel {
+    canvasWidth = 0;
+    canvasHeight = 0;
+
+    position = {
+        left: 0,
+        top: 0,
+    };
+
+    scale = {
+        x: 1,
+        y: 1,
+    };
+
+    elements: ElementModel[] = [];
+}

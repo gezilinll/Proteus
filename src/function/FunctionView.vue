@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, watch } from 'vue';
+import { watch } from 'vue';
 import usePresenter from './FunctionPresenter';
 import { useAppStore } from '../App.store';
 
@@ -102,7 +102,8 @@ watch(
         } else if (model.type.value === 'grab') {
             document.getElementsByTagName('body')[0].style.cursor = 'grab';
         } else if (model.type.value === 'brush') {
-            document.getElementsByTagName('body')[0].style.cursor = 'url("cursor-brush.png"), auto';
+            document.getElementsByTagName('body')[0].style.cursor =
+                'url("cursor-brush.png") 0 10, auto';
         }
         appStore.functionType = model.type.value;
     }
