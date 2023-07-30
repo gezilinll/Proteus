@@ -29,7 +29,7 @@ export abstract class ElementService {
         this._model.position.top = this.sprite.position.y;
     }
 
-    scale(_x: number, _y: number) {}
+    zoomTo(_x: number, _y: number) {}
 
     abstract render(): void;
 }

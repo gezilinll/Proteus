@@ -33,7 +33,7 @@ export class BackgroundService {
         this._render();
     }
 
-    zoom(target: number) {
+    zoomTo(target: number) {
         this._model.zoom.value = target;
         this._render();
     }

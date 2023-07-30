@@ -36,10 +36,10 @@ export class ViewportService {
         this._model.position.top = this.sprite.position.y;
     }
 
-    scale(x: number, y: number): void {
-        this.sprite.scale.set(x, y);
-        const newW = this._model.canvasWidth * x;
-        const newH = this._model.canvasHeight * y;
+    zoomTo(target: number): void {
+        this.sprite.scale.set(target, target);
+        const newW = this._model.canvasWidth * target;
+        const newH = this._model.canvasHeight * target;
         const offsetX = (this._model.canvasWidth - newW) / 2.0;
         const offsetY = (this._model.canvasHeight - newH) / 2.0;
         this.sprite.position.x = offsetX + this._moveX;

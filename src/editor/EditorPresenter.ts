@@ -7,6 +7,7 @@ import { EditorService } from './EditorService';
 import { BrushElementService } from './element/brush/BrushElementService';
 import { BrushElementModel } from './element/brush/BrushElementModel';
 import { useAppStore } from '../App.store';
+import { watch } from 'vue';
 
 const usePresenter = () => {
     const appStore = useAppStore();
@@ -20,6 +21,14 @@ const usePresenter = () => {
     let bgService: BackgroundService | undefined = undefined;
     const editorModel = useModel();
     let editorService: EditorService | undefined = undefined;
+
+    watch(
+        () => appStore.zoom,
+        () => {
+            bgService?.zoomTo(appStore.zoom / 100);
+            editorService?.zoomTo(appStore.zoom / 100);
+        }
+    );
 
     const setup = (canvas: HTMLCanvasElement) => {
         const pixi = new PIXI.Application({
@@ -37,8 +46,8 @@ const usePresenter = () => {
         const bgModel = useBackgroundModel();
         bgService = new BackgroundService(pixi, bgModel);
 
-        editorModel.viewport.canvasWidth = pixi.view.width;
-        editorModel.viewport.canvasHeight = pixi.view.height;
+        editorModel.viewport.canvasWidth = pixi.view.width / window.devicePixelRatio;
+        editorModel.viewport.canvasHeight = pixi.view.height / window.devicePixelRatio;
         editorService = new EditorService(pixi, editorModel);
     };
 

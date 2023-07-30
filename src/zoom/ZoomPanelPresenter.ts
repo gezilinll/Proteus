@@ -6,6 +6,7 @@ import { useAppStore } from '../App.store';
 const usePresenter = () => {
     const appStore = useAppStore();
     const model = useModel();
+    appStore.zoom = model.current.value;
     const service = new ZoomPanelService(model);
 
     const handleZoomOutClicked = () => {
@@ -21,6 +22,13 @@ const usePresenter = () => {
     };
 
     const handleFitToScreenClicked = () => {};
+
+    watch(
+        () => model.current.value,
+        () => {
+            appStore.zoom = model.current.value;
+        }
+    );
 
     return {
         model,

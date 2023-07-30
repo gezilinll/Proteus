@@ -27,6 +27,10 @@ export class EditorService {
         this._vpService.move(deltaX, deltaY);
     }
 
+    zoomTo(target: number) {
+        this._vpService.zoomTo(target);
+    }
+
     private _renderFrame() {
         this._vpService.render();
     }
