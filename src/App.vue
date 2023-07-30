@@ -3,6 +3,7 @@
         <EditorView></EditorView>
         <FunctionView></FunctionView>
         <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
+        <ZoomPanelView></ZoomPanelView>
     </v-app>
 </template>
 
@@ -10,6 +11,7 @@
 import { EditorView } from './editor';
 import { FunctionView } from './function';
 import { BrushPanelView } from './function/brush';
+import { ZoomPanelView } from './zoom';
 import { useAppStore } from './App.store';
 import { storeToRefs } from 'pinia';
 

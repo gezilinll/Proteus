@@ -114,12 +114,14 @@ const { model } = presenter;
     width: @width - (2 * @margin);
     &:hover {
         background-color: rgba(0, 0, 255, 0.1);
+        border-radius: 2px;
     }
 }
 
 .function-item-container-selected {
     &:extend(.function-item-container);
     background-color: rgba(0, 0, 255, 0.2);
+    border-radius: 2px;
 }
 
 .function-item {
