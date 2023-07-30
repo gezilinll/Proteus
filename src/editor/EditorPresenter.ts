@@ -1,12 +1,16 @@
 import { useModel as useBackgroundModel } from './background/BackgroundModel';
 import { BackgroundService } from './background/BackgroundService';
 import * as PIXI from 'pixi.js';
-import { FunctionItem } from '../Defines';
+import { FunctionPanelItem } from '../Defines';
 import { useModel } from './EditorModel';
 import { EditorService } from './EditorService';
 import { BrushElementService } from './element/brush/BrushElementService';
+import { BrushElementModel } from './element/brush/BrushElementModel';
+import { useAppStore } from '../App.store';
 
 const usePresenter = () => {
+    const appStore = useAppStore();
+
     const mouse = {
         type: 'moving' as 'pressed' | 'dragging' | 'moving',
         lastX: 0,
@@ -38,19 +42,25 @@ const usePresenter = () => {
         editorService = new EditorService(pixi, editorModel);
     };
 
-    const onMouseDown = (type: FunctionItem, x: number, y: number) => {
+    const onMouseDown = (type: FunctionPanelItem, x: number, y: number) => {
         mouse.type = 'pressed';
         mouse.lastX = x;
         mouse.lastY = y;
         if (editorService) {
             if (type === 'brush') {
                 editorModel.creatingElement = editorService.createElement(type);
-                editorModel.creatingElement.service?.moveTo(x, y);
+                if (editorModel.creatingElement.model && editorModel.creatingElement.service) {
+                    editorModel.creatingElement.service.moveTo(x, y);
+                    (editorModel.creatingElement.model as BrushElementModel).color =
+                        appStore.brushConfig.color;
+                    (editorModel.creatingElement.model as BrushElementModel).weight =
+                        appStore.brushConfig.weight;
+                }
             }
         }
     };
 
-    const onMouseMove = (type: FunctionItem, x: number, y: number) => {
+    const onMouseMove = (type: FunctionPanelItem, x: number, y: number) => {
         if (mouse.type === 'pressed') {
             mouse.type = 'dragging';
         }
@@ -69,7 +79,7 @@ const usePresenter = () => {
         mouse.lastY = y;
     };
 
-    const onMouseUp = (type: FunctionItem) => {
+    const onMouseUp = (type: FunctionPanelItem) => {
         mouse.type = 'moving';
         editorModel.creatingElement.model = undefined;
         editorModel.creatingElement.service = undefined;

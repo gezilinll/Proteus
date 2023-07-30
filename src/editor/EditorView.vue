@@ -28,16 +28,16 @@ watch(
     () => mousePressed.pressed,
     () => {
         if (mousePressed.pressed) {
-            presenter.onMouseDown(appStore.functionType, mouse.x, mouse.y);
+            presenter.onMouseDown(appStore.selectedFunction, mouse.x, mouse.y);
         } else {
-            presenter.onMouseUp(appStore.functionType);
+            presenter.onMouseUp(appStore.selectedFunction);
         }
     }
 );
 watch(
     () => [mouse.x, mouse.y],
     () => {
-        presenter.onMouseMove(appStore.functionType, mouse.x, mouse.y);
+        presenter.onMouseMove(appStore.selectedFunction, mouse.x, mouse.y);
     }
 );
 

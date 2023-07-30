@@ -85,28 +85,10 @@
 </template>
 
 <script lang="ts" setup>
-import { watch } from 'vue';
 import usePresenter from './FunctionPanelPresenter';
-import { useAppStore } from '../App.store';
 
 const presenter = usePresenter();
 const { model } = presenter;
-const appStore = useAppStore();
-
-watch(
-    () => model.selected.value,
-    () => {
-        if (model.selected.value === 'selector') {
-            document.getElementsByTagName('body')[0].style.cursor = 'auto';
-        } else if (model.selected.value === 'grab') {
-            document.getElementsByTagName('body')[0].style.cursor = 'grab';
-        } else if (model.selected.value === 'brush') {
-            document.getElementsByTagName('body')[0].style.cursor =
-                'url("cursor-brush.png") 0 10, auto';
-        }
-        appStore.selectedFunction = model.selected.value;
-    }
-);
 </script>
 
 <style lang="less" scoped>

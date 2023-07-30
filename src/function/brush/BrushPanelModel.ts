@@ -15,15 +15,15 @@ export const useModel = () => {
     const highlighterConfigs = reactive([
         {
             weight: 20,
-            color: 'rgb(254, 249, 157)',
+            color: 'rgba(254, 249, 157, 0.6)',
         },
-        { weight: 20, color: 'rgb(252, 223, 136)' },
-        { weight: 20, color: 'rgb(227, 241, 156)' },
+        { weight: 20, color: 'rgba(240, 185, 20, 0.6)' },
+        { weight: 20, color: 'rgba(227, 241, 156, 0.6)' },
     ]);
     const highlighterConfigIndex = ref(0);
 
-    const brushColor = ref('');
-    const brushWeight = ref(2);
+    const brushColor = ref(penConfigs[0].color);
+    const brushWeight = ref(penConfigs[0].weight);
     const showConfigPanel = ref(false);
 
     return {
