@@ -23,7 +23,8 @@ export const useModel = () => {
     const highlighterConfigIndex = ref(0);
 
     const brushColor = ref('');
-    const showColorPanel = ref(false);
+    const brushWeight = ref(2);
+    const showConfigPanel = ref(false);
 
     return {
         selected,
@@ -32,7 +33,8 @@ export const useModel = () => {
         highlighterConfigs,
         highlighterConfigIndex,
         brushColor,
-        showColorPanel,
+        brushWeight,
+        showConfigPanel,
     };
 };
 

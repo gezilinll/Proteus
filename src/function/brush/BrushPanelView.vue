@@ -114,12 +114,32 @@
                 ></div>
             </div>
         </div>
-        <v-color-picker
-            v-if="model.showColorPanel.value"
-            style="position: absolute; left: 60px; top: 60px"
-            v-model="model.brushColor.value"
-            elevation="10"
-        ></v-color-picker>
+        <div
+            v-if="model.showConfigPanel.value"
+            style="
+                position: absolute;
+                left: 55px;
+                top: 60px;
+                width: 320px;
+                height: 430px;
+                background-color: white;
+                border-radius: 6px;
+            "
+        >
+            <v-slider
+                v-model="model.brushWeight.value"
+                style="position: absolute; left: 12px; right: 12px; top: 16px"
+                thumb-size="10px"
+                min="2"
+                max="30"
+                :step="1"
+            ></v-slider>
+            <p style="position: absolute; font-size: 10px; left: 18px; top: 45px">Thickness</p>
+            <v-color-picker
+                style="position: absolute; left: 12px; right: 12px; top: 80px; border-radius: 0px"
+                v-model="model.brushColor.value"
+            ></v-color-picker>
+        </div>
     </div>
 </template>
 
@@ -174,9 +194,9 @@ const { model } = presenter;
 .color-item-container {
     box-sizing: border-box;
     display: flex;
-    margin: 10px;
-    height: 30px;
-    width: 30px;
+    margin: 8px;
+    height: 35px;
+    width: 35px;
     border: 1px solid rgba(5, 0, 56, 0.2);
     border-radius: 50%;
     justify-content: center;

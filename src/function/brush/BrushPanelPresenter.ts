@@ -8,17 +8,14 @@ const usePresenter = () => {
 
     const handlePenClicked = () => {
         service.handleItemClicked('pen');
-        model.showColorPanel.value = false;
     };
 
     const handleHighlighterClicked = () => {
         service.handleItemClicked('highlighter');
-        model.showColorPanel.value = false;
     };
 
     const handleEraserClicked = () => {
         service.handleItemClicked('eraser');
-        model.showColorPanel.value = false;
     };
 
     const handlePenConfigClicked = (index: number) => {
@@ -37,6 +34,18 @@ const usePresenter = () => {
             } else if (model.selected.value === 'highlighter') {
                 model.highlighterConfigs[model.highlighterConfigIndex.value].color =
                     model.brushColor.value;
+            }
+        }
+    );
+
+    watch(
+        () => model.brushWeight.value,
+        () => {
+            if (model.selected.value === 'pen') {
+                model.penConfigs[model.penConfigIndex.value].weight = model.brushWeight.value;
+            } else if (model.selected.value === 'highlighter') {
+                model.highlighterConfigs[model.highlighterConfigIndex.value].weight =
+                    model.brushWeight.value;
             }
         }
     );
