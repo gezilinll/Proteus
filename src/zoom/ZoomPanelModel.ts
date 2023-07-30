@@ -1,10 +1,12 @@
 import { ref } from 'vue';
 
 export const useModel = () => {
-    const targetScale = ref(1.0);
+    const current = ref(100);
+    const target = ref(100);
 
     return {
-        targetScale,
+        current,
+        target,
     };
 };
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="function-container">
+    <div class="function-container" @click="presenter.handleFitToScreenClicked">
         <div class="function-item-container">
             <span class="function-item">
                 <svg
@@ -18,7 +18,7 @@
                 </svg>
             </span>
         </div>
-        <div class="function-item-container">
+        <div class="function-item-container" @click="presenter.handleZoomOutClicked">
             <span class="function-item">
                 <svg
                     class="content"
@@ -33,10 +33,12 @@
                 </svg>
             </span>
         </div>
-        <div class="function-item-container">
-            <div class="function-item"><p class="content" style="font-size: 15px">50%</p></div>
+        <div class="function-item-container" @click="presenter.handleZoomTo100Clicked">
+            <div class="function-item">
+                <p class="content" style="font-size: 15px">{{ model.current.value + '%' }}</p>
+            </div>
         </div>
-        <div class="function-item-container">
+        <div class="function-item-container" @click="presenter.handleZoomInClicked">
             <span class="function-item">
                 <svg
                     class="content"
@@ -57,7 +59,12 @@
     </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import usePresenter from './ZoomPanelPresenter';
+
+const presenter = usePresenter();
+const { model } = presenter;
+</script>
 
 <style lang="less" scoped>
 @height: 50px;
