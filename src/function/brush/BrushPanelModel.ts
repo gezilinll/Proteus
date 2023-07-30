@@ -22,12 +22,17 @@ export const useModel = () => {
     ]);
     const highlighterConfigIndex = ref(0);
 
+    const brushColor = ref('');
+    const showColorPanel = ref(false);
+
     return {
         selected,
         penConfigs,
         penConfigIndex,
         highlighterConfigs,
         highlighterConfigIndex,
+        brushColor,
+        showColorPanel,
     };
 };
 

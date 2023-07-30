@@ -1,9 +1,9 @@
 <template>
-    <div class="app-container">
+    <v-app class="app-container">
         <EditorView></EditorView>
         <FunctionView></FunctionView>
         <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
-    </div>
+    </v-app>
 </template>
 
 <script setup lang="ts">

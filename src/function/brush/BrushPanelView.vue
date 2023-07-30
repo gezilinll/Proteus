@@ -114,7 +114,12 @@
                 ></div>
             </div>
         </div>
-        <el-color-picker show-alpha />
+        <v-color-picker
+            v-if="model.showColorPanel.value"
+            style="position: absolute; left: 60px; top: 60px"
+            v-model="model.brushColor.value"
+            elevation="10"
+        ></v-color-picker>
     </div>
 </template>
 
