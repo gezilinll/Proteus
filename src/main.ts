@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import { createPinia } from 'pinia';
+import { GesturePlugin } from '@vueuse/gesture';
 import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
@@ -25,4 +26,5 @@ const pinia = createPinia();
 const app = createApp(App);
 app.use(pinia);
 app.use(vuetify);
+app.use(GesturePlugin);
 app.mount('#app');

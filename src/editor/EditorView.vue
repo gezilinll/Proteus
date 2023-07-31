@@ -41,6 +41,15 @@ watch(
     }
 );
 
+appStore.canvas = canvas;
+
+const wheelHandler = ({ movement, wheeling }: any) => {
+    console.log('111', movement, wheeling);
+};
+useWheel(wheelHandler, {
+    domTarget: canvas,
+});
+
 onMounted(() => {
     presenter.setup(canvas.value! as HTMLCanvasElement);
 });
