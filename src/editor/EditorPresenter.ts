@@ -7,10 +7,12 @@ import { EditorService } from './EditorService';
 import { BrushElementService } from './element/brush/BrushElementService';
 import { BrushElementModel } from './element/brush/BrushElementModel';
 import { useAppStore } from '../App.store';
+import { useEditorStore } from './Editor.store';
 import { watch } from 'vue';
 
 const usePresenter = () => {
     const appStore = useAppStore();
+    const editorStore = useEditorStore();
 
     const mouse = {
         type: 'moving' as 'pressed' | 'dragging' | 'moving',
@@ -23,10 +25,10 @@ const usePresenter = () => {
     let editorService: EditorService | undefined = undefined;
 
     watch(
-        () => appStore.zoom,
+        () => editorStore.zoom,
         () => {
-            bgService?.zoomTo(appStore.zoom / 100);
-            editorService?.zoomTo(appStore.zoom / 100);
+            bgService?.zoomTo(editorStore.zoom / 100);
+            editorService?.zoomTo(editorStore.zoom / 100);
         }
     );
 

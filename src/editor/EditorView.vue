@@ -8,10 +8,13 @@
 import { onMounted, reactive, ref, watch } from 'vue';
 import usePresenter from './EditorPresenter';
 import { useMousePressed, useMouse } from '@vueuse/core';
+import { useWheel } from '@vueuse/gesture';
 import { useAppStore } from '../App.store';
+import { useEditorStore } from './Editor.store';
 
 const presenter = usePresenter();
 const appStore = useAppStore();
+const editorStore = useEditorStore();
 const canvas = ref(null);
 
 const mousePressed = reactive(
@@ -41,10 +44,10 @@ watch(
     }
 );
 
-appStore.canvas = canvas;
-
-const wheelHandler = ({ movement, wheeling }: any) => {
-    console.log('111', movement, wheeling);
+const wheelHandler = ({ movement }: any) => {
+    for (const hook of editorStore.wheelHooks) {
+        hook(movement[0], movement[1]);
+    }
 };
 useWheel(wheelHandler, {
     domTarget: canvas,

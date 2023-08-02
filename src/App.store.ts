@@ -9,7 +9,6 @@ export const useAppStore = defineStore('app', {
                 color: '#000000',
                 weight: 2,
             },
-            zoom: 100,
         };
     },
 });

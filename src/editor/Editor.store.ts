@@ -1,11 +1,9 @@
 import { defineStore } from 'pinia';
-import { FunctionPanelItem } from './Defines';
-import { Ref, ref } from 'vue';
 
-export declare type OnWheelListener = () => void;
+export declare type OnWheelListener = (moveX: number, moveY: number) => void;
 export declare type UnregisterListener = () => void;
 
-export const useAppStore = defineStore('app', {
+export const useEditorStore = defineStore('editor', {
     state: () => {
         return {
             wheelHooks: [] as OnWheelListener[],
