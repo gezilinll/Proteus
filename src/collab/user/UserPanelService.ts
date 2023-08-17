@@ -5,9 +5,9 @@ export class UserPanelService {
     constructor(private _model: UserPanelModel) {}
 
     handleSelfLogin(user: UserModel) {
-        this._model.self.id = user.id;
-        this._model.self.nickName = user.nickName;
-        this._model.self.color = this._randomColor();
+        this._model.self.value.id = user.id;
+        this._model.self.value.nickName = user.nickName;
+        this._model.self.value.color = this._randomColor();
     }
 
     handleOtherLogin(user: UserModel) {
