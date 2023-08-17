@@ -35,7 +35,9 @@
         </div>
         <div class="function-item-container" @click="presenter.handleZoomTo100Clicked">
             <div class="function-item">
-                <p class="content" style="font-size: 15px">{{ model.current.value + '%' }}</p>
+                <p class="content" style="font-size: 14px; padding-top: 16px">
+                    {{ model.current.value + '%' }}
+                </p>
             </div>
         </div>
         <div class="function-item-container" @click="presenter.handleZoomInClicked">
