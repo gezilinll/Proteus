@@ -6,16 +6,12 @@
         <ZoomPanelView v-if="userStore.isSelfValid()"></ZoomPanelView>
         <CollabPanelView v-if="userStore.isSelfValid()"></CollabPanelView>
         <UserPanelView v-if="userStore.isSelfValid()"></UserPanelView>
-        <div
-            id="loginContainer"
-            class="app-container"
-            style="background-color: rgba(0, 0, 0, 0.3)"
-            v-if="!userStore.isSelfValid()"
-        ></div>
+        <LoginView></LoginView>
     </v-app>
 </template>
 
 <script setup lang="ts">
+import { LoginView } from './login';
 import { EditorView } from './editor';
 import { FunctionView } from './function';
 import { BrushPanelView } from './function/brush';
@@ -25,28 +21,11 @@ import { UserPanelView } from './collab';
 import { useAppStore } from './App.store';
 import { useUserStore } from './collab/User.store';
 import { storeToRefs } from 'pinia';
-import { useGuard } from '@authing/guard-vue3';
-import type { AuthenticationClient, User } from '@authing/guard-vue3';
-import { onMounted } from 'vue';
 
 const store = useAppStore();
 const { selectedFunction } = storeToRefs(store);
 
 const userStore = useUserStore();
-const guard = useGuard();
-onMounted(() => {
-    guard.getAuthClient().then((client: AuthenticationClient) => {
-        client.getCurrentUser().then((user: User | null) => {
-            if (user) {
-                userStore.selfLogin(user.id, user.nickname!);
-            } else {
-                guard.start('#loginContainer').then((userInfo: User) => {
-                    userStore.selfLogin(userInfo.id, userInfo.nickname!);
-                });
-            }
-        });
-    });
-});
 </script>
 
 <style lang="less">
