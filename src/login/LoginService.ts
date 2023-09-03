@@ -1,6 +1,6 @@
-import { UserModel } from '../store/User.store';
 import axios from 'axios';
 import { GITHUB_CLIENT_ID, SERVER_PREFIX } from '../Constants';
+import { UserModel } from '../model/UserModel';
 
 export class LoginService {
     constructor() {}
