@@ -1,5 +1,5 @@
 import { watch } from 'vue';
-import { useAppStore } from '../App.store';
+import { useAppStore } from '../store/App.store';
 import { useModel } from './FunctionPanelModel';
 import { FunctionPanelService } from './FunctionPanelService';
 

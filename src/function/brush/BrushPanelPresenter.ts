@@ -1,7 +1,7 @@
 import { watch } from 'vue';
 import { useModel } from './BrushPanelModel';
 import { BrushPanelService } from './BrushPanelService';
-import { useAppStore } from '../../App.store';
+import { useAppStore } from '../../store/App.store';
 
 const usePresenter = () => {
     const appStore = useAppStore();

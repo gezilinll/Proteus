@@ -43,8 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import usePresenter from './UserPanelPresenter';
+import usePresenter from './PlayerPanelPresenter';
 
 const presenter = usePresenter();
 </script>
@@ -91,3 +90,4 @@ const presenter = usePresenter();
     }
 }
 </style>
+./PlayerPanelPresenter

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { FunctionPanelItem } from './Defines';
+import { FunctionPanelItem } from '../Defines';
 
 export const useAppStore = defineStore('app', {
     state: () => {

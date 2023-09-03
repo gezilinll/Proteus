@@ -6,7 +6,7 @@ import { useModel } from './EditorModel';
 import { EditorService } from './EditorService';
 import { BrushElementService } from './element/brush/BrushElementService';
 import { BrushElementModel } from './element/brush/BrushElementModel';
-import { useAppStore } from '../App.store';
+import { useAppStore } from '../store/App.store';
 import { useEditorStore } from './Editor.store';
 import { watch } from 'vue';
 

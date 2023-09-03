@@ -1,12 +1,11 @@
 import { ref, watch } from 'vue';
-import { useModel } from './LoginModel';
 import { LoginService } from './LoginService';
-import { UserModel, useUserStore } from '../collab/User.store';
+import { UserModel } from '../model/UserModel';
+import { useUserStore } from '../store/User.store';
 
 const usePresenter = () => {
-    const model = useModel();
     const store = useUserStore();
-    const service = new LoginService(model);
+    const service = new LoginService();
     let showLoading = ref(false);
 
     const requestGithubAuth = () => {
@@ -32,7 +31,7 @@ const usePresenter = () => {
         }
     );
 
-    return { model, isLoading, requestGithubAuth };
+    return { isLoading, requestGithubAuth };
 };
 
 export default usePresenter;

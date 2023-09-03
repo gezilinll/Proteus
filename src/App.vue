@@ -5,7 +5,7 @@
         <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
         <ZoomPanelView v-if="userStore.isValidUser()"></ZoomPanelView>
         <CollabPanelView v-if="userStore.isValidUser()"></CollabPanelView>
-        <UserPanelView v-if="userStore.isValidUser()"></UserPanelView>
+        <PlayerPanelView v-if="userStore.isValidUser()"></PlayerPanelView>
         <LoginView v-if="!userStore.isValidUser()"></LoginView>
     </v-app>
 </template>
@@ -16,11 +16,11 @@ import { EditorView } from './editor';
 import { FunctionView } from './function';
 import { BrushPanelView } from './function/brush';
 import { ZoomPanelView } from './zoom';
+import { PlayerPanelView } from './player';
 import { CollabPanelView } from './collab';
-import { UserPanelView } from './collab';
-import { useAppStore } from './App.store';
-import { useUserStore } from './collab/User.store';
+import { useUserStore } from './store/User.store';
 import { storeToRefs } from 'pinia';
+import { useAppStore } from './store/App.store';
 
 const store = useAppStore();
 const { selectedFunction } = storeToRefs(store);
@@ -48,4 +48,4 @@ body {
     overflow: hidden;
 }
 </style>
-./collab/User.store
+./collab/User.store ./model/User.store ./store/App.store

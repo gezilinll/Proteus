@@ -1,12 +1,12 @@
-import { useModel } from './UserPanelModel';
-import { useUserStore } from '../User.store';
-import { UserPanelService } from './UserPanelService';
+import { useModel } from './PlayerPanelModel';
+import { useUserStore } from '../store/User.store';
+import { PlayerPanelService } from './PlayerPanelService';
 import { watch } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 
 const usePresenter = () => {
     const model = useModel();
-    const service = new UserPanelService(model);
+    const service = new PlayerPanelService(model);
 
     const store = useUserStore();
     service.handleSelfLogin(store.self);

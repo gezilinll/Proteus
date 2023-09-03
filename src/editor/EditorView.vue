@@ -9,8 +9,8 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import usePresenter from './EditorPresenter';
 import { useMousePressed, useMouse } from '@vueuse/core';
 import { useWheel } from '@vueuse/gesture';
-import { useAppStore } from '../App.store';
 import { useEditorStore } from './Editor.store';
+import { useAppStore } from '../store/App.store';
 
 const presenter = usePresenter();
 const appStore = useAppStore();
@@ -65,3 +65,4 @@ onMounted(() => {
     height: 100vh;
 }
 </style>
+../store/App.store

@@ -1,8 +1,8 @@
-import { UserModel } from '../User.store';
-import { UserPanelModel } from './UserPanelModel';
+import { UserModel } from '../model/UserModel';
+import { PlayerPanelModel } from './PlayerPanelModel';
 
-export class UserPanelService {
-    constructor(private _model: UserPanelModel) {}
+export class PlayerPanelService {
+    constructor(private _model: PlayerPanelModel) {}
 
     handleSelfLogin(user: UserModel) {
         this._model.self.value.id = user.id;

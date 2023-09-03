@@ -1,10 +1,5 @@
 import { defineStore } from 'pinia';
 
-export interface UserModel {
-    id: string;
-    userName: string;
-}
-
 export const useUserStore = defineStore('user', {
     state: () => {
         return {

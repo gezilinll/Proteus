@@ -69,8 +69,8 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '../store/User.store';
 import usePresenter from './LoginPresenter';
-import { useUserStore } from '../collab/User.store';
 
 const store = useUserStore();
 
@@ -124,3 +124,4 @@ const presenter = usePresenter();
     }
 }
 </style>
+../model/User.store
