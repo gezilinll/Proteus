@@ -2,7 +2,7 @@
     <div class="root-container">
         <div class="login-container">
             <div><h1>Register or Login in</h1></div>
-            <div v-if="presenter.isTourist() && !presenter.isLoading()">
+            <div v-if="store.isTourist() && !presenter.isLoading()">
                 <div>
                     <h4 style="font-size: 12px; color: rgba(0, 0, 0, 0.65)">
                         Create or log in to your account using your existing social media account.
@@ -55,7 +55,7 @@
             </div>
             <div
                 class="progress-container"
-                v-if="presenter.isLoading() || (!presenter.isTourist() && !presenter.isValidUser())"
+                v-if="presenter.isLoading() || (!store.isTourist() && !store.isValidUser())"
             >
                 <v-progress-circular
                     :size="70"
@@ -70,6 +70,9 @@
 
 <script setup lang="ts">
 import usePresenter from './LoginPresenter';
+import { useUserStore } from '../collab/User.store';
+
+const store = useUserStore();
 
 const presenter = usePresenter();
 </script>

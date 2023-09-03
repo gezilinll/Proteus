@@ -1,12 +1,12 @@
 <template>
     <v-app class="app-container">
         <EditorView></EditorView>
-        <FunctionView v-if="userStore.isSelfValid()"></FunctionView>
+        <FunctionView v-if="userStore.isValidUser()"></FunctionView>
         <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
-        <ZoomPanelView v-if="userStore.isSelfValid()"></ZoomPanelView>
-        <CollabPanelView v-if="userStore.isSelfValid()"></CollabPanelView>
-        <UserPanelView v-if="userStore.isSelfValid()"></UserPanelView>
-        <LoginView></LoginView>
+        <ZoomPanelView v-if="userStore.isValidUser()"></ZoomPanelView>
+        <CollabPanelView v-if="userStore.isValidUser()"></CollabPanelView>
+        <UserPanelView v-if="userStore.isValidUser()"></UserPanelView>
+        <LoginView v-if="!userStore.isValidUser()"></LoginView>
     </v-app>
 </template>
 

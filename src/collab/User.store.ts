@@ -13,7 +13,11 @@ export const useUserStore = defineStore('user', {
         };
     },
     actions: {
-        isSelfValid() {
+        isTourist() {
+            return !this.self.id;
+        },
+
+        isValidUser() {
             return this.self.id && this.self.userName;
         },
 
