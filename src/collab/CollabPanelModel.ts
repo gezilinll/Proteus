@@ -3,9 +3,9 @@ import { reactive, ref } from 'vue';
 export const useModel = () => {
     const id = ref('');
 
-    const nickName = ref('');
+    const userName = ref('');
 
-    return { id, nickName };
+    return { id, userName };
 };
 
 export type UserModel = ReturnType<typeof useModel>;

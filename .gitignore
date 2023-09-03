@@ -22,3 +22,6 @@ dist-ssr
 *.sw?
 
 Stats.html
+
+Server/src/login.js
+Server/src/whiteboard.js

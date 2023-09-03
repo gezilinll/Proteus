@@ -3,10 +3,10 @@
         <div
             class="user-item-container"
             :style="{ border: 'solid ' + presenter.model.self.value.color + ' 2px' }"
-            :title="presenter.model.self.value.nickName"
+            :title="presenter.model.self.value.userName"
             @click="presenter.fakeOtherLogin"
         >
-            <span> {{ presenter.model.self.value.nickName }} </span>
+            <span> {{ presenter.model.self.value.userName }} </span>
         </div>
         <div
             style="
@@ -22,15 +22,15 @@
             class="user-item-container"
             :style="{ border: 'solid ' + presenter.model.others.value[0].color + ' 2px' }"
             v-if="presenter.model.others.value.length > 0"
-            :title="presenter.model.others.value[0].nickName"
+            :title="presenter.model.others.value[0].userName"
         >
-            <span> {{ presenter.model.others.value[0].nickName }} </span>
+            <span> {{ presenter.model.others.value[0].userName }} </span>
         </div>
         <div
             class="user-item-container"
             style="background-color: white; border: solid #dbd9d9 2px"
             v-if="presenter.model.others.value.length > 1"
-            :title="presenter.model.others.value[0].nickName"
+            :title="presenter.model.others.value[0].userName"
         >
             <span style="font-size: 10px; font-weight: bold">
                 {{ '+' + (presenter.model.others.value.length - 1) }}

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export interface UserModel {
     id: string;
-    nickName: string;
+    userName: string;
 }
 
 export const useUserStore = defineStore('user', {
@@ -14,16 +14,16 @@ export const useUserStore = defineStore('user', {
     },
     actions: {
         isSelfValid() {
-            return this.self.id && this.self.nickName;
+            return this.self.id && this.self.userName;
         },
 
-        selfLogin(id: string, nickName: string) {
+        selfLogin(id: string, userName: string) {
             this.self.id = id;
-            this.self.nickName = nickName;
+            this.self.userName = userName;
         },
 
-        otherLogin(id: string, nickName: string) {
-            this.others.push({ id, nickName });
+        otherLogin(id: string, userName: string) {
+            this.others.push({ id, userName });
         },
     },
 });

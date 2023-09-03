@@ -26,6 +26,11 @@ const store = useAppStore();
 const { selectedFunction } = storeToRefs(store);
 
 const userStore = useUserStore();
+
+let urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('id')) {
+    userStore.self.id = urlParams.get('id')!;
+}
 </script>
 
 <style lang="less">

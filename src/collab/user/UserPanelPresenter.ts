@@ -39,7 +39,7 @@ const usePresenter = () => {
     );
 
     const fakeSelfLogin = () => {
-        store.self.nickName = 'A';
+        store.self.userName = 'A';
     };
 
     const fakeOtherLogin = () => {
