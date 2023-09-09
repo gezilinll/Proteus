@@ -7,7 +7,7 @@ export class LoginService {
 
     requestGithubAuth() {
         const authorize_uri = 'https://github.com/login/oauth/authorize';
-        const redirect_uri = `${SERVER_PREFIX}/api/authorize/github`;
+        const redirect_uri = `${SERVER_PREFIX}/user/authorizeGithub`;
 
         return `${authorize_uri}?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${redirect_uri}`;
     }
@@ -15,7 +15,7 @@ export class LoginService {
     getUserInfo(userID: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await axios.get(`${SERVER_PREFIX}/api/getUserInfo?id=${userID}`);
+                const result = await axios.get(`${SERVER_PREFIX}/user/findOne?id=${userID}`);
                 resolve({ id: result.data.id, userName: result.data.userName } as UserModel);
             } catch (error) {
                 console.log('getUserInfo failed');
