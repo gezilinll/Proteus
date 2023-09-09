@@ -6,11 +6,12 @@ export const useUserStore = defineStore('user', {
         return {
             self: {} as UserModel,
             others: [] as UserModel[],
+            token: '',
         };
     },
     actions: {
         isTourist() {
-            return !this.self.id;
+            return !this.self.id && !this.token;
         },
 
         isValidUser() {

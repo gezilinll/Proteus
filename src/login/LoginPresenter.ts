@@ -18,10 +18,10 @@ const usePresenter = () => {
     };
 
     watch(
-        () => store.self.id,
+        () => store.token,
         () => {
-            if (store.self.id) {
-                service.getUserInfo(store.self.id).then((model) => {
+            if (store.token) {
+                service.getUserInfo(store.self.id, store.token).then((model) => {
                     store.self.userName = (model as UserModel).userName;
                 });
             }

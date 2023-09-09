@@ -23,13 +23,30 @@ import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/App.store';
 
 const store = useAppStore();
+const userStore = useUserStore();
 const { selectedFunction } = storeToRefs(store);
 
-const userStore = useUserStore();
-
 let urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has('id')) {
-    userStore.self.id = urlParams.get('id')!;
+if (urlParams.has('userID') && urlParams.has('token')) {
+    document.cookie = `accessToken=${urlParams.get('token')!}`;
+    document.cookie = `userID=${urlParams.get('userID')!}`;
+    window.location.href = window.location.origin;
+} else {
+    const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('accessToken='))
+        ?.split('=')[1];
+    const userID = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('userID='))
+        ?.split('=')[1];
+    console.log('cookie', token, userID);
+    if (userID) {
+        userStore.self.id = userID;
+    }
+    if (token) {
+        userStore.token = token;
+    }
 }
 </script>
 
