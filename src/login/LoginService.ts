@@ -7,7 +7,7 @@ export class LoginService {
 
     requestGithubAuth() {
         const authorize_uri = 'https://github.com/login/oauth/authorize';
-        const redirect_uri = `${SERVER_PREFIX}/user/authorizeGithub`;
+        const redirect_uri = `${SERVER_PREFIX}/auth/github`;
 
         return `${authorize_uri}?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${redirect_uri}`;
     }

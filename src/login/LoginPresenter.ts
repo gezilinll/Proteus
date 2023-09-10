@@ -21,9 +21,16 @@ const usePresenter = () => {
         () => store.token,
         () => {
             if (store.token) {
-                service.getUserInfo(store.self.id, store.token).then((model) => {
-                    store.self.userName = (model as UserModel).userName;
-                });
+                service
+                    .getUserInfo(store.self.id, store.token)
+                    .then((model) => {
+                        store.self.userName = (model as UserModel).userName;
+                    })
+                    .catch((error) => {
+                        console.log('getUserInfo failed.', error);
+                        store.self.id = '';
+                        store.token = '';
+                    });
             }
         },
         {
