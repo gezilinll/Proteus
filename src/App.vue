@@ -1,12 +1,19 @@
 <template>
     <v-app class="app-container">
         <EditorView></EditorView>
-        <FunctionView v-if="userStore.isValidUser()"></FunctionView>
+        <FunctionView v-if="userStore.isValidUser() && editorStore.isValidRecord()"></FunctionView>
         <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
-        <ZoomPanelView v-if="userStore.isValidUser()"></ZoomPanelView>
-        <CollabPanelView v-if="userStore.isValidUser()"></CollabPanelView>
-        <PlayerPanelView v-if="userStore.isValidUser()"></PlayerPanelView>
+        <ZoomPanelView
+            v-if="userStore.isValidUser() && editorStore.isValidRecord()"
+        ></ZoomPanelView>
+        <CollabPanelView
+            v-if="userStore.isValidUser() && editorStore.isValidRecord()"
+        ></CollabPanelView>
+        <PlayerPanelView
+            v-if="userStore.isValidUser() && editorStore.isValidRecord()"
+        ></PlayerPanelView>
         <LoginView v-if="!userStore.isValidUser()"></LoginView>
+        <HistoryView v-if="userStore.isValidUser() && !editorStore.isValidRecord()"></HistoryView>
     </v-app>
 </template>
 
@@ -14,6 +21,7 @@
 import { LoginView } from './login';
 import { EditorView } from './editor';
 import { FunctionView } from './function';
+import { HistoryView } from './history';
 import { BrushPanelView } from './function/brush';
 import { ZoomPanelView } from './zoom';
 import { PlayerPanelView } from './player';
@@ -21,10 +29,13 @@ import { CollabPanelView } from './collab';
 import { useUserStore } from './store/User.store';
 import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/App.store';
+import { useEditorStore } from './store/Editor.store';
 
-const store = useAppStore();
+const appStore = useAppStore();
 const userStore = useUserStore();
-const { selectedFunction } = storeToRefs(store);
+const editorStore = useEditorStore();
+
+const { selectedFunction } = storeToRefs(appStore);
 
 let urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has('userID') && urlParams.has('token')) {
@@ -40,7 +51,6 @@ if (urlParams.has('userID') && urlParams.has('token')) {
         .split('; ')
         .find((row) => row.startsWith('userID='))
         ?.split('=')[1];
-    console.log('cookie', token, userID);
     if (userID) {
         userStore.self.id = userID;
     }

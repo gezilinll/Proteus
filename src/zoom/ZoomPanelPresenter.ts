@@ -1,7 +1,7 @@
 import { watch } from 'vue';
 import { useModel } from './ZoomPanelModel';
 import { ZoomPanelService } from './ZoomPanelService';
-import { useEditorStore } from '../editor/Editor.store';
+import { useEditorStore } from '../store/Editor.store';
 
 const usePresenter = () => {
     const model = useModel();

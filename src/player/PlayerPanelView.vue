@@ -6,7 +6,7 @@
             :title="presenter.model.self.value.userName"
             @click="presenter.fakeOtherLogin"
         >
-            <span> {{ presenter.model.self.value.userName }} </span>
+            <span> {{ presenter.model.self.value.userName[0].toUpperCase() }} </span>
         </div>
         <div
             style="
@@ -24,7 +24,7 @@
             v-if="presenter.model.others.value.length > 0"
             :title="presenter.model.others.value[0].userName"
         >
-            <span> {{ presenter.model.others.value[0].userName }} </span>
+            <span> {{ presenter.model.others.value[0].userName[0] }} </span>
         </div>
         <div
             class="user-item-container"

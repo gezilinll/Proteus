@@ -77,7 +77,7 @@ const store = useUserStore();
 const presenter = usePresenter();
 </script>
 
-<style lang="less">
+<style lang="less" scoped="true">
 .root-container {
     position: absolute;
     display: flex;

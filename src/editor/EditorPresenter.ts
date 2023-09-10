@@ -7,7 +7,7 @@ import { EditorService } from './EditorService';
 import { BrushElementService } from './element/brush/BrushElementService';
 import { BrushElementModel } from './element/brush/BrushElementModel';
 import { useAppStore } from '../store/App.store';
-import { useEditorStore } from './Editor.store';
+import { useEditorStore } from '../store/Editor.store';
 import { watch } from 'vue';
 
 const usePresenter = () => {
