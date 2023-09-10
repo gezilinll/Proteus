@@ -3,7 +3,7 @@
         <div class="history-container">
             <h1 style="margin-left: 16px; margin-top: 16px">Recent boards</h1>
             <div class="record-list-container" v-if="!presenter.isLoading.value">
-                <div class="create-record-container">
+                <div class="create-record-container" @click="presenter.createBoard()">
                     <span class="create-record-icon-container">
                         <svg
                             fill="#ffffff"
@@ -26,7 +26,11 @@
                         >New board</span
                     >
                 </div>
-                <div class="record-container" v-for="item in model.records.value">
+                <div
+                    class="record-container"
+                    v-for="(item, index) in model.records.value"
+                    @click="presenter.openBoard(index)"
+                >
                     <span class="record-icon-container">
                         <svg
                             width="120px"

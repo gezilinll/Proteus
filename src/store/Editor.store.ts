@@ -7,13 +7,14 @@ export const useEditorStore = defineStore('editor', {
     state: () => {
         return {
             recordID: '',
+            recordTitle: '',
             wheelHooks: [] as OnWheelListener[],
             zoom: 100,
         };
     },
     actions: {
         isValidRecord() {
-            return !!this.recordID;
+            return !!this.recordID && !!this.recordTitle;
         },
 
         registerWheel(listener: OnWheelListener): UnregisterListener {

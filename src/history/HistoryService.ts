@@ -23,4 +23,20 @@ export class HistoryService {
             }
         });
     }
+
+    createBoard(userID: string, token: string): Promise<RecordModel> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await axios.get(`${SERVER_PREFIX}/record/create?userID=${userID}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                resolve({ id: result.data.id, title: result.data.title } as RecordModel);
+            } catch (error) {
+                console.log('loadRecordList failed');
+                reject();
+            }
+        });
+    }
 }
