@@ -24,6 +24,7 @@ const usePresenter = () => {
         service.createBoard(userStore.self.id, userStore.token).then((record: RecordModel) => {
             editorStore.recordID = record.id;
             editorStore.recordTitle = record.title;
+            editorStore.recordContent = record.content;
             isLoading.value = false;
         });
     };
@@ -31,6 +32,7 @@ const usePresenter = () => {
     const openBoard = (index: number) => {
         editorStore.recordID = model.records.value[index].id;
         editorStore.recordTitle = model.records.value[index].title;
+        editorStore.recordContent = model.records.value[index].content;
     };
 
     return { model, isLoading, loadRecordList, createBoard, openBoard };

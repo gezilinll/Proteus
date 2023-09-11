@@ -32,4 +32,13 @@ export abstract class ElementService {
     zoomTo(_x: number, _y: number) {}
 
     abstract render(): void;
+
+    toJSON() {
+        return {
+            id: this._model.uuid,
+            type: this._model.type,
+            position: this._model.position,
+            scale: this._model.scale,
+        };
+    }
 }

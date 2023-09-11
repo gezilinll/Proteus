@@ -8,6 +8,7 @@ export const useEditorStore = defineStore('editor', {
         return {
             recordID: '',
             recordTitle: '',
+            recordContent: '',
             wheelHooks: [] as OnWheelListener[],
             zoom: 100,
         };

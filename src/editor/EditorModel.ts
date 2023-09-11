@@ -19,7 +19,12 @@ export const useModel = () => {
         service: undefined,
     });
 
-    return { viewport, creatingElement };
+    const contentStatus = reactive({
+        dirty: false,
+        uploading: false,
+    });
+
+    return { viewport, creatingElement, contentStatus };
 };
 
 export type EditorModel = ReturnType<typeof useModel>;

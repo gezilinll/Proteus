@@ -50,6 +50,15 @@ export class BrushElementService extends ElementService {
         }
     }
 
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            points: this.model.points,
+            color: this.model.color,
+            weight: this.model.weight,
+        };
+    }
+
     private get model() {
         return this._model as BrushElementModel;
     }

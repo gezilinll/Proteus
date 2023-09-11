@@ -9,10 +9,12 @@ import { BrushElementModel } from './element/brush/BrushElementModel';
 import { useAppStore } from '../store/App.store';
 import { useEditorStore } from '../store/Editor.store';
 import { watch } from 'vue';
+import { useUserStore } from '../store/User.store';
 
 const usePresenter = () => {
     const appStore = useAppStore();
     const editorStore = useEditorStore();
+    const userStore = useUserStore();
 
     const mouse = {
         type: 'moving' as 'pressed' | 'dragging' | 'moving',
@@ -24,13 +26,22 @@ const usePresenter = () => {
     const editorModel = useModel();
     let editorService: EditorService | undefined = undefined;
 
-    watch(
-        () => editorStore.zoom,
-        () => {
-            bgService?.zoomTo(editorStore.zoom / 100);
-            editorService?.zoomTo(editorStore.zoom / 100);
+    const uploadContent = () => {
+        if (!editorModel.contentStatus.uploading && editorModel.contentStatus.dirty) {
+            editorModel.contentStatus.uploading = true;
+            editorModel.contentStatus.dirty = false;
+            editorService!
+                .uploadContent(
+                    editorStore.recordID,
+                    editorService!.exportContent(),
+                    userStore.token
+                )
+                .then(() => {
+                    editorModel.contentStatus.uploading = false;
+                });
         }
-    );
+        requestAnimationFrame(uploadContent);
+    };
 
     const setup = (canvas: HTMLCanvasElement) => {
         const pixi = new PIXI.Application({
@@ -51,6 +62,26 @@ const usePresenter = () => {
         editorModel.viewport.canvasWidth = pixi.view.width / window.devicePixelRatio;
         editorModel.viewport.canvasHeight = pixi.view.height / window.devicePixelRatio;
         editorService = new EditorService(pixi, editorModel);
+
+        watch(
+            () => editorStore.zoom,
+            () => {
+                bgService!.zoomTo(editorStore.zoom / 100);
+                editorService!.zoomTo(editorStore.zoom / 100);
+            }
+        );
+
+        watch(
+            () => editorStore.recordContent,
+            () => {
+                if (editorStore.recordContent) {
+                    editorService!.loadFromContent(editorStore.recordContent);
+                }
+            },
+            { immediate: true }
+        );
+
+        requestAnimationFrame(uploadContent);
     };
 
     const onMouseDown = (type: FunctionPanelItem, x: number, y: number) => {
@@ -92,6 +123,9 @@ const usePresenter = () => {
 
     const onMouseUp = (type: FunctionPanelItem) => {
         mouse.type = 'moving';
+        if (editorModel.creatingElement.model) {
+            editorModel.contentStatus.dirty = true;
+        }
         editorModel.creatingElement.model = undefined;
         editorModel.creatingElement.service = undefined;
     };

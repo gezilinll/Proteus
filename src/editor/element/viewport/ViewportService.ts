@@ -16,6 +16,10 @@ export class ViewportService {
         this.sprite = new PIXI.Container();
     }
 
+    get elements() {
+        return this._model.elements;
+    }
+
     add(model: ElementModel, service: ElementService) {
         this._model.elements.push(model);
         this.sprite.addChild(service.sprite);

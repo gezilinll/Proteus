@@ -15,7 +15,6 @@ export class HistoryService {
                     },
                 });
                 this._model.records.value = result.data as RecordModel[];
-                console.log('loadRecordList', this._model.records);
                 resolve(null);
             } catch (error) {
                 console.log('loadRecordList failed');
@@ -32,7 +31,11 @@ export class HistoryService {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                resolve({ id: result.data.id, title: result.data.title } as RecordModel);
+                resolve({
+                    id: result.data.id,
+                    title: result.data.title,
+                    content: result.data.content,
+                } as RecordModel);
             } catch (error) {
                 console.log('loadRecordList failed');
                 reject();
