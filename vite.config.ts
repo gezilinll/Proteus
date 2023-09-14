@@ -17,9 +17,13 @@ export default defineConfig({
             strategies: 'injectManifest',
             srcDir: 'src',
             filename: 'ServiceWorker.js',
+            registerType: 'autoUpdate',
             devOptions: {
                 enabled: true,
                 type: 'module',
+            },
+            workbox: {
+                cleanupOutdatedCaches: false,
             },
         }),
     ],

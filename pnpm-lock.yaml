@@ -46,6 +46,9 @@ dependencies:
   vuetify:
     specifier: ^3.3.10
     version: 3.3.10(typescript@5.0.4)(vue@3.3.4)
+  workbox-window:
+    specifier: ^7.0.0
+    version: 7.0.0
   y-websocket:
     specifier: ^1.5.0
     version: 1.5.0(yjs@13.6.1)
@@ -92,7 +95,7 @@ devDependencies:
     version: 1.16.0(vite@4.3.9)
   vite-plugin-pwa:
     specifier: ^0.16.5
-    version: 0.16.5(vite@4.3.9)
+    version: 0.16.5(vite@4.3.9)(workbox-window@7.0.0)
   vue-tsc:
     specifier: ^1.4.2
     version: 1.6.5(typescript@5.0.4)
@@ -2186,7 +2189,6 @@ packages:
 
   /@types/trusted-types@2.0.4:
     resolution: {integrity: sha512-IDaobHimLQhjwsQ/NMwRVfa/yL7L/wriQPMhw1ZJall0KX6E1oxk29XMDeilW5qTIg5aoiqf5Udy8U/51aNoQQ==}
-    dev: true
 
   /@types/uuid@9.0.2:
     resolution: {integrity: sha512-kNnC1GFBLuhImSnV7w4njQkUiJi0ZXUycu1rUaouPqiKlXkh77JKgdRnTAp1x5eBwcIwbtI+3otwzuIDEuDoxQ==}
@@ -4718,11 +4720,12 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-pwa@0.16.5(vite@4.3.9):
+  /vite-plugin-pwa@0.16.5(vite@4.3.9)(workbox-window@7.0.0):
     resolution: {integrity: sha512-Ahol4dwhMP2UHPQXkllSlXbihOaDFnvBIDPmAxoSZ1EObBUJGP4CMRyCyAVkIHjd6/H+//vH0DM2ON+XxHr81g==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0
+      workbox-window: ^7.0.0
     dependencies:
       debug: 4.3.4
       fast-glob: 3.3.1
@@ -4961,7 +4964,6 @@ packages:
 
   /workbox-core@7.0.0:
     resolution: {integrity: sha512-81JkAAZtfVP8darBpfRTovHg8DGAVrKFgHpOArZbdFd78VqHr5Iw65f2guwjE2NlCFbPFDoez3D3/6ZvhI/rwQ==}
-    dev: true
 
   /workbox-expiration@7.0.0:
     resolution: {integrity: sha512-MLK+fogW+pC3IWU9SFE+FRStvDVutwJMR5if1g7oBJx3qwmO69BNoJQVaMXq41R0gg3MzxVfwOGKx3i9P6sOLQ==}
@@ -5038,7 +5040,6 @@ packages:
     dependencies:
       '@types/trusted-types': 2.0.4
       workbox-core: 7.0.0
-    dev: true
 
   /wrap-ansi@7.0.0:
     resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}
