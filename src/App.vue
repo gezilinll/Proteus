@@ -30,6 +30,7 @@ import { useUserStore } from './store/User.store';
 import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/App.store';
 import { useEditorStore } from './store/Editor.store';
+import { onUnmounted } from 'vue';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -37,27 +38,40 @@ const editorStore = useEditorStore();
 
 const { selectedFunction } = storeToRefs(appStore);
 
-let urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has('userID') && urlParams.has('token')) {
-    document.cookie = `accessToken=${urlParams.get('token')!}`;
-    document.cookie = `userID=${urlParams.get('userID')!}`;
-    window.location.href = window.location.origin;
-} else {
-    const token = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('accessToken='))
-        ?.split('=')[1];
-    const userID = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('userID='))
-        ?.split('=')[1];
-    if (userID) {
-        userStore.self.id = userID;
-    }
-    if (token) {
-        userStore.token = token;
-    }
+let swRegister: ServiceWorkerRegistration | null = null;
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+        .register('/src/ServiceWorker.js')
+        .then((registration) => {
+            swRegister = registration;
+            let urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('userID') && urlParams.has('token')) {
+                document.cookie = `accessToken=${urlParams.get('token')!}`;
+                document.cookie = `userID=${urlParams.get('userID')!}`;
+                window.location.href = window.location.origin;
+            } else {
+                const token = document.cookie
+                    .split('; ')
+                    .find((row) => row.startsWith('accessToken='))
+                    ?.split('=')[1];
+                const userID = document.cookie
+                    .split('; ')
+                    .find((row) => row.startsWith('userID='))
+                    ?.split('=')[1];
+                if (userID) {
+                    userStore.self.id = userID;
+                }
+                if (token) {
+                    userStore.token = token;
+                }
+            }
+        })
+        .catch((error) => console.log('register sw failed', error));
 }
+
+onUnmounted(() => {
+    swRegister?.unregister();
+});
 </script>
 
 <style lang="less">

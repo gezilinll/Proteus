@@ -12,14 +12,10 @@ export class LoginService {
         return `${authorize_uri}?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${redirect_uri}`;
     }
 
-    getUserInfo(userID: string, token: string) {
+    getUserInfo(userID: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await axios.get(`${SERVER_PREFIX}/user/findOne?id=${userID}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const result = await axios.get(`${SERVER_PREFIX}/user/findOne?id=${userID}`);
                 resolve({ id: result.data.id, userName: result.data.userName } as UserModel);
             } catch (error) {
                 console.log('getUserInfo failed');

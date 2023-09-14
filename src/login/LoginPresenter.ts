@@ -21,8 +21,12 @@ const usePresenter = () => {
         () => store.token,
         () => {
             if (store.token) {
+                navigator.serviceWorker.controller!.postMessage({
+                    type: 'SET_TOKEN',
+                    token: store.token,
+                });
                 service
-                    .getUserInfo(store.self.id, store.token)
+                    .getUserInfo(store.self.id)
                     .then((model) => {
                         store.self.userName = (model as UserModel).userName;
                     })

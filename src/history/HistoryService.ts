@@ -6,14 +6,10 @@ import { RecordModel } from '../model/RecordModel';
 export class HistoryService {
     constructor(private _model: HistoryModel) {}
 
-    loadRecordList(userID: string, token: string) {
+    loadRecordList(userID: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await axios.get(`${SERVER_PREFIX}/record/findAll?userID=${userID}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const result = await axios.get(`${SERVER_PREFIX}/record/findAll?userID=${userID}`);
                 this._model.records.value = result.data as RecordModel[];
                 resolve(null);
             } catch (error) {
@@ -23,14 +19,10 @@ export class HistoryService {
         });
     }
 
-    createBoard(userID: string, token: string): Promise<RecordModel> {
+    createBoard(userID: string): Promise<RecordModel> {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await axios.get(`${SERVER_PREFIX}/record/create?userID=${userID}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const result = await axios.get(`${SERVER_PREFIX}/record/create?userID=${userID}`);
                 resolve({
                     id: result.data.id,
                     title: result.data.title,

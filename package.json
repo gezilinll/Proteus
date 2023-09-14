@@ -2,13 +2,13 @@
     "name": "blitz",
     "private": true,
     "version": "0.0.0",
-    "type": "module",
     "license": "GPL-3.0-or-later",
     "author": "gezilinll",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "test": "playwright test"
     },
     "dependencies": {
         "@hocuspocus/provider": "^2.1.0",
@@ -31,6 +31,7 @@
     },
     "devDependencies": {
         "@mdi/font": "^7.2.96",
+        "@playwright/test": "^1.37.1",
         "@types/js-cookie": "^3.0.3",
         "@types/protoo-client": "^4.0.1",
         "@types/random-string": "^0.0.28",
@@ -40,6 +41,8 @@
         "typescript": "^5.0.2",
         "vite": "^4.3.9",
         "vite-plugin-compression": "^0.5.1",
+        "vite-plugin-mkcert": "^1.16.0",
+        "vite-plugin-pwa": "^0.16.5",
         "vue-tsc": "^1.4.2"
     }
 }

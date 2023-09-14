@@ -15,13 +15,13 @@ const usePresenter = () => {
     const isLoading = ref(true);
 
     const loadRecordList = async () => {
-        await service.loadRecordList(userStore.self.id, userStore.token);
+        await service.loadRecordList(userStore.self.id);
         isLoading.value = false;
     };
 
     const createBoard = () => {
         isLoading.value = true;
-        service.createBoard(userStore.self.id, userStore.token).then((record: RecordModel) => {
+        service.createBoard(userStore.self.id).then((record: RecordModel) => {
             editorStore.recordID = record.id;
             editorStore.recordTitle = record.title;
             editorStore.recordContent = record.content;

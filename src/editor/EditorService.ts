@@ -21,9 +21,9 @@ export class EditorService {
 
     loadFromContent(json: string) {
         const elements = JSON.parse(json) as ElementModel[];
-        for (const item of elements) {
-            //TODO
-        }
+        // for (const item of elements) {
+        //     //TODO
+        // }
         console.log('loadFromContent', json, elements);
     }
 
