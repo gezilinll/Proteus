@@ -22,13 +22,13 @@
                             </g>
                         </svg>
                     </span>
-                    <span class="create-record-title-container" style="color: white"
+                    <span class="create-record-title-container board-title" style="color: white"
                         >New board</span
                     >
                 </div>
                 <div
                     class="record-container"
-                    v-for="(item, index) in model.records.value"
+                    v-for="(item, index) in model.boards.value"
                     @click="presenter.openBoard(index)"
                 >
                     <span class="record-icon-container">
@@ -80,9 +80,14 @@
                             </g>
                         </svg>
                     </span>
-                    <span class="record-title-container" style="color: black">{{
-                        item.title
-                    }}</span>
+                    <div class="record-title-container">
+                        <span class="board-title" style="color: black; padding-top: 20px">{{
+                            item.title
+                        }}</span>
+                    </div>
+                    <div class="record-time-container">
+                        <span class="board-date">{{ 'Modified at ' + item.updatedAt }}</span>
+                    </div>
                 </div>
             </div>
 
@@ -100,18 +105,20 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import usePresenter from './HistoryPresenter';
+import usePresenter from './BoardPresenter';
 
 const presenter = usePresenter();
 
 const { model } = presenter;
 
 onMounted(() => {
-    presenter.loadRecordList();
+    presenter.loadBoardList();
 });
 </script>
 
 <style lang="less" scoped="true">
+@import url('~@/../../style/Variables.less');
+@import url('~@/../../style/Common.less');
 .root-container {
     position: absolute;
     display: flex;
@@ -193,10 +200,16 @@ onMounted(() => {
 
 .record-title-container {
     width: 180px;
-    height: 60px;
+    height: 30px;
     display: flex;
     justify-content: center;
-    align-items: center;
+}
+
+.record-time-container {
+    width: 180px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
 }
 
 .progress-container {
@@ -206,4 +219,16 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
 }
+
+.board-title {
+    font-family: @g-font-family;
+}
+
+.board-date {
+    font-family: @g-font-family;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.4);
+    padding-top: 10px;
+}
 </style>
+./BoardPresenter

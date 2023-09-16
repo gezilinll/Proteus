@@ -1,35 +1,35 @@
 import axios from 'axios';
-import { HistoryModel } from './HistoryModel';
+import { HistoryModel } from './BoardModel';
 import { SERVER_PREFIX } from '../Constants';
-import { RecordModel } from '../model/RecordModel';
+import { BoardModel } from '../model/BoardModel';
 
-export class HistoryService {
+export class BoardService {
     constructor(private _model: HistoryModel) {}
 
-    loadRecordList(userID: string) {
+    loadBoardList(userID: string) {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await axios.get(`${SERVER_PREFIX}/record/findAll?userID=${userID}`);
-                this._model.records.value = result.data as RecordModel[];
+                const result = await axios.get(`${SERVER_PREFIX}/board/findAll?userID=${userID}`);
+                this._model.boards.value = result.data as BoardModel[];
                 resolve(null);
             } catch (error) {
-                console.log('loadRecordList failed');
+                console.log('loadBoardList failed');
                 reject();
             }
         });
     }
 
-    createBoard(userID: string): Promise<RecordModel> {
+    createBoard(userID: string): Promise<BoardModel> {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await axios.get(`${SERVER_PREFIX}/record/create?userID=${userID}`);
+                const result = await axios.get(`${SERVER_PREFIX}/board/create?userID=${userID}`);
                 resolve({
                     id: result.data.id,
                     title: result.data.title,
                     content: result.data.content,
-                } as RecordModel);
+                } as BoardModel);
             } catch (error) {
-                console.log('loadRecordList failed');
+                console.log('createBoard failed');
                 reject();
             }
         });

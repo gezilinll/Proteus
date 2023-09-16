@@ -6,16 +6,16 @@ export declare type UnregisterListener = () => void;
 export const useEditorStore = defineStore('editor', {
     state: () => {
         return {
-            recordID: '',
-            recordTitle: '',
-            recordContent: '',
+            boardID: '',
+            boardTitle: '',
+            boardContent: '',
             wheelHooks: [] as OnWheelListener[],
             zoom: 100,
         };
     },
     actions: {
-        isValidRecord() {
-            return !!this.recordID && !!this.recordTitle;
+        isValidBoard() {
+            return !!this.boardID && !!this.boardTitle;
         },
 
         registerWheel(listener: OnWheelListener): UnregisterListener {

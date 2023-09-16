@@ -1,22 +1,20 @@
 <template>
     <v-app class="app-container">
         <EditorView></EditorView>
-        <FunctionView v-if="userStore.isValidUser() && editorStore.isValidRecord()"></FunctionView>
+        <FunctionView v-if="userStore.isValidUser() && editorStore.isValidBoard()"></FunctionView>
         <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
         <NavigationPanelView
-            v-if="userStore.isValidUser() && editorStore.isValidRecord()"
+            v-if="userStore.isValidUser() && editorStore.isValidBoard()"
         ></NavigationPanelView>
-        <ZoomPanelView
-            v-if="userStore.isValidUser() && editorStore.isValidRecord()"
-        ></ZoomPanelView>
+        <ZoomPanelView v-if="userStore.isValidUser() && editorStore.isValidBoard()"></ZoomPanelView>
         <CollabPanelView
-            v-if="userStore.isValidUser() && editorStore.isValidRecord()"
+            v-if="userStore.isValidUser() && editorStore.isValidBoard()"
         ></CollabPanelView>
         <PlayerPanelView
-            v-if="userStore.isValidUser() && editorStore.isValidRecord()"
+            v-if="userStore.isValidUser() && editorStore.isValidBoard()"
         ></PlayerPanelView>
         <LoginView v-if="!userStore.isValidUser()"></LoginView>
-        <HistoryView v-if="userStore.isValidUser() && !editorStore.isValidRecord()"></HistoryView>
+        <MyBoardsView v-if="userStore.isValidUser() && !editorStore.isValidBoard()"></MyBoardsView>
     </v-app>
 </template>
 
@@ -24,7 +22,7 @@
 import { LoginView } from './login';
 import { EditorView } from './editor';
 import { FunctionView } from './function';
-import { HistoryView } from './history';
+import { MyBoardsView } from './board';
 import { BrushPanelView } from './function/brush';
 import { ZoomPanelView } from './zoom';
 import { NavigationPanelView } from './navigation';
@@ -90,4 +88,4 @@ body {
     overflow: hidden;
 }
 </style>
-./collab/User.store ./model/User.store ./store/App.store
+./collab/User.store ./model/User.store ./store/App.store ./board

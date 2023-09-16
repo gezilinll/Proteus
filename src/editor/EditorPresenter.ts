@@ -31,11 +31,7 @@ const usePresenter = () => {
             editorModel.contentStatus.uploading = true;
             editorModel.contentStatus.dirty = false;
             editorService!
-                .uploadContent(
-                    editorStore.recordID,
-                    editorService!.exportContent(),
-                    userStore.token
-                )
+                .uploadContent(editorStore.boardID, editorService!.exportContent(), userStore.token)
                 .then(() => {
                     editorModel.contentStatus.uploading = false;
                 });
@@ -72,10 +68,10 @@ const usePresenter = () => {
         );
 
         watch(
-            () => editorStore.recordContent,
+            () => editorStore.boardContent,
             () => {
-                if (editorStore.recordContent) {
-                    editorService!.loadFromContent(editorStore.recordContent);
+                if (editorStore.boardContent) {
+                    editorService!.loadFromContent(editorStore.boardContent);
                 }
             },
             { immediate: true }
