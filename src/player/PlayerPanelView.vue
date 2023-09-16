@@ -10,10 +10,10 @@
         </div>
         <div
             style="
-                border: 0.5px solid rgba(0, 0, 0, 0.3);
+                border: 0.5px solid rgba(0, 0, 0, 0.2);
                 height: 25px;
                 margin-top: 3px;
-                margin-left: 3px;
+                margin-left: 1px;
                 margin-right: 3px;
             "
             v-if="presenter.model.others.value.length > 0"

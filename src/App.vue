@@ -3,6 +3,9 @@
         <EditorView></EditorView>
         <FunctionView v-if="userStore.isValidUser() && editorStore.isValidRecord()"></FunctionView>
         <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
+        <NavigationPanelView
+            v-if="userStore.isValidUser() && editorStore.isValidRecord()"
+        ></NavigationPanelView>
         <ZoomPanelView
             v-if="userStore.isValidUser() && editorStore.isValidRecord()"
         ></ZoomPanelView>
@@ -24,6 +27,7 @@ import { FunctionView } from './function';
 import { HistoryView } from './history';
 import { BrushPanelView } from './function/brush';
 import { ZoomPanelView } from './zoom';
+import { NavigationPanelView } from './navigation';
 import { PlayerPanelView } from './player';
 import { CollabPanelView } from './collab';
 import { useUserStore } from './store/User.store';
@@ -31,6 +35,7 @@ import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/App.store';
 import { useEditorStore } from './store/Editor.store';
 import { onUnmounted } from 'vue';
+// @ts-expect-error
 import { registerSW } from 'virtual:pwa-register';
 
 const appStore = useAppStore();
