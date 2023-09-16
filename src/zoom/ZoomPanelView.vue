@@ -1,6 +1,6 @@
 <template>
     <div class="function-container" @click="presenter.handleFitToScreenClicked">
-        <div class="function-item-container">
+        <div class="function-item-container" v-tooltip.top="'Fit to screen'">
             <span class="function-item">
                 <svg
                     class="content"
@@ -18,7 +18,11 @@
                 </svg>
             </span>
         </div>
-        <div class="function-item-container" @click="presenter.handleZoomOutClicked">
+        <div
+            class="function-item-container"
+            @click="presenter.handleZoomOutClicked"
+            v-tooltip.top="'Zoom out'"
+        >
             <span class="function-item">
                 <svg
                     class="content"
@@ -33,14 +37,22 @@
                 </svg>
             </span>
         </div>
-        <div class="function-item-container" @click="presenter.handleZoomTo100Clicked">
+        <div
+            class="function-item-container"
+            @click="presenter.handleZoomTo100Clicked"
+            v-tooltip.top="'Zoom to 100%'"
+        >
             <div class="function-item">
-                <p class="content" style="font-size: 14px">
+                <p class="content zoom-value">
                     {{ model.current.value + '%' }}
                 </p>
             </div>
         </div>
-        <div class="function-item-container" @click="presenter.handleZoomInClicked">
+        <div
+            class="function-item-container"
+            @click="presenter.handleZoomInClicked"
+            v-tooltip.top="'Zoom in'"
+        >
             <span class="function-item">
                 <svg
                     class="content"
@@ -69,6 +81,9 @@ const { model } = presenter;
 </script>
 
 <style lang="less" scoped>
+@import url('../style/Variables.less');
+@import url('../style/Common.less');
+
 @height: 50px;
 @itemSize: 40px;
 @margin: 5px;
@@ -96,9 +111,7 @@ const { model } = presenter;
 }
 
 .function-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    .g-center();
     box-sizing: border-box;
     margin: @margin;
     height: @itemSize - (2 * @margin);
@@ -109,5 +122,10 @@ const { model } = presenter;
     &:hover {
         color: blue;
     }
+}
+
+.zoom-value {
+    font-size: 18px;
+    font-family: 'Gill Sans', sans-serif;
 }
 </style>

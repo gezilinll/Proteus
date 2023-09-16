@@ -7,6 +7,7 @@
                     : 'function-item-container'
             "
             @click="presenter.handleSelectorClicked"
+            v-tooltip.right="'Select'"
         >
             <span class="function-item">
                 <svg
@@ -32,6 +33,7 @@
                     : 'function-item-container'
             "
             @click="presenter.handleGrabClicked"
+            v-tooltip.right="'Drag this board'"
         >
             <span class="function-item">
                 <svg
@@ -56,6 +58,7 @@
                     : 'function-item-container'
             "
             @click="presenter.handleBrushClicked"
+            v-tooltip.right="'Pen'"
         >
             <span class="function-item">
                 <svg

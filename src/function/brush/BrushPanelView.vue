@@ -1,6 +1,10 @@
 <template>
     <div class="function-container">
-        <div class="function-item-container" @click="presenter.handlePenClicked">
+        <div
+            class="function-item-container"
+            @click="presenter.handlePenClicked"
+            v-tooltip.right="'Pen'"
+        >
             <span class="function-item">
                 <svg
                     :class="model.selected.value === 'pen' ? 'svg-item-selected' : 'svg-item'"
@@ -24,7 +28,11 @@
                 </svg>
             </span>
         </div>
-        <div class="function-item-container" @click="presenter.handleHighlighterClicked">
+        <div
+            class="function-item-container"
+            @click="presenter.handleHighlighterClicked"
+            v-tooltip.right="'Highlighter'"
+        >
             <span class="function-item">
                 <svg
                     :class="
@@ -55,7 +63,11 @@
                 </svg>
             </span>
         </div>
-        <div class="function-item-container" @click="presenter.handleEraserClicked">
+        <div
+            class="function-item-container"
+            @click="presenter.handleEraserClicked"
+            v-tooltip.right="'Eraser'"
+        >
             <span class="function-item">
                 <svg
                     viewBox="0 0 24 24"

@@ -3,10 +3,12 @@
         <div
             class="user-item-container"
             :style="{ border: 'solid ' + presenter.model.self.value.color + ' 2px' }"
-            :title="presenter.model.self.value.userName"
+            v-tooltip.bottom="presenter.model.self.value.userName"
             @click="presenter.fakeOtherLogin"
         >
-            <span> {{ presenter.model.self.value.userName[0].toUpperCase() }} </span>
+            <span class="text-content">
+                {{ presenter.model.self.value.userName[0].toUpperCase() }}
+            </span>
         </div>
         <div
             style="
@@ -22,22 +24,25 @@
             class="user-item-container"
             :style="{ border: 'solid ' + presenter.model.others.value[0].color + ' 2px' }"
             v-if="presenter.model.others.value.length > 0"
-            :title="presenter.model.others.value[0].userName"
+            v-tooltip.bottom="presenter.model.others.value[0].userName"
         >
-            <span> {{ presenter.model.others.value[0].userName[0] }} </span>
+            <span class="text-content">
+                {{ presenter.model.others.value[0].userName[0] }}
+            </span>
         </div>
         <div
             class="user-item-container"
             style="background-color: white; border: solid #dbd9d9 2px"
             v-if="presenter.model.others.value.length > 1"
-            :title="presenter.model.others.value[0].userName"
+            v-tooltip.bottom="presenter.model.others.value.length - 1 + ' others'"
         >
-            <span style="font-size: 10px; font-weight: bold">
+            <span class="text-content">
                 {{ '+' + (presenter.model.others.value.length - 1) }}
             </span>
         </div>
-        <div class="share-container">
-            <span style="color: white; font-size: 14px; font-weight: bold"> Share </span>
+
+        <div class="share-container" v-tooltip.bottom="'Shared with others'">
+            <span class="text-content" style="color: white"> Share </span>
         </div>
     </div>
 </template>
@@ -49,6 +54,8 @@ const presenter = usePresenter();
 </script>
 
 <style lang="less" scoped>
+@import url('../style/Variables.less');
+@import url('../style/Common.less');
 .user-container {
     display: flex;
     position: absolute;
@@ -62,10 +69,8 @@ const presenter = usePresenter();
 }
 
 .user-item-container {
+    .g-center();
     box-sizing: border-box;
-    justify-content: center;
-    align-items: center;
-    display: flex;
     width: 30px;
     height: 30px;
     margin-left: 5px;
@@ -76,9 +81,7 @@ const presenter = usePresenter();
 
 .share-container {
     box-sizing: border-box;
-    justify-content: center;
-    align-items: center;
-    display: flex;
+    .g-center();
     width: 55px;
     height: 30px;
     margin-left: 5px;
@@ -89,5 +92,9 @@ const presenter = usePresenter();
         background-color: blue;
     }
 }
+
+.text-content {
+    font-size: 16px;
+    font-family: @g-font-family;
+}
 </style>
-./PlayerPanelPresenter

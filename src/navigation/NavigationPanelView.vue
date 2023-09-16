@@ -1,7 +1,7 @@
 <template>
     <div class="navi-container">
-        <div class="logo-container">
-            <span class="logo">
+        <div class="logo-container" v-tooltip.bottom="'Go to boards'">
+            <span class="logo g-center">
                 <img src="logo.svg" />
             </span>
         </div>
@@ -14,7 +14,7 @@
                 margin-right: 1px;
             "
         ></div>
-        <div class="title-container">
+        <div class="title-container" v-tooltip.bottom="'Edit board title'">
             <span class="title"> Untitled</span>
         </div>
         <div
@@ -26,7 +26,7 @@
                 margin-right: 1px;
             "
         ></div>
-        <div class="function-item-container">
+        <div class="function-item-container" v-tooltip.bottom="'Export this board'">
             <span class="function-item">
                 <svg viewBox="0 0 24 24" fill="none">
                     <g clip-path="url(#clip0_1908_1049)">
@@ -52,6 +52,8 @@
 <script setup lang="ts"></script>
 
 <style lang="less" scoped>
+@import url('~@/../../style/Variables.less');
+@import url('~@/../../style/Common.less');
 @height: 50px;
 @itemSize: 40px;
 @margin: 5px;
@@ -78,9 +80,6 @@
 }
 
 .logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     box-sizing: border-box;
     margin: @margin;
     height: @itemSize - (2 * @margin);
@@ -98,11 +97,19 @@
     padding-right: @margin;
     padding-top: 5px;
     height: @itemSize;
-    font-size: 18px;
     &:hover {
         background-color: rgba(0, 0, 255, 0.1);
         border-radius: 2px;
     }
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    font-size: 18px;
+    font-family: @g-font-family;
 }
 
 .function-item-container {

@@ -1,6 +1,6 @@
 <template>
     <div class="function-container">
-        <div class="function-item-container">
+        <div class="function-item-container" v-tooltip.bottom="'Show collaborators\' cursors'">
             <span class="function-item">
                 <svg viewBox="0 0 24 24" fill="none">
                     <path
@@ -17,7 +17,7 @@
                 </svg>
             </span>
         </div>
-        <div class="function-item-container">
+        <div class="function-item-container" v-tooltip.bottom="'Reactions'">
             <span class="function-item">
                 <svg
                     viewBox="0 0 24 24"
@@ -49,7 +49,7 @@
                 </svg>
             </span>
         </div>
-        <div class="function-item-container">
+        <div class="function-item-container" v-tooltip.bottom="'Comment'">
             <span class="function-item">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
