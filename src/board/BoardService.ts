@@ -23,13 +23,23 @@ export class BoardService {
         return new Promise(async (resolve, reject) => {
             try {
                 const result = await axios.get(`${SERVER_PREFIX}/board/create?userID=${userID}`);
-                resolve({
-                    id: result.data.id,
-                    title: result.data.title,
-                    content: result.data.content,
-                } as BoardModel);
+                this._model.boards.value.push(result.data as BoardModel);
+                resolve(this._model.boards.value[-1]);
             } catch (error) {
                 console.log('createBoard failed');
+                reject();
+            }
+        });
+    }
+
+    loadCurrentBoard(id: string): Promise<BoardModel> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await axios.get(`${SERVER_PREFIX}/board/find?id=${id}`);
+                Object.assign(this._model.currentBoard, result.data);
+                resolve(this._model.currentBoard);
+            } catch (error) {
+                console.log('loadCurrentBoard failed');
                 reject();
             }
         });

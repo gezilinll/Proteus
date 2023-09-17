@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { BoardModel } from '../model/BoardModel';
 
 export declare type OnWheelListener = (moveX: number, moveY: number) => void;
 export declare type UnregisterListener = () => void;
@@ -6,16 +7,16 @@ export declare type UnregisterListener = () => void;
 export const useEditorStore = defineStore('editor', {
     state: () => {
         return {
-            boardID: '',
-            boardTitle: '',
-            boardContent: '',
+            currentBoard: {} as BoardModel,
             wheelHooks: [] as OnWheelListener[],
             zoom: 100,
         };
     },
     actions: {
         isValidBoard() {
-            return !!this.boardID && !!this.boardTitle;
+            return (
+                !!this.currentBoard.id && !!this.currentBoard.title && !!this.currentBoard.content
+            );
         },
 
         registerWheel(listener: OnWheelListener): UnregisterListener {

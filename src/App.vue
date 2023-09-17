@@ -42,29 +42,38 @@ const editorStore = useEditorStore();
 
 const { selectedFunction } = storeToRefs(appStore);
 
+function initFromCookie() {
+    const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('accessToken='))
+        ?.split('=')[1];
+    const userID = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('userID='))
+        ?.split('=')[1];
+    if (userID) {
+        userStore.self.id = userID;
+    }
+    if (token) {
+        userStore.token = token;
+    }
+}
+
 let swRegister: ServiceWorkerRegistration | null = null;
 if ('serviceWorker' in navigator) {
     registerSW();
     let urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('userID') && urlParams.has('token')) {
+    if (urlParams.has('id')) {
+        document.cookie = `id=${urlParams.get('id')!}`;
+        initFromCookie();
+    } else if (urlParams.has('userID') && urlParams.has('token')) {
         document.cookie = `accessToken=${urlParams.get('token')!}`;
         document.cookie = `userID=${urlParams.get('userID')!}`;
+        document.cookie = 'id=';
         window.location.href = window.location.origin;
     } else {
-        const token = document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('accessToken='))
-            ?.split('=')[1];
-        const userID = document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('userID='))
-            ?.split('=')[1];
-        if (userID) {
-            userStore.self.id = userID;
-        }
-        if (token) {
-            userStore.token = token;
-        }
+        document.cookie = 'id=';
+        initFromCookie();
     }
 }
 

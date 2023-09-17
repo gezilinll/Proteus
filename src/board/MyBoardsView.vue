@@ -29,7 +29,7 @@
                 <div
                     class="record-container"
                     v-for="(item, index) in model.boards.value"
-                    @click="presenter.openBoard(index)"
+                    @click="presenter.prepareOpenBoard(index)"
                 >
                     <span class="record-icon-container">
                         <svg
@@ -112,7 +112,15 @@ const presenter = usePresenter();
 const { model } = presenter;
 
 onMounted(() => {
-    presenter.loadBoardList();
+    const boardID = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('id='))
+        ?.split('=')[1];
+    if (boardID) {
+        presenter.loadCurrentBoard(boardID);
+    } else {
+        presenter.loadBoardList();
+    }
 });
 </script>
 
