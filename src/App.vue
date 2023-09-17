@@ -33,8 +33,8 @@ import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/App.store';
 import { useEditorStore } from './store/Editor.store';
 import { onUnmounted } from 'vue';
-// @ts-expect-error
-import { registerSW } from 'virtual:pwa-register';
+import { register } from 'register-service-worker';
+import axios from 'axios';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -55,31 +55,24 @@ function initFromCookie() {
         userStore.self.id = userID;
     }
     if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         userStore.token = token;
     }
 }
 
-let swRegister: ServiceWorkerRegistration | null = null;
-if ('serviceWorker' in navigator) {
-    registerSW();
-    let urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('id')) {
-        document.cookie = `id=${urlParams.get('id')!}`;
-        initFromCookie();
-    } else if (urlParams.has('userID') && urlParams.has('token')) {
-        document.cookie = `accessToken=${urlParams.get('token')!}`;
-        document.cookie = `userID=${urlParams.get('userID')!}`;
-        document.cookie = 'id=';
-        window.location.href = window.location.origin;
-    } else {
-        document.cookie = 'id=';
-        initFromCookie();
-    }
+let urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has('id')) {
+    document.cookie = `id=${urlParams.get('id')!}`;
+    initFromCookie();
+} else if (urlParams.has('userID') && urlParams.has('token')) {
+    document.cookie = `accessToken=${urlParams.get('token')!}`;
+    document.cookie = `userID=${urlParams.get('userID')!}`;
+    document.cookie = 'id=';
+    window.location.href = window.location.origin;
+} else {
+    document.cookie = 'id=';
+    initFromCookie();
 }
-
-onUnmounted(() => {
-    swRegister?.unregister();
-});
 </script>
 
 <style lang="less">

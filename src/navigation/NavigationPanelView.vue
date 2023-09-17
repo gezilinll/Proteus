@@ -2,7 +2,7 @@
     <div class="navi-container">
         <div class="logo-container" v-tooltip.bottom="'Go to boards'">
             <span class="logo g-center">
-                <img src="logo.svg" />
+                <img src="/logo.svg" />
             </span>
         </div>
         <div
