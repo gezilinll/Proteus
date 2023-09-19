@@ -24,7 +24,7 @@ export class BoardService {
             try {
                 const result = await axios.get(`${SERVER_PREFIX}/board/create?userID=${userID}`);
                 this._model.boards.value.push(result.data as BoardModel);
-                resolve(this._model.boards.value[-1]);
+                resolve(this._model.boards.value.at(-1)!);
             } catch (error) {
                 console.log('createBoard failed');
                 reject();

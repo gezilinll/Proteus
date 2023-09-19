@@ -32,8 +32,6 @@ import { useUserStore } from './store/User.store';
 import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/App.store';
 import { useEditorStore } from './store/Editor.store';
-import { onUnmounted } from 'vue';
-import { register } from 'register-service-worker';
 import axios from 'axios';
 
 const appStore = useAppStore();

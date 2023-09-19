@@ -27,7 +27,6 @@ const usePresenter = () => {
         isLoading.value = true;
         service.createBoard(userStore.self.id).then((board: BoardModel) => {
             window.location.href = window.location.origin + `/?id=${board.id}`;
-            isLoading.value = false;
         });
     };
 
