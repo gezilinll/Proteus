@@ -10,11 +10,11 @@ const usePresenter = () => {
     const model = useModel();
     const userStore = useUserStore();
     const editorStore = useEditorStore();
-    const serviceStore = useServiceStore();
+    model.currentBoard = editorStore.currentBoard;
 
+    const serviceStore = useServiceStore();
     const service = new BoardService(model);
     serviceStore.board = service;
-    editorStore.currentBoard = model.currentBoard;
 
     const isLoading = ref(true);
 

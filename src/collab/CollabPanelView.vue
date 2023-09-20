@@ -69,7 +69,11 @@
     </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import usePresenter from './CollabPanelPresenter';
+
+const presenter = usePresenter();
+</script>
 
 <style lang="less" scoped>
 @height: 50px;

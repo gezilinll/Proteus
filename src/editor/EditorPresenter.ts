@@ -9,12 +9,10 @@ import { BrushElementModel } from './element/brush/BrushElementModel';
 import { useAppStore } from '../store/App.store';
 import { useEditorStore } from '../store/Editor.store';
 import { watch } from 'vue';
-import { useUserStore } from '../store/User.store';
 
 const usePresenter = () => {
     const appStore = useAppStore();
     const editorStore = useEditorStore();
-    const userStore = useUserStore();
 
     const mouse = {
         type: 'moving' as 'pressed' | 'dragging' | 'moving',
@@ -25,19 +23,6 @@ const usePresenter = () => {
     let bgService: BackgroundService | undefined = undefined;
     const editorModel = useModel();
     let editorService: EditorService | undefined = undefined;
-
-    const uploadContent = () => {
-        if (!editorModel.contentStatus.uploading && editorModel.contentStatus.dirty) {
-            editorModel.contentStatus.uploading = true;
-            editorModel.contentStatus.dirty = false;
-            editorService!
-                .uploadContent(editorStore.boardID, editorService!.exportContent(), userStore.token)
-                .then(() => {
-                    editorModel.contentStatus.uploading = false;
-                });
-        }
-        requestAnimationFrame(uploadContent);
-    };
 
     const setup = (canvas: HTMLCanvasElement) => {
         const pixi = new PIXI.Application({
@@ -68,16 +53,14 @@ const usePresenter = () => {
         );
 
         watch(
-            () => editorStore.boardContent,
+            () => editorStore.currentBoard.content,
             () => {
-                if (editorStore.boardContent) {
-                    editorService!.loadFromContent(editorStore.boardContent);
+                if (editorStore.currentBoard.content) {
+                    editorService!.loadFromContent(editorStore.currentBoard.content);
                 }
             },
             { immediate: true }
         );
-
-        requestAnimationFrame(uploadContent);
     };
 
     const onMouseDown = (type: FunctionPanelItem, x: number, y: number) => {
