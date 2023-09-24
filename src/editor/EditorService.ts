@@ -5,7 +5,7 @@ import { BrushElementModel } from './element/brush/BrushElementModel';
 import { BrushElementService } from './element/brush/BrushElementService';
 import { ViewportService } from './element/viewport/ViewportService';
 import * as PIXI from 'pixi.js';
-import { SERVER_PREFIX } from '../Constants';
+import { SERVER_URL } from '../Constants';
 import { ElementModel } from './element/ElementModel';
 
 export class EditorService {
@@ -39,7 +39,7 @@ export class EditorService {
         return new Promise(async (resolve, reject) => {
             try {
                 await axios.get(
-                    `${SERVER_PREFIX}/record/updateContent?recordID=${recordID}&content=${content}`,
+                    `${SERVER_URL}/record/updateContent?recordID=${recordID}&content=${content}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

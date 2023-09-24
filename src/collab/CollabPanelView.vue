@@ -66,6 +66,21 @@
                 </svg>
             </span>
         </div>
+        <div
+            class="function-item-container"
+            v-tooltip.bottom="'Video chat'"
+            @click="presenter.joinVideoChat()"
+        >
+            <span class="function-item">
+                <svg viewBox="0 0 24 24" aria-hidden="true" role="presentation" focusable="false">
+                    <path
+                        d="M14 20v2a1 1 0 0 1-2 0v-2H6v2a1 1 0 0 1-2 0v-2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2l6-3v14l-6-3v2a2 2 0 0 1-2 2h-2zM2 6v12h14V6H2zm20 2.236l-4 2v3.528l4 2V8.236z"
+                        fill-rule="nonzero"
+                        fill="currentColor"
+                    ></path>
+                </svg>
+            </span>
+        </div>
     </div>
 </template>
 
@@ -84,7 +99,7 @@ const presenter = usePresenter();
     position: absolute;
     right: 240px;
     top: 12px;
-    width: 150px;
+    width: 200px;
     height: 50px;
     border-radius: 5px;
     background-color: white;

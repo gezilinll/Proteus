@@ -18,6 +18,10 @@ export const useUserStore = defineStore('user', {
             return this.self.id && this.self.userName;
         },
 
+        hasOther(id: string) {
+            return this.others.filter((item) => item.id === id).length > 0;
+        },
+
         selfLogin(id: string, userName: string) {
             this.self.id = id;
             this.self.userName = userName;

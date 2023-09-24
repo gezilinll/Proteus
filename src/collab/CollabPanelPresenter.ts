@@ -12,13 +12,21 @@ const usePresenter = () => {
         () => editorStore.currentBoard.content,
         () => {
             if (editorStore.currentBoard.content) {
-                service.joinRoom(editorStore.currentBoard.id, userStore.self.id);
+                service.setup(editorStore.currentBoard.id, {
+                    id: userStore.self.id,
+                    name: userStore.self.userName,
+                });
+                service.joinWhiteboard();
             }
         },
         { immediate: true }
     );
 
-    return {};
+    const joinVideoChat = () => {
+        service.joinVideoChat();
+    };
+
+    return { joinVideoChat };
 };
 
 export default usePresenter;
