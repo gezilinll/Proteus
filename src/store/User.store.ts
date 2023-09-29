@@ -4,7 +4,7 @@ import { UserModel } from '../model/UserModel';
 export const useUserStore = defineStore('user', {
     state: () => {
         return {
-            self: {} as UserModel,
+            self: { id: '', name: '', color: '', mouseX: 0, mouseY: 0 } as UserModel,
             others: [] as UserModel[],
             token: '',
         };
@@ -15,20 +15,11 @@ export const useUserStore = defineStore('user', {
         },
 
         isValidUser() {
-            return this.self.id && this.self.userName;
+            return this.self.id && this.self.name;
         },
 
         hasOther(id: string) {
             return this.others.filter((item) => item.id === id).length > 0;
-        },
-
-        selfLogin(id: string, userName: string) {
-            this.self.id = id;
-            this.self.userName = userName;
-        },
-
-        otherLogin(id: string, userName: string) {
-            this.others.push({ id, userName });
         },
     },
 });

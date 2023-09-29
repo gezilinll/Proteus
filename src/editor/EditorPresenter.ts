@@ -9,9 +9,12 @@ import { BrushElementModel } from './element/brush/BrushElementModel';
 import { useAppStore } from '../store/App.store';
 import { useEditorStore } from '../store/Editor.store';
 import { watch } from 'vue';
+import { useUserStore } from '../store/User.store';
+import { throttle } from 'lodash';
 
 const usePresenter = () => {
     const appStore = useAppStore();
+    const userStore = useUserStore();
     const editorStore = useEditorStore();
 
     const mouse = {
@@ -98,6 +101,10 @@ const usePresenter = () => {
         }
         mouse.lastX = x;
         mouse.lastY = y;
+
+        if (editorService) {
+            updateUserMousePosition(x, y);
+        }
     };
 
     const onMouseUp = (type: FunctionPanelItem) => {
@@ -108,6 +115,14 @@ const usePresenter = () => {
         editorModel.creatingElement.model = undefined;
         editorModel.creatingElement.service = undefined;
     };
+
+    const updateUserMousePosition = throttle(function (x: number, y: number) {
+        if (editorService) {
+            const globalPosition = editorService.calculateGlobalPosition(x, y);
+            userStore.self.mouseX = globalPosition.x;
+            userStore.self.mouseY = globalPosition.y;
+        }
+    }, 500);
 
     return { editorModel, setup, onMouseDown, onMouseMove, onMouseUp };
 };

@@ -2,12 +2,11 @@
     <div class="user-container">
         <div
             class="user-item-container"
-            :style="{ border: 'solid ' + presenter.model.self.value.color + ' 2px' }"
-            v-tooltip.bottom="presenter.model.self.value.userName"
-            @click="presenter.fakeOtherLogin"
+            :style="{ border: 'solid ' + self.color + ' 2px' }"
+            v-tooltip.bottom="self.name"
         >
             <span class="text-content">
-                {{ presenter.model.self.value.userName[0].toUpperCase() }}
+                {{ self.name[0].toUpperCase() }}
             </span>
         </div>
         <div
@@ -18,26 +17,26 @@
                 margin-left: 1px;
                 margin-right: 3px;
             "
-            v-if="presenter.model.others.value.length > 0"
+            v-if="others.length > 0"
         ></div>
         <div
             class="user-item-container"
-            :style="{ border: 'solid ' + presenter.model.others.value[0].color + ' 2px' }"
-            v-if="presenter.model.others.value.length > 0"
-            v-tooltip.bottom="presenter.model.others.value[0].userName"
+            v-if="others.length > 0"
+            :style="{ border: 'solid ' + others[0].color + ' 2px' }"
+            v-tooltip.bottom="others[0].name"
         >
             <span class="text-content">
-                {{ presenter.model.others.value[0].userName[0] }}
+                {{ others[0].name[0].toUpperCase() }}
             </span>
         </div>
         <div
             class="user-item-container"
             style="background-color: white; border: solid #dbd9d9 2px"
-            v-if="presenter.model.others.value.length > 1"
-            v-tooltip.bottom="presenter.model.others.value.length - 1 + ' others'"
+            v-if="others.length > 1"
+            v-tooltip.bottom="others.length - 1 + ' others'"
         >
             <span class="text-content">
-                {{ '+' + (presenter.model.others.value.length - 1) }}
+                {{ '+' + (others.length - 1) }}
             </span>
         </div>
 
@@ -48,9 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import usePresenter from './PlayerPanelPresenter';
+import { useUserStore } from '../store/User.store';
+import { storeToRefs } from 'pinia';
 
-const presenter = usePresenter();
+const userStore = useUserStore();
+
+const { self, others } = storeToRefs(userStore);
 </script>
 
 <style lang="less" scoped>

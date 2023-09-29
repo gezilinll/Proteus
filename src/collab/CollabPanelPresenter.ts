@@ -12,10 +12,7 @@ const usePresenter = () => {
         () => editorStore.currentBoard.content,
         () => {
             if (editorStore.currentBoard.content) {
-                service.setup(editorStore.currentBoard.id, {
-                    id: userStore.self.id,
-                    name: userStore.self.userName,
-                });
+                service.setup(editorStore.currentBoard.id);
                 service.joinWhiteboard();
             }
         },
@@ -25,6 +22,13 @@ const usePresenter = () => {
     const joinVideoChat = () => {
         service.joinVideoChat();
     };
+
+    watch(
+        () => [userStore.self.mouseX, userStore.self.mouseY],
+        (position) => {
+            service.updateMousePosition(position[0], position[1]);
+        }
+    );
 
     return { joinVideoChat };
 };

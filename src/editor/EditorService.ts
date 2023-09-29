@@ -65,6 +65,13 @@ export class EditorService {
         this._vpService.move(deltaX, deltaY);
     }
 
+    calculateGlobalPosition(mouseX: number, mouseY: number) {
+        return {
+            x: this._vpService.sprite.position.x + mouseX,
+            y: this._vpService.sprite.position.y + mouseY,
+        };
+    }
+
     zoomTo(target: number) {
         this._vpService.zoomTo(target);
     }

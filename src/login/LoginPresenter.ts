@@ -24,7 +24,7 @@ const usePresenter = () => {
                 service
                     .getUserInfo(store.self.id)
                     .then((model) => {
-                        store.self.userName = (model as UserModel).userName;
+                        store.self.name = (model as UserModel).name;
                     })
                     .catch((error) => {
                         console.log('getUserInfo failed.', error);

@@ -16,7 +16,7 @@ export class LoginService {
         return new Promise(async (resolve, reject) => {
             try {
                 const result = await axios.get(`${SERVER_URL}/user/findOne?id=${userID}`);
-                resolve({ id: result.data.id, userName: result.data.userName } as UserModel);
+                resolve({ id: result.data.id, name: result.data.name } as UserModel);
             } catch (error) {
                 console.log('getUserInfo failed');
                 reject();
