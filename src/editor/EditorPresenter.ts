@@ -11,10 +11,13 @@ import { useEditorStore } from '../store/Editor.store';
 import { watch } from 'vue';
 import { useUserStore } from '../store/User.store';
 import { throttle } from 'lodash';
+import { storeToRefs } from 'pinia';
+import { UserAwareness } from '../collab/room/Whiteboard';
 
 const usePresenter = () => {
     const appStore = useAppStore();
     const userStore = useUserStore();
+    const { others } = storeToRefs(userStore);
     const editorStore = useEditorStore();
 
     const mouse = {
@@ -74,7 +77,8 @@ const usePresenter = () => {
             if (type === 'brush') {
                 editorModel.creatingElement = editorService.createElement(type);
                 if (editorModel.creatingElement.model && editorModel.creatingElement.service) {
-                    editorModel.creatingElement.service.moveTo(x, y);
+                    const position = editorService.calculateGlobalPosition(x, y);
+                    editorModel.creatingElement.service.moveTo(position.x, position.y);
                     (editorModel.creatingElement.model as BrushElementModel).color =
                         appStore.brushConfig.color;
                     (editorModel.creatingElement.model as BrushElementModel).weight =
@@ -94,8 +98,8 @@ const usePresenter = () => {
         } else if (mouse.type === 'dragging' && type === 'brush') {
             if (editorModel.creatingElement.service) {
                 (editorModel.creatingElement.service as BrushElementService).lineTo(
-                    x - mouse.lastX,
-                    y - mouse.lastY
+                    (x - mouse.lastX) / editorService!.zoom,
+                    (y - mouse.lastY) / editorService!.zoom
                 );
             }
         }
@@ -122,7 +126,19 @@ const usePresenter = () => {
             userStore.self.mouseX = globalPosition.x;
             userStore.self.mouseY = globalPosition.y;
         }
-    }, 500);
+    }, 50);
+
+    watch(
+        () => others.value,
+        () => {
+            if (editorService) {
+                for (const user of others.value) {
+                    editorService.updateUserAwareness(user as unknown as UserAwareness);
+                }
+            }
+        },
+        { immediate: true }
+    );
 
     return { editorModel, setup, onMouseDown, onMouseMove, onMouseUp };
 };

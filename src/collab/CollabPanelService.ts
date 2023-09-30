@@ -15,7 +15,6 @@ export class CollabPanelService {
     setup(roomID: string) {
         this._roomID = roomID;
         this._userStore.self.color = this._randomColor();
-        console.log('setup', this._userStore.self.color);
     }
 
     joinWhiteboard() {
@@ -45,7 +44,10 @@ export class CollabPanelService {
     private _handleUserAwarenessUpdated(users: UserAwareness[]) {
         const onlineUsers = new Set(users.map((item) => item.id));
         this._userStore.others = this._userStore.others.filter((item) => onlineUsers.has(item.id));
-        const localUsers = new Set(this._userStore.others.map((item) => item.id));
+        const localUsers = new Map();
+        for (const user of this._userStore.others) {
+            localUsers.set(user.id, user);
+        }
         localUsers.add(this._userStore.self.id);
         for (const onlineUser of users) {
             if (!localUsers.has(onlineUser.id)) {
@@ -56,6 +58,10 @@ export class CollabPanelService {
                     mouseX: onlineUser.mouseX,
                     mouseY: onlineUser.mouseY,
                 });
+            } else {
+                const localUser = localUsers.get(onlineUser.id)!;
+                localUser.mouseX = onlineUser.mouseX;
+                localUser.mouseY = onlineUser.mouseY;
             }
         }
     }
@@ -63,7 +69,7 @@ export class CollabPanelService {
     private _randomColor() {
         let result = '';
         for (let i = 0; i < 6; ++i) {
-            const value = Math.floor(16 * Math.random());
+            const value = Math.floor(12 * Math.random());
             result += value.toString(16);
         }
         return '#' + result;

@@ -7,15 +7,18 @@ import { ViewportService } from './element/viewport/ViewportService';
 import * as PIXI from 'pixi.js';
 import { SERVER_URL } from '../Constants';
 import { ElementModel } from './element/ElementModel';
+import { UserAwareness } from '../collab/room/Whiteboard';
+import { UserAwarenessUI } from './ui/UserAwarenessUI';
 
 export class EditorService {
     private _vpService: ViewportService;
     private _pixi: PIXI.Application;
+    private _awareness: Map<string, UserAwarenessUI> = new Map();
 
     constructor(pixi: PIXI.Application, model: EditorModel) {
         this._pixi = pixi;
         this._vpService = new ViewportService(model.viewport);
-        this._pixi.stage.addChild(this._vpService.sprite);
+        this._pixi.stage.addChild(this._vpService.container);
         this._pixi.ticker.add(this._renderFrame, this);
     }
 
@@ -67,9 +70,25 @@ export class EditorService {
 
     calculateGlobalPosition(mouseX: number, mouseY: number) {
         return {
-            x: this._vpService.sprite.position.x + mouseX,
-            y: this._vpService.sprite.position.y + mouseY,
+            x: (mouseX - this._vpService.container.position.x) / this._vpService.container.scale.x,
+            y: (mouseY - this._vpService.container.position.y) / this._vpService.container.scale.y,
         };
+    }
+
+    updateUserAwareness(awareness: UserAwareness) {
+        let ui: UserAwarenessUI;
+        if (this._awareness.has(awareness.id)) {
+            ui = this._awareness.get(awareness.id)!;
+        } else {
+            ui = new UserAwarenessUI(this._vpService.container);
+            this._vpService.container.addChild(ui.sprit);
+            this._awareness.set(awareness.id, ui);
+        }
+        ui.updateUserAwareness(awareness);
+    }
+
+    get zoom() {
+        return this._vpService.container.scale.x;
     }
 
     zoomTo(target: number) {
