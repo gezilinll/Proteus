@@ -48,7 +48,7 @@ export class CollabPanelService {
         for (const user of this._userStore.others) {
             localUsers.set(user.id, user);
         }
-        localUsers.add(this._userStore.self.id);
+        localUsers.set(this._userStore.self.id, this._userStore.self);
         for (const onlineUser of users) {
             if (!localUsers.has(onlineUser.id)) {
                 this._userStore.others.push({
