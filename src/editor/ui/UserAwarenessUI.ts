@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { UserAwareness } from '../../collab/room/Whiteboard';
+import { UserAwareness } from '../../room/Whiteboard';
 
 export class UserAwarenessUI {
     sprit: PIXI.Container;

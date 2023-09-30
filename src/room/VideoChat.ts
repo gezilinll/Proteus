@@ -2,11 +2,11 @@ import randomString from 'random-string';
 import protooClient from 'protoo-client';
 import * as mediasoupClient from 'mediasoup-client';
 import { Transport } from 'mediasoup-client/lib/types';
-import { useUserStore } from '../../store/User.store';
-import { MEDIASOUP_URL } from '../../Constants';
+import { useUserStore } from '../store/User.store';
+import { MEDIASOUP_URL } from '../Constants';
 
 export class VideoChat {
-    private _roomID: string;
+    private _roomID: string = '';
     private _peerID: string;
 
     private _protoo: protooClient.Peer | undefined = undefined;

@@ -12,7 +12,7 @@ import { watch } from 'vue';
 import { useUserStore } from '../store/User.store';
 import { throttle } from 'lodash';
 import { storeToRefs } from 'pinia';
-import { UserAwareness } from '../collab/room/Whiteboard';
+import { UserAwareness } from '../room/Whiteboard';
 
 const usePresenter = () => {
     const appStore = useAppStore();

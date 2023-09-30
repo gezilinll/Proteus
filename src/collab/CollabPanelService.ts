@@ -1,7 +1,6 @@
-import { UserModel } from '../model/UserModel';
 import { useUserStore } from '../store/User.store';
-import { Room } from './room/Room';
-import { UserAwareness } from './room/Whiteboard';
+import { Room } from '../room/Room';
+import { UserAwareness } from '../room/Whiteboard';
 
 export class CollabPanelService {
     private _roomID: string = '';
