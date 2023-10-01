@@ -133,7 +133,7 @@ const usePresenter = () => {
         () => {
             if (editorService) {
                 for (const user of others.value) {
-                    editorService.updateUserAwareness(user as unknown as UserAwareness);
+                    editorService.updateUserAwareness(user[1] as unknown as UserAwareness);
                 }
             }
         },

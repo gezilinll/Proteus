@@ -5,7 +5,7 @@ export const useUserStore = defineStore('user', {
     state: () => {
         return {
             self: { id: '', name: '', color: '', mouseX: 0, mouseY: 0 } as UserModel,
-            others: [] as UserModel[],
+            others: new Map<string, UserModel>(),
             token: '',
         };
     },
@@ -16,10 +16,6 @@ export const useUserStore = defineStore('user', {
 
         isValidUser() {
             return this.self.id && this.self.name;
-        },
-
-        hasOther(id: string) {
-            return this.others.filter((item) => item.id === id).length > 0;
         },
     },
 });

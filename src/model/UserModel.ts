@@ -6,6 +6,4 @@ export interface UserModel {
     mouseY: number;
     videoTrack?: MediaStreamTrack;
     audioTrack?: MediaStreamTrack;
-    audio?: boolean;
-    video?: boolean;
 }

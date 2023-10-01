@@ -2,9 +2,14 @@ import randomString from 'random-string';
 import protooClient from 'protoo-client';
 import * as mediasoupClient from 'mediasoup-client';
 import { Transport } from 'mediasoup-client/lib/types';
-import { useUserStore } from '../store/User.store';
 import { MEDIASOUP_URL } from '../Constants';
 
+export declare type OnProducerStreamUpdated = (stream: MediaStreamTrack | null) => void;
+
+export interface VideoChatWatcher {
+    producerVideoUpdated: OnProducerStreamUpdated;
+    producerAudioUpdated: OnProducerStreamUpdated;
+}
 export class VideoChat {
     private _roomID: string = '';
     private _peerID: string;
@@ -17,13 +22,17 @@ export class VideoChat {
     private _webcamProducer: mediasoupClient.types.Producer | undefined = undefined;
     private _micProducer: mediasoupClient.types.Producer | undefined = undefined;
 
-    private _store = useUserStore();
+    private _producerVideoUpdated?: OnProducerStreamUpdated;
+    private _producerAudioUpdated?: OnProducerStreamUpdated;
 
     constructor() {
         this._peerID = randomString({ length: 8 }).toLowerCase();
     }
 
-    async join(roomID: string) {
+    async join(roomID: string, watcher?: VideoChatWatcher) {
+        this._producerVideoUpdated = watcher?.producerVideoUpdated;
+        this._producerAudioUpdated = watcher?.producerAudioUpdated;
+
         this._roomID = roomID;
         console.log('video room url', this._getProtooUrl());
         const protooTransport = new protooClient.WebSocketTransport(this._getProtooUrl());
@@ -284,6 +293,7 @@ export class VideoChat {
 
     private async _enableProducer() {
         await this.enableWebcam();
+        await this.enableMic();
     }
 
     async enableWebcam() {
@@ -340,7 +350,7 @@ export class VideoChat {
                 codec,
             });
 
-            // TODO this._store.producer.videoTrack = this.webcamProducer.track;
+            this._producerVideoUpdated?.(this.webcamProducer.track);
 
             this.webcamProducer.on('transportclose', () => {
                 console.log('Webcam transportclose!');
@@ -367,9 +377,7 @@ export class VideoChat {
 
         this._webcamProducer = undefined;
 
-        // TODO
-        // this._store.producer.video = false;
-        // this._store.producer.videoTrack = null;
+        this._producerVideoUpdated?.(null);
     }
 
     async enableMic() {
@@ -397,8 +405,7 @@ export class VideoChat {
                 // 	.find((codec) => codec.mimeType.toLowerCase() === 'audio/pcma')
             });
 
-            // TODO
-            // this._store.producer.audioTrack = this._micProducer.track;
+            this._producerAudioUpdated?.(this._micProducer.track);
 
             this._micProducer.on('transportclose', () => {
                 this._micProducer = undefined;
@@ -426,8 +433,8 @@ export class VideoChat {
             console.log('Error closing server-side mic Producer:', error);
         }
 
-        // TODO this._store.producer.audio = false;
         this._micProducer = undefined;
+        this._producerAudioUpdated?.(null);
     }
 
     private _getProtooUrl() {

@@ -2,8 +2,10 @@ import { watch } from 'vue';
 import { useEditorStore } from '../store/Editor.store';
 import { CollabPanelService } from './CollabPanelService';
 import { useUserStore } from '../store/User.store';
+import { useAppStore } from '../store/App.store';
 
 const usePresenter = () => {
+    const appStore = useAppStore();
     const userStore = useUserStore();
     const editorStore = useEditorStore();
     const service = new CollabPanelService();
@@ -21,6 +23,7 @@ const usePresenter = () => {
 
     const joinVideoChat = () => {
         service.joinVideoChat();
+        appStore.showVideoChatPanel = true;
     };
 
     watch(

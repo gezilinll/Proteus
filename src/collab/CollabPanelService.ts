@@ -1,6 +1,7 @@
 import { useUserStore } from '../store/User.store';
 import { Room } from '../room/Room';
 import { UserAwareness } from '../room/Whiteboard';
+import { UserModel } from '../model/UserModel';
 
 export class CollabPanelService {
     private _roomID: string = '';
@@ -33,7 +34,16 @@ export class CollabPanelService {
     }
 
     joinVideoChat() {
-        this._room.joinVideoChat(this._roomID);
+        this._room.joinVideoChat(this._roomID, {
+            producerAudioUpdated: (audio?: MediaStreamTrack | null) => {
+                console.log('producerAudioUpdated');
+                this._userStore.self.audioTrack = audio ?? undefined;
+            },
+            producerVideoUpdated: (video: MediaStreamTrack | null) => {
+                console.log('producerVideoUpdated');
+                this._userStore.self.videoTrack = video ?? undefined;
+            },
+        });
     }
 
     updateMousePosition(x: number, y: number) {
@@ -42,23 +52,19 @@ export class CollabPanelService {
 
     private _handleUserAwarenessUpdated(users: UserAwareness[]) {
         const onlineUsers = new Set(users.map((item) => item.id));
-        this._userStore.others = this._userStore.others.filter((item) => onlineUsers.has(item.id));
-        const localUsers = new Map();
-        for (const user of this._userStore.others) {
-            localUsers.set(user.id, user);
+        for (const otherUser of this._userStore.others) {
+            if (!onlineUsers.has(otherUser[0])) {
+                this._userStore.others.delete(otherUser[0]);
+            }
         }
-        localUsers.set(this._userStore.self.id, this._userStore.self);
         for (const onlineUser of users) {
-            if (!localUsers.has(onlineUser.id)) {
-                this._userStore.others.push({
-                    id: onlineUser.id,
-                    name: onlineUser.name,
-                    color: onlineUser.color,
-                    mouseX: onlineUser.mouseX,
-                    mouseY: onlineUser.mouseY,
-                });
+            if (this._userStore.self.id === onlineUser.id) {
+                continue;
+            }
+            if (!this._userStore.others.has(onlineUser.id)) {
+                this._userStore.others.set(onlineUser.id, onlineUser as unknown as UserModel);
             } else {
-                const localUser = localUsers.get(onlineUser.id)!;
+                const localUser = this._userStore.others.get(onlineUser.id)!;
                 localUser.mouseX = onlineUser.mouseX;
                 localUser.mouseY = onlineUser.mouseY;
             }

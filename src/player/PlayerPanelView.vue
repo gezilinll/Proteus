@@ -17,26 +17,26 @@
                 margin-left: 1px;
                 margin-right: 3px;
             "
-            v-if="others.length > 0"
+            v-if="others.size > 0"
         ></div>
         <div
             class="user-item-container"
-            v-if="others.length > 0"
-            :style="{ border: 'solid ' + others[0].color + ' 2px' }"
-            v-tooltip.bottom="others[0].name"
+            v-if="others.size > 0"
+            :style="{ border: 'solid ' + firstOtherUser!.color + ' 2px' }"
+            v-tooltip.bottom="firstOtherUser!.name"
         >
             <span class="text-content">
-                {{ others[0].name[0].toUpperCase() }}
+                {{ firstOtherUser!.name[0].toUpperCase() }}
             </span>
         </div>
         <div
             class="user-item-container"
             style="background-color: white; border: solid #dbd9d9 2px"
-            v-if="others.length > 1"
-            v-tooltip.bottom="others.length - 1 + ' others'"
+            v-if="others.size > 1"
+            v-tooltip.bottom="others.size - 1 + ' others'"
         >
             <span class="text-content">
-                {{ '+' + (others.length - 1) }}
+                {{ '+' + (others.size - 1) }}
             </span>
         </div>
 
@@ -47,12 +47,21 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useUserStore } from '../store/User.store';
 import { storeToRefs } from 'pinia';
+import { UserModel } from '../model/UserModel';
 
 const userStore = useUserStore();
 
 const { self, others } = storeToRefs(userStore);
+
+const firstOtherUser = computed(() => {
+    if (others.value.size > 0) {
+        return others.value.values().next().value as UserModel;
+    }
+    return null;
+});
 </script>
 
 <style lang="less" scoped>

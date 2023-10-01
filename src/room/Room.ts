@@ -1,4 +1,4 @@
-import { VideoChat } from './VideoChat';
+import { VideoChat, VideoChatWatcher } from './VideoChat';
 import { UserAwareness, Whiteboard, WhiteboardWatcher } from './Whiteboard';
 
 export class Room {
@@ -14,8 +14,8 @@ export class Room {
         this._whiteboard.join(id, user, watcher);
     }
 
-    joinVideoChat(id: string) {
-        this._videoChat.join(id);
+    joinVideoChat(id: string, watcher?: VideoChatWatcher) {
+        this._videoChat.join(id, watcher);
     }
 
     updateMousePosition(x: number, y: number) {

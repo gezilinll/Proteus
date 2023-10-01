@@ -13,6 +13,7 @@
         <PlayerPanelView
             v-if="userStore.isValidUser() && editorStore.isValidBoard()"
         ></PlayerPanelView>
+        <VideoChatPanelView v-if="appStore.showVideoChatPanel"></VideoChatPanelView>
         <LoginView v-if="!userStore.isValidUser()"></LoginView>
         <MyBoardsView v-if="userStore.isValidUser() && !editorStore.isValidBoard()"></MyBoardsView>
     </v-app>
@@ -27,6 +28,7 @@ import { BrushPanelView } from './function/brush';
 import { ZoomPanelView } from './zoom';
 import { NavigationPanelView } from './navigation';
 import { PlayerPanelView } from './player';
+import { VideoChatPanelView } from './video';
 import { CollabPanelView } from './collab';
 import { useUserStore } from './store/User.store';
 import { storeToRefs } from 'pinia';
