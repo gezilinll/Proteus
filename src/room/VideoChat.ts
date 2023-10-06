@@ -13,6 +13,11 @@ export declare type OnConsumerStreamUpdated = (
     stream: MediaStreamTrack | null
 ) => void;
 
+export enum Status {
+    CLOSED,
+    JOINED,
+}
+
 export interface VideoChatWatcher {
     producerVideoUpdated: OnProducerStreamUpdated;
     producerAudioUpdated: OnProducerStreamUpdated;
@@ -30,6 +35,8 @@ export class VideoChat {
 
     private _webcamProducer: mediasoupClient.types.Producer | undefined = undefined;
     private _micProducer: mediasoupClient.types.Producer | undefined = undefined;
+
+    private _status: Status = Status.CLOSED;
 
     private _producerVideoUpdated?: OnProducerStreamUpdated;
     private _producerAudioUpdated?: OnProducerStreamUpdated;
@@ -56,14 +63,17 @@ export class VideoChat {
 
         this._protoo.on('failed', () => {
             console.log('protooClient failed');
+            this._status = Status.CLOSED;
         });
 
         this._protoo.on('disconnected', () => {
             console.log('protooClient disconnected');
+            this._status = Status.CLOSED;
         });
 
         this._protoo.on('close', () => {
             console.log('protooClient close');
+            this._status = Status.CLOSED;
         });
 
         this._protoo.on('request', async (request, accept) => {
@@ -116,6 +126,16 @@ export class VideoChat {
         this._protoo.on('notification', (notification) => {
             console.log('protooClient notification', notification);
         });
+    }
+
+    async leave() {
+        if (this._webcamProducer) {
+            this.disableWebcam();
+        }
+        if (this._micProducer) {
+            this.disableMic();
+        }
+        this._protoo?.close();
     }
 
     private async _onProtooOpen() {
@@ -286,6 +306,8 @@ export class VideoChat {
                 this.sendTransport.on('connectionstatechange', (connectionState: string) => {
                     console.log('connectionstatechange', connectionState);
                 });
+
+                this._status = Status.JOINED;
             }
         } catch (error: any) {
             console.log('_joinRoom() failed:%o', error);
@@ -466,5 +488,9 @@ export class VideoChat {
 
     private get micProducer() {
         return this._micProducer!;
+    }
+
+    get status() {
+        return this._status;
     }
 }

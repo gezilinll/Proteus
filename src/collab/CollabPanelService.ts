@@ -86,6 +86,10 @@ export class CollabPanelService {
         );
     }
 
+    leaveVideoChat() {
+        this._room.leaveVideoChat();
+    }
+
     updateMousePosition(x: number, y: number) {
         this._room.updateMousePosition(x, y);
     }

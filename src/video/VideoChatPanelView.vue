@@ -219,6 +219,7 @@
                     </svg>
                 </span>
             </div>
+            <span class="text-content" @click="presenter.leave()"> Leave </span>
         </div>
     </div>
 </template>
@@ -338,5 +339,21 @@ const hasOtherStream = computed(() => {
 .chat-window-container {
     width: 200px;
     height: 150px;
+}
+
+.text-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: red;
+    font-family: @g-font-family;
+    height: 35px;
+    width: 65px;
+    font-weight: 600;
+    &:hover {
+        background-color: rgba(0, 0, 255, 0.1);
+        border-radius: 2px;
+    }
 }
 </style>

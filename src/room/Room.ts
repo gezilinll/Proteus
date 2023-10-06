@@ -1,4 +1,4 @@
-import { UserPeer, VideoChat, VideoChatWatcher } from './VideoChat';
+import { Status, UserPeer, VideoChat, VideoChatWatcher } from './VideoChat';
 import { UserAwareness, Whiteboard, WhiteboardWatcher } from './Whiteboard';
 
 export class Room {
@@ -15,7 +15,15 @@ export class Room {
     }
 
     joinVideoChat(id: string, userPeer: UserPeer, watcher?: VideoChatWatcher) {
-        this._videoChat.join(id, userPeer, watcher);
+        if (this._videoChat.status === Status.CLOSED) {
+            this._videoChat.join(id, userPeer, watcher);
+        }
+    }
+
+    leaveVideoChat() {
+        if (this._videoChat.status === Status.JOINED) {
+            this._videoChat.leave();
+        }
     }
 
     updateMousePosition(x: number, y: number) {
