@@ -2,6 +2,7 @@ import { useUserStore } from '../store/User.store';
 import { Room } from '../room/Room';
 import { UserAwareness } from '../room/Whiteboard';
 import { UserModel } from '../model/UserModel';
+import randomString from 'random-string';
 
 export class CollabPanelService {
     private _roomID: string = '';
@@ -15,6 +16,7 @@ export class CollabPanelService {
     setup(roomID: string) {
         this._roomID = roomID;
         this._userStore.self.color = this._randomColor();
+        this._userStore.self.peerID = randomString({ length: 8 }).toLowerCase();
     }
 
     joinWhiteboard() {
@@ -34,16 +36,30 @@ export class CollabPanelService {
     }
 
     joinVideoChat() {
-        this._room.joinVideoChat(this._roomID, {
-            producerAudioUpdated: (audio?: MediaStreamTrack | null) => {
-                console.log('producerAudioUpdated');
-                this._userStore.self.audioTrack = audio ?? undefined;
+        this._room.joinVideoChat(
+            this._roomID,
+            {
+                id: this._userStore.self.id,
+                name: this._userStore.self.name,
+                peerID: this._userStore.self.peerID,
             },
-            producerVideoUpdated: (video: MediaStreamTrack | null) => {
-                console.log('producerVideoUpdated');
-                this._userStore.self.videoTrack = video ?? undefined;
-            },
-        });
+            {
+                producerAudioUpdated: (audio?: MediaStreamTrack | null) => {
+                    this._userStore.self.audioTrack = audio ?? undefined;
+                },
+                producerVideoUpdated: (video: MediaStreamTrack | null) => {
+                    this._userStore.self.videoTrack = video ?? undefined;
+                },
+                consumerAudioUpdated: (peerId: string, stream: MediaStreamTrack | null) => {
+                    const user = this._userStore.getOtherUserByPeerID(peerId)!;
+                    user.audioTrack = stream ?? undefined;
+                },
+                consumerVideoUpdated: (peerId: string, stream: MediaStreamTrack | null) => {
+                    const user = this._userStore.getOtherUserByPeerID(peerId)!;
+                    user.videoTrack = stream ?? undefined;
+                },
+            }
+        );
     }
 
     updateMousePosition(x: number, y: number) {
@@ -61,8 +77,8 @@ export class CollabPanelService {
             if (this._userStore.self.id === onlineUser.id) {
                 continue;
             }
-            if (!this._userStore.others.has(onlineUser.id)) {
-                this._userStore.others.set(onlineUser.id, onlineUser as unknown as UserModel);
+            if (!this._userStore.hasOtherUserByID(onlineUser.id)) {
+                this._userStore.addOtherUser(onlineUser as unknown as UserModel);
             } else {
                 const localUser = this._userStore.others.get(onlineUser.id)!;
                 localUser.mouseX = onlineUser.mouseX;

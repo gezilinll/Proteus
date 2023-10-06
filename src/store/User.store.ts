@@ -6,6 +6,7 @@ export const useUserStore = defineStore('user', {
         return {
             self: { id: '', name: '', color: '', mouseX: 0, mouseY: 0 } as UserModel,
             others: new Map<string, UserModel>(),
+            othersPeedID: new Map<string, UserModel>(),
             token: '',
         };
     },
@@ -16,6 +17,19 @@ export const useUserStore = defineStore('user', {
 
         isValidUser() {
             return this.self.id && this.self.name;
+        },
+
+        addOtherUser(user: UserModel) {
+            this.others.set(user.id, user);
+            this.othersPeedID.set(user.peerID!, user);
+        },
+
+        hasOtherUserByID(id: string) {
+            return this.others.has(id);
+        },
+
+        getOtherUserByPeerID(id: string) {
+            return this.othersPeedID.get(id);
         },
     },
 });

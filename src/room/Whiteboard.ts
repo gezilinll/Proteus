@@ -6,7 +6,10 @@ import { UserModel } from '../model/UserModel';
 
 export declare type OnUserAwarenessUpdated = (users: UserAwareness[]) => void;
 
-export declare type UserAwareness = Pick<UserModel, 'id' | 'name' | 'color' | 'mouseX' | 'mouseY'>;
+export declare type UserAwareness = Pick<
+    UserModel,
+    'id' | 'name' | 'color' | 'mouseX' | 'mouseY' | 'peerID'
+>;
 
 export interface WhiteboardWatcher {
     awarenessUpdated: OnUserAwarenessUpdated;
@@ -65,6 +68,7 @@ export class Whiteboard {
             color: this._user?.color,
             mouseX: x,
             mouseY: y,
+            peerID: this._user?.peerID,
         });
     }
 }

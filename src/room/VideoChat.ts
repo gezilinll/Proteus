@@ -1,18 +1,27 @@
-import randomString from 'random-string';
 import protooClient from 'protoo-client';
 import * as mediasoupClient from 'mediasoup-client';
 import { Transport } from 'mediasoup-client/lib/types';
 import { MEDIASOUP_URL } from '../Constants';
+import { UserModel } from '../model/UserModel';
+
+export declare type UserPeer = Pick<UserModel, 'id' | 'name' | 'peerID'>;
 
 export declare type OnProducerStreamUpdated = (stream: MediaStreamTrack | null) => void;
+
+export declare type OnConsumerStreamUpdated = (
+    peerId: string,
+    stream: MediaStreamTrack | null
+) => void;
 
 export interface VideoChatWatcher {
     producerVideoUpdated: OnProducerStreamUpdated;
     producerAudioUpdated: OnProducerStreamUpdated;
+    consumerVideoUpdated: OnConsumerStreamUpdated;
+    consumerAudioUpdated: OnConsumerStreamUpdated;
 }
 export class VideoChat {
     private _roomID: string = '';
-    private _peerID: string;
+    private _userPeer?: UserPeer;
 
     private _protoo: protooClient.Peer | undefined = undefined;
     private _mediasoupDevice: mediasoupClient.Device | undefined = undefined;
@@ -24,17 +33,19 @@ export class VideoChat {
 
     private _producerVideoUpdated?: OnProducerStreamUpdated;
     private _producerAudioUpdated?: OnProducerStreamUpdated;
+    private _consumerVideoUpdated?: OnConsumerStreamUpdated;
+    private _consumerAudioUpdated?: OnConsumerStreamUpdated;
 
-    constructor() {
-        this._peerID = randomString({ length: 8 }).toLowerCase();
-    }
+    constructor() {}
 
-    async join(roomID: string, watcher?: VideoChatWatcher) {
+    async join(roomID: string, userPeer: UserPeer, watcher?: VideoChatWatcher) {
+        this._roomID = roomID;
+        this._userPeer = userPeer;
         this._producerVideoUpdated = watcher?.producerVideoUpdated;
         this._producerAudioUpdated = watcher?.producerAudioUpdated;
+        this._consumerVideoUpdated = watcher?.consumerVideoUpdated;
+        this._consumerAudioUpdated = watcher?.consumerAudioUpdated;
 
-        this._roomID = roomID;
-        console.log('video room url', this._getProtooUrl());
         const protooTransport = new protooClient.WebSocketTransport(this._getProtooUrl());
         this._protoo = new protooClient.Peer(protooTransport);
 
@@ -76,7 +87,8 @@ export class VideoChat {
 
                         consumer.on('transportclose', () => {
                             console.log('consumer transportclose', consumer);
-                            //TODO this._store.consumers.delete(consumer.id);
+                            this._consumerAudioUpdated?.(consumer.appData.peerId, null);
+                            this._consumerVideoUpdated?.(consumer.appData.peerId, null);
                         });
 
                         mediasoupClient.parseScalabilityMode(
@@ -87,22 +99,11 @@ export class VideoChat {
                         // resume this Consumer (which was paused for now if video).
                         accept();
 
-                        console.log('new consumer', consumer.id, consumer.track.kind);
-                        //TODO if (!this._store.hasOther(consumer.id)) {
-                        //     this._store.others.push({
-                        //         user: { id: uuidv4(), nickname: uuidv4() },
-                        //         audio: true,
-                        //         video: true,
-                        //         videoTrack: null,
-                        //         audioTrack: null,
-                        //     });
-                        // }
-                        // const userMedia = this._store.consumers.get(consumer.id)!;
-                        // if (consumer.track.kind === 'audio') {
-                        //     userMedia.audioTrack = consumer.track;
-                        // } else {
-                        //     userMedia.videoTrack = consumer.track;
-                        // }
+                        if (consumer.track.kind === 'audio') {
+                            this._consumerAudioUpdated?.(consumer.appData.peerId, consumer.track);
+                        } else {
+                            this._consumerVideoUpdated?.(consumer.appData.peerId, consumer.track);
+                        }
                     } catch (error) {
                         console.log('"newConsumer" request failed:%o', error);
                         throw error;
@@ -269,7 +270,7 @@ export class VideoChat {
                 // Join now into the room.
                 // NOTE: Don't send our RTP capabilities if we don't want to consume.
                 await this.protoo.request('join', {
-                    displayName: randomString({ length: 8 }).toLowerCase(),
+                    displayName: this._userPeer!.name,
                     device: {
                         flag: 'chrome',
                         name: 'Chrome',
@@ -438,7 +439,9 @@ export class VideoChat {
     }
 
     private _getProtooUrl() {
-        return `${MEDIASOUP_URL}/?roomId=${this._roomID}&peerId=${this._peerID}&consumerReplicas=undefined`;
+        return `${MEDIASOUP_URL}/?roomId=${this._roomID}&peerId=${
+            this._userPeer!.peerID
+        }&consumerReplicas=undefined`;
     }
 
     private get mediasoupDevice() {
