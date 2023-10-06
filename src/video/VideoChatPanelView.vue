@@ -1,11 +1,11 @@
 <template>
     <div class="root-container" id="root-container">
         <div class="stream-list-container">
-            <div class="chat-window-container" v-if="self.videoTrack">
+            <div class="chat-window-container" v-if="self.videoStream">
                 <video
                     id="video-producer-player"
                     style="position: absolute; width: 200px; height: 150px; object-fit: cover"
-                    :srcObject.prop="self.videoTrack"
+                    :srcObject.prop="self.videoStream"
                     autoplay
                 ></video>
                 <audio
@@ -13,16 +13,21 @@
                     autoPlay
                     playsInline
                     :controls="false"
-                    v-if="self.audioTrack"
-                    :srcObject.prop="self.audioTrack"
+                    v-if="self.audioStream"
+                    :srcObject.prop="self.audioStream"
                 />
+                <video
+                    id="video-producer-player"
+                    style="position: absolute; width: 200px; height: 150px; object-fit: cover"
+                    autoplay
+                ></video>
             </div>
             <div class="chat-window-container" v-for="userItem in others" v-if="hasOtherStream">
                 <video
                     id="video-producer-player"
                     style="position: absolute; width: 200px; height: 150px; object-fit: cover"
-                    v-if="userItem[1].videoTrack"
-                    :srcObject.prop="userItem[1].videoTrack"
+                    v-if="userItem[1].videoStream"
+                    :srcObject.prop="userItem[1].videoStream"
                     autoplay
                 ></video>
                 <audio
@@ -30,8 +35,8 @@
                     autoPlay
                     playsInline
                     :controls="false"
-                    v-if="userItem[1].audioTrack"
-                    :srcObject.prop="userItem[1].audioTrack"
+                    v-if="userItem[1].audioStream"
+                    :srcObject.prop="userItem[1].audioStream"
                 />
             </div>
         </div>
@@ -51,17 +56,17 @@ const { self, others } = storeToRefs(userStore);
 
 onMounted(() => {
     watch(
-        () => self.value.audioTrack || self.value.videoTrack || others.value,
+        () => self.value.audioStream || self.value.videoStream || others.value,
         () => {
             const videoHeight = 150,
                 maxHeight = 485,
                 functionHeight = 35;
             let containerHeight = functionHeight;
-            if (self.value.videoTrack || self.value.audioTrack) {
+            if (self.value.videoStream || self.value.audioStream) {
                 containerHeight += videoHeight;
             }
             for (const other of others.value) {
-                if (other[1].videoTrack || other[1].audioTrack) {
+                if (other[1].videoStream || other[1].audioStream) {
                     containerHeight += videoHeight;
                 }
             }
@@ -78,7 +83,7 @@ const hasOtherStream = computed(() => {
         return false;
     }
     for (const other of others.value) {
-        if (other[1].videoTrack || other[1].audioTrack) {
+        if (other[1].videoStream || other[1].audioStream) {
             return true;
         }
     }

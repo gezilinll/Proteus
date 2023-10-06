@@ -5,6 +5,6 @@ export interface UserModel {
     mouseX: number;
     mouseY: number;
     peerID?: string;
-    videoTrack?: MediaStreamTrack;
-    audioTrack?: MediaStreamTrack;
+    videoStream?: MediaStream;
+    audioStream?: MediaStream;
 }

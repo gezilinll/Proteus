@@ -45,18 +45,42 @@ export class CollabPanelService {
             },
             {
                 producerAudioUpdated: (audio?: MediaStreamTrack | null) => {
-                    this._userStore.self.audioTrack = audio ?? undefined;
+                    if (audio) {
+                        const audioStream = new MediaStream();
+                        audioStream.addTrack(audio);
+                        this._userStore.self.audioStream = audioStream;
+                    } else {
+                        this._userStore.self.audioStream = undefined;
+                    }
                 },
                 producerVideoUpdated: (video: MediaStreamTrack | null) => {
-                    this._userStore.self.videoTrack = video ?? undefined;
+                    if (video) {
+                        const videoStream = new MediaStream();
+                        videoStream.addTrack(video);
+                        this._userStore.self.videoStream = videoStream;
+                    } else {
+                        this._userStore.self.videoStream = undefined;
+                    }
                 },
                 consumerAudioUpdated: (peerId: string, stream: MediaStreamTrack | null) => {
                     const user = this._userStore.getOtherUserByPeerID(peerId)!;
-                    user.audioTrack = stream ?? undefined;
+                    if (stream) {
+                        const audioStream = new MediaStream();
+                        audioStream.addTrack(stream);
+                        user.audioStream = audioStream;
+                    } else {
+                        user.audioStream = undefined;
+                    }
                 },
                 consumerVideoUpdated: (peerId: string, stream: MediaStreamTrack | null) => {
                     const user = this._userStore.getOtherUserByPeerID(peerId)!;
-                    user.videoTrack = stream ?? undefined;
+                    if (stream) {
+                        const videoStream = new MediaStream();
+                        videoStream.addTrack(stream);
+                        user.videoStream = videoStream;
+                    } else {
+                        user.videoStream = undefined;
+                    }
                 },
             }
         );
