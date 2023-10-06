@@ -90,6 +90,22 @@ export class CollabPanelService {
         this._room.updateMousePosition(x, y);
     }
 
+    switchAudio() {
+        if (this._userStore.self.audioStream) {
+            this._room.disableMic();
+        } else {
+            this._room.enableMic();
+        }
+    }
+
+    switchVideo() {
+        if (this._userStore.self.videoStream) {
+            this._room.disableCamera();
+        } else {
+            this._room.enableCamera();
+        }
+    }
+
     private _handleUserAwarenessUpdated(users: UserAwareness[]) {
         const onlineUsers = new Set(users.map((item) => item.id));
         for (const otherUser of this._userStore.others) {

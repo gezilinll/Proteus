@@ -3,12 +3,15 @@ import { useEditorStore } from '../store/Editor.store';
 import { CollabPanelService } from './CollabPanelService';
 import { useUserStore } from '../store/User.store';
 import { useAppStore } from '../store/App.store';
+import { useServiceStore } from '../store/Service.store';
 
 const usePresenter = () => {
     const appStore = useAppStore();
     const userStore = useUserStore();
     const editorStore = useEditorStore();
+    const serviceStore = useServiceStore();
     const service = new CollabPanelService();
+    serviceStore.collab = service;
 
     watch(
         () => editorStore.currentBoard.content,

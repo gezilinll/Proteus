@@ -21,4 +21,20 @@ export class Room {
     updateMousePosition(x: number, y: number) {
         this._whiteboard.updateMousePosition(x, y);
     }
+
+    enableMic() {
+        this._videoChat.enableMic();
+    }
+
+    disableMic() {
+        this._videoChat.disableMic();
+    }
+
+    enableCamera() {
+        this._videoChat.enableWebcam();
+    }
+
+    disableCamera() {
+        this._videoChat.disableWebcam();
+    }
 }
