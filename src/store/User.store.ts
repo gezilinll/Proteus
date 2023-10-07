@@ -23,13 +23,12 @@ export const useUserStore = defineStore('user', {
 
         addOtherUser(user: UserModel) {
             this.others.push(user);
-            console.log('addOtherUser', user.peerID);
             this.othersUserID.set(user.id, user);
             this.othersPeerID.set(user.peerID!, user);
         },
 
         deleteOtherUser(user: UserModel) {
-            this.others = this.others.filter((item) => item.id === user.id);
+            this.others = this.others.filter((item) => item.peerID !== user.peerID);
             this.othersUserID.delete(user.id);
             this.othersPeerID.delete(user.peerID!);
         },

@@ -90,4 +90,3 @@ body {
     overflow: hidden;
 }
 </style>
-./collab/User.store ./model/User.store ./store/App.store ./board

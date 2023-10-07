@@ -88,9 +88,11 @@ export class CollabPanelService {
                     this._userStore.userStreamFlag++;
                 },
                 consumerClosed: (peerId: string) => {
-                    const user = this._userStore.getOtherUserByPeerID(peerId)!;
-                    user.videoStream = undefined;
-                    user.audioStream = undefined;
+                    const user = this._userStore.getOtherUserByPeerID(peerId);
+                    if (user) {
+                        user.videoStream = undefined;
+                        user.audioStream = undefined;
+                    }
                     this._userStore.userStreamFlag++;
                 },
             }
@@ -122,14 +124,14 @@ export class CollabPanelService {
     }
 
     private _handleUserAwarenessUpdated(users: UserAwareness[]) {
-        const onlineUsers = new Set(users.map((item) => item.id));
+        const onlineUsers = new Set(users.map((item) => item.peerID));
         for (const otherUser of this._userStore.others) {
-            if (!onlineUsers.has(otherUser.id)) {
+            if (!onlineUsers.has(otherUser.peerID)) {
                 this._userStore.deleteOtherUser(otherUser);
             }
         }
         for (const onlineUser of users) {
-            if (this._userStore.self.id === onlineUser.id) {
+            if (this._userStore.self.peerID === onlineUser.peerID) {
                 continue;
             }
             if (!this._userStore.hasOtherUserByID(onlineUser.id)) {
