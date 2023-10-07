@@ -5,9 +5,11 @@ export const useUserStore = defineStore('user', {
     state: () => {
         return {
             self: { id: '', name: '', color: '', mouseX: 0, mouseY: 0 } as UserModel,
-            others: new Map<string, UserModel>(),
+            others: [] as UserModel[],
+            othersUserID: new Map<string, UserModel>(),
             othersPeedID: new Map<string, UserModel>(),
             token: '',
+            userStreamFlag: 0,
         };
     },
     actions: {
@@ -20,12 +22,23 @@ export const useUserStore = defineStore('user', {
         },
 
         addOtherUser(user: UserModel) {
-            this.others.set(user.id, user);
+            this.others.push(user);
+            this.othersUserID.set(user.id, user);
             this.othersPeedID.set(user.peerID!, user);
         },
 
+        deleteOtherUser(user: UserModel) {
+            this.others = this.others.filter((item) => item.id === user.id);
+            this.othersUserID.delete(user.id);
+            this.othersPeedID.delete(user.peerID!);
+        },
+
         hasOtherUserByID(id: string) {
-            return this.others.has(id);
+            return this.othersUserID.has(id);
+        },
+
+        getOtherUserByUserID(id: string) {
+            return this.othersUserID.get(id);
         },
 
         getOtherUserByPeerID(id: string) {

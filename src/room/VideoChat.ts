@@ -13,6 +13,8 @@ export declare type OnConsumerStreamUpdated = (
     stream: MediaStreamTrack | null
 ) => void;
 
+export declare type OnConsumerClosed = (peerID: string) => void;
+
 export enum Status {
     CLOSED,
     JOINED,
@@ -23,6 +25,7 @@ export interface VideoChatWatcher {
     producerAudioUpdated: OnProducerStreamUpdated;
     consumerVideoUpdated: OnConsumerStreamUpdated;
     consumerAudioUpdated: OnConsumerStreamUpdated;
+    consumerClosed: OnConsumerClosed;
 }
 export class VideoChat {
     private _roomID: string = '';
@@ -42,6 +45,7 @@ export class VideoChat {
     private _producerAudioUpdated?: OnProducerStreamUpdated;
     private _consumerVideoUpdated?: OnConsumerStreamUpdated;
     private _consumerAudioUpdated?: OnConsumerStreamUpdated;
+    private _consumerClosed?: OnConsumerClosed;
 
     constructor() {}
 
@@ -52,6 +56,7 @@ export class VideoChat {
         this._producerAudioUpdated = watcher?.producerAudioUpdated;
         this._consumerVideoUpdated = watcher?.consumerVideoUpdated;
         this._consumerAudioUpdated = watcher?.consumerAudioUpdated;
+        this._consumerClosed = watcher?.consumerClosed;
 
         const protooTransport = new protooClient.WebSocketTransport(this._getProtooUrl());
         this._protoo = new protooClient.Peer(protooTransport);
@@ -124,6 +129,13 @@ export class VideoChat {
         });
 
         this._protoo.on('notification', (notification) => {
+            switch (notification.method) {
+                case 'peerClosed':
+                    {
+                        this._consumerClosed?.(notification.data.peerId);
+                    }
+                    break;
+            }
             console.log('protooClient notification', notification);
         });
     }

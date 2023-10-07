@@ -65,7 +65,7 @@
                 />
             </div>
             <div class="chat-window-container" v-for="userItem in others" v-if="hasOtherStream">
-                <span class="video-off-item" v-if="!userItem[1].videoStream">
+                <span class="video-off-item" v-if="!userItem.videoStream">
                     <svg viewBox="0 0 600 600" version="1.1" id="svg9724" width="200" height="100">
                         <g
                             id="g10449"
@@ -114,16 +114,16 @@
                 </span>
                 <video
                     style="position: absolute; width: 200px; height: 150px; object-fit: cover"
-                    v-if="userItem[1].videoStream"
-                    :srcObject.prop="userItem[1].videoStream"
+                    v-if="userItem.videoStream"
+                    :srcObject.prop="userItem.videoStream"
                     autoplay
                 ></video>
                 <audio
                     autoPlay
                     playsInline
                     :controls="false"
-                    v-if="userItem[1].audioStream"
-                    :srcObject.prop="userItem[1].audioStream"
+                    v-if="userItem.audioStream"
+                    :srcObject.prop="userItem.audioStream"
                 />
             </div>
         </div>
@@ -234,18 +234,18 @@ import usePresenter from './VideoChatPanelPresenter';
 
 const presenter = usePresenter();
 const userStore = useUserStore();
-const { self, others } = storeToRefs(userStore);
+const { self, others, userStreamFlag } = storeToRefs(userStore);
 
 onMounted(() => {
     watch(
-        () => self.value.audioStream || self.value.videoStream || others.value,
+        () => userStreamFlag.value,
         () => {
             const videoHeight = 150,
                 maxHeight = 485,
                 functionHeight = 35;
             let containerHeight = videoHeight + functionHeight; // keep self
             for (const other of others.value) {
-                if (other[1].videoStream || other[1].audioStream) {
+                if (other.videoStream || other.audioStream) {
                     containerHeight += videoHeight;
                 }
             }
@@ -258,11 +258,11 @@ onMounted(() => {
 });
 
 const hasOtherStream = computed(() => {
-    if (others.value.size === 0) {
+    if (others.value.length === 0) {
         return false;
     }
     for (const other of others.value) {
-        if (other[1].videoStream || other[1].audioStream) {
+        if (other.videoStream || other.audioStream) {
             return true;
         }
     }

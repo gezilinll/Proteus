@@ -52,6 +52,7 @@ export class CollabPanelService {
                     } else {
                         this._userStore.self.audioStream = undefined;
                     }
+                    this._userStore.userStreamFlag++;
                 },
                 producerVideoUpdated: (video: MediaStreamTrack | null) => {
                     if (video) {
@@ -61,6 +62,7 @@ export class CollabPanelService {
                     } else {
                         this._userStore.self.videoStream = undefined;
                     }
+                    this._userStore.userStreamFlag++;
                 },
                 consumerAudioUpdated: (peerId: string, stream: MediaStreamTrack | null) => {
                     const user = this._userStore.getOtherUserByPeerID(peerId)!;
@@ -71,6 +73,7 @@ export class CollabPanelService {
                     } else {
                         user.audioStream = undefined;
                     }
+                    this._userStore.userStreamFlag++;
                 },
                 consumerVideoUpdated: (peerId: string, stream: MediaStreamTrack | null) => {
                     const user = this._userStore.getOtherUserByPeerID(peerId)!;
@@ -81,6 +84,13 @@ export class CollabPanelService {
                     } else {
                         user.videoStream = undefined;
                     }
+                    this._userStore.userStreamFlag++;
+                },
+                consumerClosed: (peerId: string) => {
+                    const user = this._userStore.getOtherUserByPeerID(peerId)!;
+                    user.videoStream = undefined;
+                    user.audioStream = undefined;
+                    this._userStore.userStreamFlag++;
                 },
             }
         );
@@ -113,8 +123,8 @@ export class CollabPanelService {
     private _handleUserAwarenessUpdated(users: UserAwareness[]) {
         const onlineUsers = new Set(users.map((item) => item.id));
         for (const otherUser of this._userStore.others) {
-            if (!onlineUsers.has(otherUser[0])) {
-                this._userStore.others.delete(otherUser[0]);
+            if (!onlineUsers.has(otherUser.id)) {
+                this._userStore.deleteOtherUser(otherUser);
             }
         }
         for (const onlineUser of users) {
@@ -124,7 +134,7 @@ export class CollabPanelService {
             if (!this._userStore.hasOtherUserByID(onlineUser.id)) {
                 this._userStore.addOtherUser(onlineUser as unknown as UserModel);
             } else {
-                const localUser = this._userStore.others.get(onlineUser.id)!;
+                const localUser = this._userStore.getOtherUserByUserID(onlineUser.id)!;
                 localUser.mouseX = onlineUser.mouseX;
                 localUser.mouseY = onlineUser.mouseY;
             }

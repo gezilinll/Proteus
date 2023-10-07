@@ -42,14 +42,11 @@ const usePresenter = () => {
         pixi.stage.cullable = true;
         pixi.stage.eventMode = 'static';
         (globalThis as any).__PIXI_APP__ = pixi;
-
         const bgModel = useBackgroundModel();
         bgService = new BackgroundService(pixi, bgModel);
-
         editorModel.viewport.canvasWidth = pixi.view.width / window.devicePixelRatio;
         editorModel.viewport.canvasHeight = pixi.view.height / window.devicePixelRatio;
         editorService = new EditorService(pixi, editorModel);
-
         watch(
             () => editorStore.zoom,
             () => {
@@ -57,7 +54,6 @@ const usePresenter = () => {
                 editorService!.zoomTo(editorStore.zoom / 100);
             }
         );
-
         watch(
             () => editorStore.currentBoard.content,
             () => {
@@ -133,11 +129,11 @@ const usePresenter = () => {
         () => {
             if (editorService) {
                 for (const user of others.value) {
-                    editorService.updateUserAwareness(user[1] as unknown as UserAwareness);
+                    editorService.updateUserAwareness(user as unknown as UserAwareness);
                 }
             }
         },
-        { immediate: true }
+        { immediate: true, deep: true }
     );
 
     return { editorModel, setup, onMouseDown, onMouseMove, onMouseUp };

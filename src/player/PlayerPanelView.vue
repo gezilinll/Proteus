@@ -17,11 +17,11 @@
                 margin-left: 1px;
                 margin-right: 3px;
             "
-            v-if="others.size > 0"
+            v-if="others.length > 0"
         ></div>
         <div
             class="user-item-container"
-            v-if="others.size > 0"
+            v-if="others.length > 0"
             :style="{ border: 'solid ' + firstOtherUser!.color + ' 2px' }"
             v-tooltip.bottom="firstOtherUser!.name"
         >
@@ -32,11 +32,11 @@
         <div
             class="user-item-container"
             style="background-color: white; border: solid #dbd9d9 2px"
-            v-if="others.size > 1"
-            v-tooltip.bottom="others.size - 1 + ' others'"
+            v-if="others.length > 1"
+            v-tooltip.bottom="others.length - 1 + ' others'"
         >
             <span class="text-content">
-                {{ '+' + (others.size - 1) }}
+                {{ '+' + (others.length - 1) }}
             </span>
         </div>
 
@@ -50,15 +50,14 @@
 import { computed } from 'vue';
 import { useUserStore } from '../store/User.store';
 import { storeToRefs } from 'pinia';
-import { UserModel } from '../model/UserModel';
 
 const userStore = useUserStore();
 
 const { self, others } = storeToRefs(userStore);
 
 const firstOtherUser = computed(() => {
-    if (others.value.size > 0) {
-        return others.value.values().next().value as UserModel;
+    if (others.value.length > 0) {
+        return others.value[0];
     }
     return null;
 });
