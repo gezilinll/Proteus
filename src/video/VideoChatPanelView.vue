@@ -50,7 +50,6 @@
                     </svg>
                 </span>
                 <video
-                    id="video-producer-player"
                     style="position: absolute; width: 200px; height: 150px; object-fit: cover"
                     v-if="self.videoStream"
                     :srcObject.prop="self.videoStream"

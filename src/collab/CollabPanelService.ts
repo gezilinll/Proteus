@@ -28,6 +28,7 @@ export class CollabPanelService {
                 color: this._userStore.self.color,
                 mouseX: this._userStore.self.mouseX,
                 mouseY: this._userStore.self.mouseY,
+                peerID: this._userStore.self.peerID,
             },
             {
                 awarenessUpdated: this._handleUserAwarenessUpdated.bind(this),
