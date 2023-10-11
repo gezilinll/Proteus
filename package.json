@@ -8,7 +8,7 @@
         "start": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "test": "playwright test"
+        "test": "cypress open --component"
     },
     "dependencies": {
         "@hocuspocus/provider": "^2.1.0",
@@ -34,13 +34,14 @@
     },
     "devDependencies": {
         "@mdi/font": "^7.2.96",
-        "@playwright/test": "^1.37.1",
         "@types/js-cookie": "^3.0.3",
         "@types/lodash": "^4.14.199",
+        "@types/mocha": "^10.0.2",
         "@types/protoo-client": "^4.0.1",
         "@types/random-string": "^0.0.28",
         "@types/uuid": "^9.0.2",
         "@vitejs/plugin-vue": "^4.1.0",
+        "cypress": "^13.3.0",
         "rollup-plugin-visualizer": "^5.9.2",
         "typescript": "^5.0.2",
         "vite": "^4.3.9",
