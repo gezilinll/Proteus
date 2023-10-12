@@ -14,11 +14,11 @@ export const useUserStore = defineStore('user', {
     },
     actions: {
         isTourist() {
-            return !this.self.id && !this.token;
+            return !this.self.id || !this.token;
         },
 
         isValidUser() {
-            return this.self.id && this.self.name;
+            return this.self.id && this.self.name && this.token;
         },
 
         addOtherUser(user: UserModel) {

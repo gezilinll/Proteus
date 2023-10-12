@@ -15,6 +15,8 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands';
+import '@cypress/code-coverage/support';
+import { createPinia, setActivePinia } from 'pinia';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -22,6 +24,8 @@ import './commands';
 import { mount } from 'cypress/vue';
 
 Cypress.Commands.add('mount', mount);
+
+setActivePinia(createPinia());
 
 // Example use:
 // cy.mount(MyComponent)
