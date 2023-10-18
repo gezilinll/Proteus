@@ -3,6 +3,7 @@
         "target": "ESNext",
         "useDefineForClassFields": true,
         "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "types": ["cypress", "node"],
         "composite": true,
         "skipLibCheck": true,
         "module": "ESNext",
@@ -17,7 +18,7 @@
 
         /* Linting */
         "strict": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "esModuleInterop": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,

@@ -8,8 +8,8 @@
         "start": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "test:client": "cypress open --component --browser chrome",
-        "test:terminal": "cypress run --component",
+        "test:client": "cypress open --e2e --browser chrome",
+        "test:terminal": "cypress run --e2e --browser chrome",
         "test:coverage": "nyc report --reporter=text-lcov"
     },
     "dependencies": {

@@ -17,23 +17,16 @@ const customViteConfig = defineViteConfig({
 });
 
 export default defineConfig({
+    fixturesFolder: false,
     env: {
         codeCoverage: {
             exclude: 'cypress/**/*.*',
         },
     },
     video: false,
-    component: {
+    e2e: {
+        baseUrl: 'http://localhost:7001',
         specPattern: '**/*.spec.ts',
-        devServer: {
-            framework: 'vue',
-            bundler: 'vite',
-            viteConfig: customViteConfig,
-        },
-        setupNodeEvents(on, config) {
-            require('@cypress/code-coverage/task')(on, config);
-
-            return config;
-        },
+        supportFile: false,
     },
 });
