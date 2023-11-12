@@ -69,10 +69,10 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from '../../store/User.store';
+import { useBlitzStore } from '../../store/Blitz.store';
 import usePresenter from './LoginPanelPresenter';
 
-const store = useUserStore();
+const store = useBlitzStore();
 
 const presenter = usePresenter();
 </script>

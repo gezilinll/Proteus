@@ -9,12 +9,10 @@ import { onMounted, reactive, ref, watch } from 'vue';
 import usePresenter from './EditorPresenter';
 import { useMousePressed, useMouse } from '@vueuse/core';
 import { useWheel } from '@vueuse/gesture';
-import { useEditorStore } from '../store/Editor.store';
-import { useAppStore } from '../store/App.store';
+import { useBlitzStore } from '../store/Blitz.store';
 
 const presenter = usePresenter();
-const appStore = useAppStore();
-const editorStore = useEditorStore();
+const blitz = useBlitzStore();
 const canvas = ref(null);
 
 const mousePressed = reactive(
@@ -31,21 +29,21 @@ watch(
     () => mousePressed.pressed,
     () => {
         if (mousePressed.pressed) {
-            presenter.onMouseDown(appStore.selectedFunction, mouse.x, mouse.y);
+            presenter.onMouseDown(blitz.selectedFunction, mouse.x, mouse.y);
         } else {
-            presenter.onMouseUp(appStore.selectedFunction);
+            presenter.onMouseUp(blitz.selectedFunction);
         }
     }
 );
 watch(
     () => [mouse.x, mouse.y],
     () => {
-        presenter.onMouseMove(appStore.selectedFunction, mouse.x, mouse.y);
+        presenter.onMouseMove(blitz.selectedFunction, mouse.x, mouse.y);
     }
 );
 
 const wheelHandler = ({ movement }: any) => {
-    for (const hook of editorStore.wheelHooks) {
+    for (const hook of blitz.wheelHooks) {
         hook(movement[0], movement[1]);
     }
 };

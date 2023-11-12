@@ -1,10 +1,10 @@
 import { ref, watch } from 'vue';
 import { LoginPanelService } from './LoginPanelService';
 import { UserModel } from '../../model/UserModel';
-import { useUserStore } from '../../store/User.store';
+import { useBlitzStore } from '../../store/Blitz.store';
 
 const usePresenter = () => {
-    const store = useUserStore();
+    const store = useBlitzStore();
     const service = new LoginPanelService();
     let showLoading = ref(false);
 

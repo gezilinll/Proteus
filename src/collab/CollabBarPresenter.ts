@@ -1,38 +1,29 @@
 import { watch } from 'vue';
-import { useEditorStore } from '../store/Editor.store';
-import { CollabBarService } from './CollabBarService';
-import { useUserStore } from '../store/User.store';
-import { useAppStore } from '../store/App.store';
-import { useServiceStore } from '../store/Service.store';
+import { useBlitzStore } from '../store/Blitz.store';
 
 const usePresenter = () => {
-    const appStore = useAppStore();
-    const userStore = useUserStore();
-    const editorStore = useEditorStore();
-    const serviceStore = useServiceStore();
-    const service = new CollabBarService();
-    serviceStore.collab = service;
+    const blitz = useBlitzStore();
 
     watch(
-        () => editorStore.currentBoard.content,
+        () => blitz.currentBoard.content,
         () => {
-            if (editorStore.currentBoard.content) {
-                service.setup(editorStore.currentBoard.id);
-                service.joinWhiteboard();
+            if (blitz.currentBoard.content) {
+                blitz.collabService.setup(blitz.currentBoard.id);
+                blitz.collabService.joinWhiteboard();
             }
         },
         { immediate: true }
     );
 
     const joinVideoChat = () => {
-        service.joinVideoChat();
-        appStore.showVideoChatPanel = true;
+        blitz.collabService.joinVideoChat();
+        blitz.showVideoChatPanel = true;
     };
 
     watch(
-        () => [userStore.self.mouseX, userStore.self.mouseY],
+        () => [blitz.self.mouseX, blitz.self.mouseY],
         (position) => {
-            service.updateMousePosition(position[0], position[1]);
+            blitz.collabService.updateMousePosition(position[0], position[1]);
         }
     );
 

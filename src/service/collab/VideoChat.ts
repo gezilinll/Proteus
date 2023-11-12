@@ -1,8 +1,8 @@
 import protooClient from 'protoo-client';
 import * as mediasoupClient from 'mediasoup-client';
 import { Transport } from 'mediasoup-client/lib/types';
-import { MEDIASOUP_URL } from '../Constants';
-import { UserModel } from '../model/UserModel';
+import { MEDIASOUP_URL } from '../../Constants';
+import { UserModel } from '../../model/UserModel';
 
 export declare type UserPeer = Pick<UserModel, 'id' | 'name' | 'peerID'>;
 

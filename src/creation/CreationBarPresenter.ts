@@ -1,10 +1,10 @@
 import { watch } from 'vue';
-import { useAppStore } from '../store/App.store';
 import { useModel } from './CreationBarModel';
 import { CreationBarService } from './CreationBarService';
+import { useBlitzStore } from '../store/Blitz.store';
 
 const usePresenter = () => {
-    const appStore = useAppStore();
+    const blitz = useBlitzStore();
     const model = useModel();
     const service = new CreationBarService(model);
 
@@ -31,7 +31,7 @@ const usePresenter = () => {
                 document.getElementsByTagName('body')[0].style.cursor =
                     'url("cursor-brush.png") 0 10, auto';
             }
-            appStore.selectedFunction = model.selected.value;
+            blitz.selectedFunction = model.selected.value;
         }
     );
 

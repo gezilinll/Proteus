@@ -225,15 +225,15 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useUserStore } from '../../store/User.store';
+import { useBlitzStore } from '../../store/Blitz.store';
 import { storeToRefs } from 'pinia';
 import { watch } from 'vue';
 import { computed } from 'vue';
 import usePresenter from './VideoChatPanelPresenter';
 
 const presenter = usePresenter();
-const userStore = useUserStore();
-const { self, others, userStreamFlag } = storeToRefs(userStore);
+const blitz = useBlitzStore();
+const { self, others, userStreamFlag } = storeToRefs(blitz);
 
 onMounted(() => {
     watch(

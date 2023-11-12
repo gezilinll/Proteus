@@ -1,15 +1,15 @@
 import { watch } from 'vue';
 import { useModel } from './ToolsBarModel';
 import { ToolsBarService } from './ToolsBarService';
-import { useEditorStore } from '../store/Editor.store';
+import { useBlitzStore } from '../store/Blitz.store';
 
 const usePresenter = () => {
     const model = useModel();
     const service = new ToolsBarService(model);
 
-    const editorStore = useEditorStore();
-    model.current.value = editorStore.zoom;
-    editorStore.registerWheel((x: number, y: number) => {
+    const blitz = useBlitzStore();
+    model.current.value = blitz.zoom;
+    blitz.registerWheel((x: number, y: number) => {
         if (y > 0) {
             service.zoomOut(10);
         } else if (y < 0) {
@@ -34,13 +34,13 @@ const usePresenter = () => {
     watch(
         () => model.current.value,
         () => {
-            editorStore.zoom = model.current.value;
+            blitz.zoom = model.current.value;
         }
     );
     watch(
-        () => editorStore.zoom,
+        () => blitz.zoom,
         () => {
-            model.current.value = editorStore.zoom;
+            model.current.value = blitz.zoom;
         }
     );
 

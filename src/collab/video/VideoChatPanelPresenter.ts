@@ -1,21 +1,19 @@
-import { useAppStore } from '../../store/App.store';
-import { useServiceStore } from '../../store/Service.store';
+import { useBlitzStore } from '../../store/Blitz.store';
 
 const usePresenter = () => {
-    const serviceStore = useServiceStore();
-    const appStore = useAppStore();
+    const blitz = useBlitzStore();
 
     const switchAudio = () => {
-        serviceStore.collab?.switchAudio();
+        blitz.collabService.switchAudio();
     };
 
     const switchVideo = () => {
-        serviceStore.collab?.switchVideo();
+        blitz.collabService.switchVideo();
     };
 
     const leave = () => {
-        serviceStore.collab?.leaveVideoChat();
-        appStore.showVideoChatPanel = false;
+        blitz.collabService.leaveVideoChat();
+        blitz.showVideoChatPanel = false;
     };
     return { switchAudio, switchVideo, leave };
 };

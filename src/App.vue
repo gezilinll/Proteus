@@ -1,15 +1,15 @@
 <template>
     <v-app class="app-container">
         <Editor></Editor>
-        <BoardBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></BoardBar>
-        <CreationBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></CreationBar>
+        <BoardBar v-if="blitz.isValidUser() && blitz.isValidBoard()"></BoardBar>
+        <CreationBar v-if="blitz.isValidUser() && blitz.isValidBoard()"></CreationBar>
         <BrushBar v-if="selectedFunction === 'brush'"></BrushBar>
-        <ToolsBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></ToolsBar>
-        <CollabBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></CollabBar>
-        <CreatorBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></CreatorBar>
-        <VideoChatPanel v-if="appStore.showVideoChatPanel"></VideoChatPanel>
-        <LoginPanel v-if="!userStore.isValidUser()"></LoginPanel>
-        <BoardPanel v-if="userStore.isValidUser() && !editorStore.isValidBoard()"></BoardPanel>
+        <ToolsBar v-if="blitz.isValidUser() && blitz.isValidBoard()"></ToolsBar>
+        <CollabBar v-if="blitz.isValidUser() && blitz.isValidBoard()"></CollabBar>
+        <CreatorBar v-if="blitz.isValidUser() && blitz.isValidBoard()"></CreatorBar>
+        <VideoChatPanel v-if="blitz.showVideoChatPanel"></VideoChatPanel>
+        <LoginPanel v-if="!blitz.isValidUser()"></LoginPanel>
+        <BoardPanel v-if="blitz.isValidUser() && !blitz.isValidBoard()"></BoardPanel>
     </v-app>
 </template>
 
@@ -19,17 +19,13 @@ import { BoardPanel, BoardBar } from './board';
 import { CreationBar, BrushBar } from './creation';
 import { ToolsBar } from './tools';
 import { CollabBar, CreatorBar, LoginPanel, VideoChatPanel } from './collab';
-import { useUserStore } from './store/User.store';
 import { storeToRefs } from 'pinia';
-import { useAppStore } from './store/App.store';
-import { useEditorStore } from './store/Editor.store';
 import axios from 'axios';
+import { useBlitzStore } from './store/Blitz.store';
 
-const appStore = useAppStore();
-const userStore = useUserStore();
-const editorStore = useEditorStore();
+const blitz = useBlitzStore();
 
-const { selectedFunction } = storeToRefs(appStore);
+const { selectedFunction } = storeToRefs(blitz);
 
 function initFromCookie() {
     const token = document.cookie
@@ -41,11 +37,11 @@ function initFromCookie() {
         .find((row) => row.startsWith('userID='))
         ?.split('=')[1];
     if (userID) {
-        userStore.self.id = userID;
+        blitz.self.id = userID;
     }
     if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        userStore.token = token;
+        blitz.token = token;
     }
 }
 

@@ -48,12 +48,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useUserStore } from '../../store/User.store';
+import { useBlitzStore } from '../../store/Blitz.store';
 import { storeToRefs } from 'pinia';
 
-const userStore = useUserStore();
+const blitz = useBlitzStore();
 
-const { self, others } = storeToRefs(userStore);
+const { self, others } = storeToRefs(blitz);
 
 const firstOtherUser = computed(() => {
     if (others.value.length > 0) {

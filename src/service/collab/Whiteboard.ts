@@ -1,8 +1,8 @@
 import * as Y from 'yjs';
 import { v4 as uuidv4 } from 'uuid';
 import { HocuspocusProvider, onAwarenessUpdateParameters } from '@hocuspocus/provider';
-import { HOCUSPOCUS_URL } from '../Constants';
-import { UserModel } from '../model/UserModel';
+import { HOCUSPOCUS_URL } from '../../Constants';
+import { UserModel } from '../../model/UserModel';
 
 export declare type OnUserAwarenessUpdated = (users: UserAwareness[]) => void;
 

@@ -6,19 +6,15 @@ import { useModel } from './EditorModel';
 import { EditorService } from './EditorService';
 import { BrushElementService } from './element/brush/BrushElementService';
 import { BrushElementModel } from './element/brush/BrushElementModel';
-import { useAppStore } from '../store/App.store';
-import { useEditorStore } from '../store/Editor.store';
 import { watch } from 'vue';
-import { useUserStore } from '../store/User.store';
 import { throttle } from 'lodash';
 import { storeToRefs } from 'pinia';
 import { UserAwareness } from '../room/Whiteboard';
+import { useBlitzStore } from '../store/Blitz.store';
 
 const usePresenter = () => {
-    const appStore = useAppStore();
-    const userStore = useUserStore();
-    const { others } = storeToRefs(userStore);
-    const editorStore = useEditorStore();
+    const blitz = useBlitzStore();
+    const { others } = storeToRefs(blitz);
 
     const mouse = {
         type: 'moving' as 'pressed' | 'dragging' | 'moving',
@@ -48,17 +44,17 @@ const usePresenter = () => {
         editorModel.viewport.canvasHeight = pixi.view.height / window.devicePixelRatio;
         editorService = new EditorService(pixi, editorModel);
         watch(
-            () => editorStore.zoom,
+            () => blitz.zoom,
             () => {
-                bgService!.zoomTo(editorStore.zoom / 100);
-                editorService!.zoomTo(editorStore.zoom / 100);
+                bgService!.zoomTo(blitz.zoom / 100);
+                editorService!.zoomTo(blitz.zoom / 100);
             }
         );
         watch(
-            () => editorStore.currentBoard.content,
+            () => blitz.currentBoard.content,
             () => {
-                if (editorStore.currentBoard.content) {
-                    editorService!.loadFromContent(editorStore.currentBoard.content);
+                if (blitz.currentBoard.content) {
+                    editorService!.loadFromContent(blitz.currentBoard.content);
                 }
             },
             { immediate: true }
@@ -76,9 +72,9 @@ const usePresenter = () => {
                     const position = editorService.calculateGlobalPosition(x, y);
                     editorModel.creatingElement.service.moveTo(position.x, position.y);
                     (editorModel.creatingElement.model as BrushElementModel).color =
-                        appStore.brushConfig.color;
+                        blitz.brushConfig.color;
                     (editorModel.creatingElement.model as BrushElementModel).weight =
-                        appStore.brushConfig.weight;
+                        blitz.brushConfig.weight;
                 }
             }
         }
@@ -119,8 +115,8 @@ const usePresenter = () => {
     const updateUserMousePosition = throttle(function (x: number, y: number) {
         if (editorService) {
             const globalPosition = editorService.calculateGlobalPosition(x, y);
-            userStore.self.mouseX = globalPosition.x;
-            userStore.self.mouseY = globalPosition.y;
+            blitz.self.mouseX = globalPosition.x;
+            blitz.self.mouseY = globalPosition.y;
         }
     }, 50);
 
