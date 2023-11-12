@@ -1,24 +1,23 @@
 import { watch } from 'vue';
 import { useModel } from './BrushBarModel';
-import { BrushBarService } from './BrushBarService';
 import { useBlitzStore } from '../../store/Blitz.store';
+import { BrushPanelItem } from '../../Defines';
 
 const usePresenter = () => {
     const blitz = useBlitzStore();
     const model = useModel();
-    const service = new BrushBarService(model);
 
     blitz.brushConfig.weight = model.brushWeight.value;
     blitz.brushConfig.color = model.brushColor.value;
 
     const handlePenClicked = () => {
-        service.handleItemClicked('pen');
+        handleItemClicked('pen');
         blitz.brushConfig.weight = model.penConfigs[model.penConfigIndex.value].weight;
         blitz.brushConfig.color = model.penConfigs[model.penConfigIndex.value].color;
     };
 
     const handleHighlighterClicked = () => {
-        service.handleItemClicked('highlighter');
+        handleItemClicked('highlighter');
         blitz.brushConfig.weight =
             model.highlighterConfigs[model.highlighterConfigIndex.value].weight;
         blitz.brushConfig.color =
@@ -26,19 +25,42 @@ const usePresenter = () => {
     };
 
     const handleEraserClicked = () => {
-        service.handleItemClicked('eraser');
+        handleItemClicked('eraser');
     };
 
     const handlePenConfigClicked = (index: number) => {
-        service.handleConfigClick(index);
+        handleConfigClick(index);
         blitz.brushConfig.weight = model.penConfigs[index].weight;
         blitz.brushConfig.color = model.penConfigs[index].color;
     };
 
     const handleHighlighterConfigClicked = (index: number) => {
-        service.handleConfigClick(index);
+        handleConfigClick(index);
         blitz.brushConfig.weight = model.highlighterConfigs[index].weight;
         blitz.brushConfig.color = model.highlighterConfigs[index].color;
+    };
+
+    const handleItemClicked = (type: BrushPanelItem) => {
+        model.selected.value = type;
+        model.showConfigPanel.value = false;
+    };
+
+    const handleConfigClick = (index: number) => {
+        if (model.selected.value === 'pen') {
+            if (model.penConfigIndex.value === index) {
+                model.showConfigPanel.value = !model.showConfigPanel.value;
+            }
+            model.penConfigIndex.value = index;
+            model.brushColor.value = model.penConfigs[index].color;
+            model.brushWeight.value = model.penConfigs[index].weight;
+        } else if (model.selected.value === 'highlighter') {
+            if (model.highlighterConfigIndex.value === index) {
+                model.showConfigPanel.value = !model.showConfigPanel.value;
+            }
+            model.highlighterConfigIndex.value = index;
+            model.brushColor.value = model.highlighterConfigs[index].color;
+            model.brushWeight.value = model.highlighterConfigs[index].weight;
+        }
     };
 
     watch(

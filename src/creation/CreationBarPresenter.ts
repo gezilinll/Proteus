@@ -1,23 +1,31 @@
 import { watch } from 'vue';
 import { useModel } from './CreationBarModel';
-import { CreationBarService } from './CreationBarService';
 import { useBlitzStore } from '../store/Blitz.store';
+import { FunctionPanelItem } from '../Defines';
 
 const usePresenter = () => {
     const blitz = useBlitzStore();
     const model = useModel();
-    const service = new CreationBarService(model);
 
     const handleSelectorClicked = () => {
-        service.handleItemClicked('selector');
+        handleItemClicked('selector');
     };
 
     const handleGrabClicked = () => {
-        service.handleItemClicked('grab');
+        handleItemClicked('grab');
     };
 
     const handleBrushClicked = () => {
-        service.handleItemClicked('brush');
+        handleItemClicked('brush');
+    };
+
+    const handleItemClicked = (type: FunctionPanelItem) => {
+        if (type === 'selector') {
+            model.showPanel.value = false;
+        } else if (model.selected.value === type) {
+            model.showPanel.value = !model.showPanel.value;
+        }
+        model.selected.value = type;
     };
 
     watch(

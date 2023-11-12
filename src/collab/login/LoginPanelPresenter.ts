@@ -1,11 +1,10 @@
 import { ref, watch } from 'vue';
-import { LoginPanelService } from './LoginPanelService';
 import { UserModel } from '../../model/UserModel';
 import { useBlitzStore } from '../../store/Blitz.store';
 
 const usePresenter = () => {
     const store = useBlitzStore();
-    const service = new LoginPanelService();
+    const service = store.userService;
     let showLoading = ref(false);
 
     const requestGithubAuth = () => {

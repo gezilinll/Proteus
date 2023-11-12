@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { GITHUB_CLIENT_ID, SERVER_URL } from '../../Constants';
-import { UserModel } from '../../model/UserModel';
+import { SERVER_URL, GITHUB_CLIENT_ID } from '../Constants';
+import { UserModel } from '../model/UserModel';
 
-export class LoginPanelService {
+export class UserService {
     constructor() {}
 
     requestGithubAuth() {

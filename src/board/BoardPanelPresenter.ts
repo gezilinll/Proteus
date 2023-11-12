@@ -1,12 +1,9 @@
 import { ref } from 'vue';
-import { useModel } from './BoardPanelModel';
 import { BoardModel } from '../model/BoardModel';
 import { useBlitzStore } from '../store/Blitz.store';
 
 const usePresenter = () => {
-    const model = useModel();
     const blitz = useBlitzStore();
-    model.currentBoard = blitz.currentBoard;
 
     const isLoading = ref(true);
 
@@ -24,7 +21,7 @@ const usePresenter = () => {
 
     const prepareOpenBoard = (index: number) => {
         isLoading.value = true;
-        window.location.href = `${window.location.origin}/?id=${model.boards.value[index].id}`;
+        window.location.href = `${window.location.origin}/?id=${blitz.boards[index].id}`;
     };
 
     const loadCurrentBoard = (id: string) => {
@@ -32,7 +29,7 @@ const usePresenter = () => {
         blitz.boardService.loadCurrentBoard(id).then(() => (isLoading.value = false));
     };
 
-    return { model, isLoading, loadBoardList, createBoard, prepareOpenBoard, loadCurrentBoard };
+    return { isLoading, loadBoardList, createBoard, prepareOpenBoard, loadCurrentBoard };
 };
 
 export default usePresenter;

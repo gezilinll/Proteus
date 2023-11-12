@@ -28,7 +28,7 @@
                 </div>
                 <div
                     class="record-container"
-                    v-for="(item, index) in model.boards.value"
+                    v-for="(item, index) in boards"
                     @click="presenter.prepareOpenBoard(index)"
                 >
                     <span class="record-icon-container">
@@ -106,10 +106,14 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import usePresenter from './BoardPanelPresenter';
+import { useBlitzStore } from '../store/Blitz.store';
+import { storeToRefs } from 'pinia';
 
 const presenter = usePresenter();
 
-const { model } = presenter;
+const blitz = useBlitzStore();
+
+const { boards } = storeToRefs(blitz);
 
 onMounted(() => {
     const boardID = document.cookie
