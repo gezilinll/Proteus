@@ -1,1 +1,1 @@
-export { default as EditorView } from './EditorView.vue';
+export { default as Editor } from './Editor.vue';

@@ -1,35 +1,24 @@
 <template>
     <v-app class="app-container">
-        <EditorView></EditorView>
-        <FunctionView v-if="userStore.isValidUser() && editorStore.isValidBoard()"></FunctionView>
-        <BrushPanelView v-if="selectedFunction === 'brush'"></BrushPanelView>
-        <NavigationPanelView
-            v-if="userStore.isValidUser() && editorStore.isValidBoard()"
-        ></NavigationPanelView>
-        <ZoomPanelView v-if="userStore.isValidUser() && editorStore.isValidBoard()"></ZoomPanelView>
-        <CollabPanelView
-            v-if="userStore.isValidUser() && editorStore.isValidBoard()"
-        ></CollabPanelView>
-        <PlayerPanelView
-            v-if="userStore.isValidUser() && editorStore.isValidBoard()"
-        ></PlayerPanelView>
-        <VideoChatPanelView v-if="appStore.showVideoChatPanel"></VideoChatPanelView>
-        <LoginView v-if="!userStore.isValidUser()"></LoginView>
-        <MyBoardsView v-if="userStore.isValidUser() && !editorStore.isValidBoard()"></MyBoardsView>
+        <Editor></Editor>
+        <BoardBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></BoardBar>
+        <CreationBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></CreationBar>
+        <BrushBar v-if="selectedFunction === 'brush'"></BrushBar>
+        <ToolsBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></ToolsBar>
+        <CollabBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></CollabBar>
+        <CreatorBar v-if="userStore.isValidUser() && editorStore.isValidBoard()"></CreatorBar>
+        <VideoChatPanel v-if="appStore.showVideoChatPanel"></VideoChatPanel>
+        <LoginPanel v-if="!userStore.isValidUser()"></LoginPanel>
+        <BoardPanel v-if="userStore.isValidUser() && !editorStore.isValidBoard()"></BoardPanel>
     </v-app>
 </template>
 
 <script setup lang="ts">
-import { LoginView } from './login';
-import { EditorView } from './editor';
-import { FunctionView } from './function';
-import { MyBoardsView } from './board';
-import { BrushPanelView } from './function/brush';
-import { ZoomPanelView } from './zoom';
-import { NavigationPanelView } from './navigation';
-import { PlayerPanelView } from './player';
-import { VideoChatPanelView } from './video';
-import { CollabPanelView } from './collab';
+import { Editor } from './editor';
+import { BoardPanel, BoardBar } from './board';
+import { CreationBar, BrushBar } from './creation';
+import { ToolsBar } from './tools';
+import { CollabBar, CreatorBar, LoginPanel, VideoChatPanel } from './collab';
 import { useUserStore } from './store/User.store';
 import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/App.store';

@@ -1,1 +1,2 @@
-export { default as MyBoardsView } from './MyBoardsView.vue';
+export { default as BoardPanel } from './BoardPanel.vue';
+export { default as BoardBar } from './BoardBar.vue';

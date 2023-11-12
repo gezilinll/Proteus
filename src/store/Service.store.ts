@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { BoardService } from '../board/BoardService';
+import { BoardService } from '../board/BoardPanelService';
 import { CollabPanelService } from '../collab/CollabPanelService';
 
 interface State {
