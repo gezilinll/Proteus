@@ -8,7 +8,7 @@ import * as PIXI from 'pixi.js';
 import { SERVER_URL } from '../Constants';
 import { ElementModel } from './element/ElementModel';
 import { UserAwareness } from '../service/collab/Whiteboard';
-import { UserAwarenessUI } from './ui/UserAwarenessUI';
+import { UserAwarenessUI } from './widget/UserAwarenessUI';
 
 export class EditorService {
     private _vpService: ViewportService;
