@@ -19,6 +19,14 @@ const usePresenter = () => {
         handleItemClicked('brush');
     };
 
+    const handleTextClicked = () => {
+        handleItemClicked('text');
+    };
+
+    const handleShapeClicked = () => {
+        handleItemClicked('shape');
+    };
+
     const handleItemClicked = (type: FunctionPanelItem) => {
         if (type === 'selector') {
             model.showPanel.value = false;
@@ -38,6 +46,10 @@ const usePresenter = () => {
             } else if (model.selected.value === 'brush') {
                 document.getElementsByTagName('body')[0].style.cursor =
                     'url("cursor-brush.png") 0 10, auto';
+            } else if (model.selected.value === 'shape') {
+                document.getElementsByTagName('body')[0].style.cursor = 'crosshair';
+            } else if (model.selected.value === 'text') {
+                document.getElementsByTagName('body')[0].style.cursor = 'text';
             }
             blitz.selectedFunction = model.selected.value;
         }
@@ -48,6 +60,8 @@ const usePresenter = () => {
         handleSelectorClicked,
         handleGrabClicked,
         handleBrushClicked,
+        handleTextClicked,
+        handleShapeClicked,
     };
 };
 

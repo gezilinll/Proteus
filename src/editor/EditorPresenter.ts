@@ -9,8 +9,8 @@ import { BrushElementModel } from './element/brush/BrushElementModel';
 import { watch } from 'vue';
 import { throttle } from 'lodash';
 import { storeToRefs } from 'pinia';
-import { UserAwareness } from '../room/Whiteboard';
 import { useBlitzStore } from '../store/Blitz.store';
+import { UserAwareness } from '../service/collab/Whiteboard';
 
 const usePresenter = () => {
     const blitz = useBlitzStore();
