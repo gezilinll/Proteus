@@ -3,10 +3,10 @@ import { SERVER_URL } from '../../Constants';
 import { BrushElementModel } from '../../model/element/BrushElementModel';
 import { ElementType } from '../../Defines';
 import { BoardElementModel } from '../../model/element/BoardElementModel';
-import { CanvasModel } from '../../model/CanvasModel';
+import { BackgroundModel } from '../../model/BackgroundModel';
 
 export class EditorService {
-    canvas: CanvasModel = new CanvasModel();
+    canvas: BackgroundModel = new BackgroundModel();
     board: BoardElementModel = new BoardElementModel();
 
     constructor() {}
@@ -57,7 +57,7 @@ export class EditorService {
 
     zoomTo(target: number) {
         this.canvas.zoomTo(target);
-        this.board.scaleTo(target);
+        this.board.zoomTo(target);
         this.board.notifyUpdated();
     }
 

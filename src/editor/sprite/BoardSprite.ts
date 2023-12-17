@@ -5,7 +5,7 @@ import { BaseSprite } from './BaseSprite';
 import { BrushSprite } from './BrushSprite';
 import { BrushElementModel } from '../../model/element/BrushElementModel';
 
-export class ViewportSprite {
+export class BoardSprite {
     sprite: PIXI.Container;
 
     private _model: BoardElementModel;
@@ -23,9 +23,6 @@ export class ViewportSprite {
         this._model.registerObserver(this.update.bind(this));
 
         this.sprite = new PIXI.Container();
-        const placeholder = new PIXI.Graphics();
-        placeholder.drawRect(0, 0, canvasWidth, canvasHeight);
-        this.sprite.addChild(placeholder);
     }
 
     private _onElementAdded(model: BaseElementModel) {

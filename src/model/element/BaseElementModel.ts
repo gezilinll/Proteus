@@ -37,7 +37,7 @@ export abstract class BaseElementModel {
         this.position.top += deltaY;
     }
 
-    scaleTo(target: number) {
+    zoomTo(target: number) {
         this.scale.x = target;
         this.scale.y = target;
     }

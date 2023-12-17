@@ -1,6 +1,6 @@
 export declare type OnCanvasUpdated = () => void;
 
-export class CanvasModel {
+export class BackgroundModel {
     width: number = 0;
     height: number = 0;
     styleWidth: number = 0;
