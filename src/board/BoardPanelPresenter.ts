@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { BoardModel } from '../model/BoardModel';
+import { BoardModel } from '../model/RecordModel';
 import { useBlitzStore } from '../store/Blitz.store';
 
 const usePresenter = () => {

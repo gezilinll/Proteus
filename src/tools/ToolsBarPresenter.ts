@@ -7,7 +7,7 @@ const usePresenter = () => {
     const model = useModel();
 
     const blitz = useBlitzStore();
-    model.current.value = blitz.zoom;
+    model.current.value = 100;
     blitz.registerWheel((x: number, y: number) => {
         if (y > 0) {
             zoomOut(10);
@@ -84,13 +84,7 @@ const usePresenter = () => {
     watch(
         () => model.current.value,
         () => {
-            blitz.zoom = model.current.value;
-        }
-    );
-    watch(
-        () => blitz.zoom,
-        () => {
-            model.current.value = blitz.zoom;
+            blitz.editorService.zoomTo(model.current.value / 100);
         }
     );
 

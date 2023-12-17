@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { SERVER_URL } from '../Constants';
-import { BoardModel } from '../model/BoardModel';
+import { BoardModel } from '../model/RecordModel';
 import { useBlitzStore } from '../store/Blitz.store';
 
 export class BoardService {

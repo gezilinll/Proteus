@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
 import { FunctionPanelItem } from '../Defines';
-import { BoardModel } from '../model/BoardModel';
+import { BoardModel } from '../model/RecordModel';
 import { BoardService } from '../service/BoardService';
 import { CollabService } from '../service/collab/CollabService';
 import { UserModel } from '../model/UserModel';
 import { UserService } from '../service/UserService';
 import { CookieService } from '../service/CookieService';
+import { EditorService } from '../service/editor/EditorService';
 
 export declare type OnWheelListener = (moveX: number, moveY: number) => void;
 export declare type UnregisterListener = () => void;
@@ -20,12 +21,12 @@ export const useBlitzStore = defineStore('blitz', {
             },
             showVideoChatPanel: false,
             wheelHooks: [] as OnWheelListener[],
-            zoom: 100,
 
             boardService: new BoardService(),
             collabService: new CollabService(),
             userService: new UserService(),
             cookieService: new CookieService(),
+            editorService: new EditorService(),
 
             self: { id: '', name: '', color: '', mouseX: 0, mouseY: 0 } as UserModel,
             others: [] as UserModel[],

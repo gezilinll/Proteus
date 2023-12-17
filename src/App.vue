@@ -21,7 +21,6 @@ import { ToolsBar } from './tools';
 import { CollabBar, CreatorBar, LoginPanel, VideoChatPanel } from './collab';
 import { storeToRefs } from 'pinia';
 import { useBlitzStore } from './store/Blitz.store';
-
 const blitz = useBlitzStore();
 
 const { selectedFunction } = storeToRefs(blitz);
