@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { UserAwareness } from '../../service/collab/Whiteboard';
-import { UserAwarenessUI } from '../widget/UserAwarenessUI';
+import { UserAwarenessWidget } from '../widget/UserAwarenessWidget';
 import { BoardSprite } from '../sprite/BoardSprite';
 import { BoardElementModel } from '../../model/element/BoardElementModel';
 import { BackgroundSprite } from '../sprite/BackgroundSprite';
@@ -10,8 +10,10 @@ export class EditorCanvasService {
     private _bgSprite: BackgroundSprite;
     private _boardSprite: BoardSprite;
 
+    private _userAwarenessContainer: PIXI.Container;
+    private _userAwarenessWidgets: Map<string, UserAwarenessWidget> = new Map();
+
     private _pixi: PIXI.Application;
-    private _awareness: Map<string, UserAwarenessUI> = new Map();
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -40,17 +42,21 @@ export class EditorCanvasService {
             this._pixi.view.height / window.devicePixelRatio
         );
         this._pixi.stage.addChild(this._boardSprite.sprite);
+
+        this._userAwarenessContainer = new PIXI.Container();
+        this._userAwarenessContainer.zIndex = 999999999;
+        this._pixi.stage.addChild(this._userAwarenessContainer);
     }
 
     updateUserAwareness(awareness: UserAwareness) {
-        // let ui: UserAwarenessUI;
-        // if (this._awareness.has(awareness.id)) {
-        //     ui = this._awareness.get(awareness.id)!;
-        // } else {
-        //     ui = new UserAwarenessUI(this._vpService.container);
-        //     this._vpService.container.addChild(ui.sprit);
-        //     this._awareness.set(awareness.id, ui);
-        // }
-        // ui.updateUserAwareness(awareness);
+        let widget: UserAwarenessWidget;
+        if (this._userAwarenessWidgets.has(awareness.id)) {
+            widget = this._userAwarenessWidgets.get(awareness.id)!;
+        } else {
+            widget = new UserAwarenessWidget();
+            this._userAwarenessContainer.addChild(widget.sprit);
+            this._userAwarenessWidgets.set(awareness.id, widget);
+        }
+        widget.updateUserAwareness(awareness);
     }
 }

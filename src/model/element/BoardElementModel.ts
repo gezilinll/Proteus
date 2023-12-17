@@ -12,10 +12,6 @@ export class BoardElementModel extends BaseElementModel {
 
     private _addedObserver?: ElementAddedObserver;
     private _removedObserver?: ElementAddedObserver;
-    private _movedDistance = {
-        x: 0,
-        y: 0,
-    };
 
     registerElementAddedObserver(observer: ElementAddedObserver) {
         this._addedObserver = observer;
@@ -34,15 +30,4 @@ export class BoardElementModel extends BaseElementModel {
         this.elements = this.elements.filter((e) => e === element);
         this._removedObserver?.(element);
     }
-
-    // move(deltaX: number, deltaY: number): void {
-    //     this.position.left -= this._movedDistance.x;
-    //     this.position.top -= this._movedDistance.y;
-
-    //     this._movedDistance.x += deltaX;
-    //     this._movedDistance.y += deltaY;
-
-    //     this.position.left += this._movedDistance.x;
-    //     this.position.top += this._movedDistance.y;
-    // }
 }

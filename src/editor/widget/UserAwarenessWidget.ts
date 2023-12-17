@@ -1,15 +1,13 @@
 import * as PIXI from 'pixi.js';
 import { UserAwareness } from '../../service/collab/Whiteboard';
 
-export class UserAwarenessUI {
+export class UserAwarenessWidget {
     sprit: PIXI.Container;
 
-    private _viewport: PIXI.Container;
     private _text: PIXI.Text;
     private _background: PIXI.Sprite;
 
-    constructor(viewport: PIXI.Container) {
-        this._viewport = viewport;
+    constructor() {
         this.sprit = new PIXI.Container();
         this._text = new PIXI.Text();
         this._background = new PIXI.Sprite();
@@ -19,7 +17,6 @@ export class UserAwarenessUI {
     updateUserAwareness(awareness: UserAwareness) {
         this.sprit.position.x = awareness.mouseX;
         this.sprit.position.y = awareness.mouseY;
-        this.sprit.zIndex = 999999999;
         this._text.text = awareness.name;
         const style = new PIXI.TextStyle({
             fill: '#ffffff',
@@ -35,7 +32,5 @@ export class UserAwarenessUI {
         this._background.tint = new PIXI.Color(awareness.color).toNumber();
         this._background.width = textMetrics.width + 10;
         this._background.height = textMetrics.height + 10;
-
-        this.sprit.scale.set(1.0 / this._viewport.scale.x, 1.0 / this._viewport.scale.y);
     }
 }
