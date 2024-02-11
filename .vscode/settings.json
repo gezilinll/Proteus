@@ -1,38 +1,39 @@
 {
     "typescript.tsdk": "node_modules/typescript/lib",
-    "git.branchProtection": ["master"],
+    "typescript.suggest.jsdoc.generateReturns": false,
     "explorer.autoRevealExclude": {
         "**/node_modules": false
     },
     "workbench.editor.highlightModifiedTabs": true,
     "terminal.integrated.wordSeparators": " ()[]{}',，\"`─‘’“”<>（）【】{}《》「」:：",
     "editor.codeActionsOnSave": {
-        "source.addMissingImports": false,
-        "source.fixAll.eslint": true,
-        "source.fixAll.stylelint": true,
-        "source.fixAll.markdownlint": true
+        "source.addMissingImports": "explicit",
+        "source.fixAll.eslint": "explicit",
+        "source.fixAll.stylelint": "explicit",
+        "source.fixAll.markdownlint": "explicit"
     },
+    "search.followSymlinks": true,
     "editor.formatOnSave": true,
     "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:：'\",.<>/?，。‘’“”；（）【】{}《》「」",
     "emmet.useInlineCompletions": true,
     "editor.linkedEditing": true,
     "html.autoClosingTags": true,
     "search.exclude": {
-        "**/node_modules": true
+        "**/node_modules": true,
+        "**/.turbo": true,
+        "**/dist": true
     },
-    "npm.packageManager": "npm",
-
+    "npm.packageManager": "pnpm",
     "css.validate": false,
     "less.validate": false,
     "stylelint.enable": true,
-    "stylelint.packageManager": "npm",
+    "stylelint.packageManager": "pnpm",
     "stylelint.validate": ["css", "less", "html", "vue"],
 
     "eslint.enable": true,
-    "eslint.packageManager": "pnpm",
+    "eslint.runtime": "node",
     "eslint.validate": [
         "javascript",
-        "typescript",
         "typescript",
         "typescriptreact",
         "vue",
@@ -81,33 +82,18 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[svg]": {
-        "editor.defaultFormatter": "jock.svg"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
 
-    "cSpell.words": [
-        "bbox",
-        "Collab",
-        "cullable",
-        "gezilinll",
-        "Hocuspocus",
-        "iconsets",
-        "Insertable",
-        "libwebrtc",
-        "materialdesignicons",
-        "mediasoup",
-        "momo",
-        "pinia",
-        "PIXI",
-        "producedata",
-        "protoo",
-        "trackended",
-        "transportclose",
-        "urlib",
-        "uuidv",
-        "Vuetify"
+    "versionlens.npm.files": "**/{package,web-module}.json",
+    "versionlens.npm.dependencyProperties": [
+        "dependencies",
+        "devDependencies",
+        "peerDependencies",
+        "optionalDependencies",
+        "pnpm.overrides"
     ],
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    },
-    "python.formatting.provider": "none"
+
+    "vue.complete.casing.props": "autoCamel",
+    "cSpell.words": []
 }

@@ -1,0 +1,22 @@
+{
+  "name": "blitz",
+  "version": "1.0.0",
+  "description": "",
+  "workspaces": [
+    "packages/**"
+  ],
+  "scripts": {
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12",
+    "vitest": "^1.2.2"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.1"
+  }
+}
