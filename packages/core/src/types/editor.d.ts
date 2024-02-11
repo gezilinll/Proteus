@@ -1,6 +1,7 @@
-import { Subject } from "rxjs";
-import { Plugin } from "./plugin";
-import { Element } from "./element";
+import { Subject } from 'rxjs';
+
+import { Element } from './element';
+import { Plugin } from './plugin';
 
 export interface Editor {
     readonly events: {

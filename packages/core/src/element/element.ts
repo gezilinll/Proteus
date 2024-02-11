@@ -1,3 +1,1 @@
-export class Element {
-    
-}
+export class Element {}

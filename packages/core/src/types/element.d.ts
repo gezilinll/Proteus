@@ -1,3 +1,1 @@
-export interface Element {
-    
-}
+export interface Element {}

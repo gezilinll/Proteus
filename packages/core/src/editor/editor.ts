@@ -1,6 +1,7 @@
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+
 import { Plugin as IPlugin } from '../types';
-import { Element, Editor as IEditor } from '../types';
+import { Editor as IEditor, Element } from '../types';
 
 export class Editor implements IEditor {
     readonly events = { changeElement: new Subject<Element>() };

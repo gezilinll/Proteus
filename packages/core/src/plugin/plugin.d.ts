@@ -1,6 +1,7 @@
-import { Event } from "../editor/events";
+import { Editor } from '../types';
 
 export interface Plugin {
     name: string;
-    events: Event<any>[];
+    mount(editor: Editor): void;
+    unmount(editor: Editor): void;
 }
