@@ -1,0 +1,13 @@
+{
+    "name": "@blitz/app",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "start": "vite"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {},
+    "dependencies": {}
+}

@@ -1,20 +1,46 @@
 import { Subject } from 'rxjs';
 
-import { Plugin as IPlugin } from '../types';
-import { Editor as IEditor, Element } from '../types';
+import { Element } from '../element';
+import { Plugin } from '../plugin';
 
-export class Editor implements IEditor {
-    readonly events = { changeElement: new Subject<Element>() };
+export class Editor {
+    private _elements: Element[] = [];
+
+    readonly events = {
+        addElement: new Subject<Element>(),
+        changeElement: new Subject<Element>(),
+        removeElement: new Subject<Element>(),
+        mouseDown: new Subject<MouseEvent>(),
+        mouseMove: new Subject<MouseEvent>(),
+        mouseUp: new Subject<MouseEvent>(),
+    };
 
     constructor() {}
 
-    changeElement<T extends Element>(element: T, changed: Partial<T>) {}
+    addElement<T extends Element>(element: T) {
+        this._elements.push(element);
+        this.events.addElement.next(element);
+    }
 
-    registerPlugin(plugin: IPlugin): void {
+    changeElement<T extends Element>(element: T, changed: Partial<T>) {
+        Object.assign(element, changed);
+        this.events.changeElement.next(element);
+    }
+
+    removeElement<T extends Element>(element: T) {
+        this._elements = this._elements.filter((item) => item.id);
+        this.events.removeElement.next(element);
+    }
+
+    handleMouseDown() {}
+
+    handleMouseMove() {}
+
+    registerPlugin(plugin: Plugin): void {
         plugin.mount(this);
     }
 
-    unregisterPlugin(plugin: IPlugin): void {
+    unregisterPlugin(plugin: Plugin): void {
         plugin.unmount(this);
     }
 }

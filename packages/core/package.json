@@ -2,8 +2,18 @@
     "name": "@blitz/core",
     "version": "1.0.0",
     "description": "",
+    "type": "module",
+    "files": [
+        "dist",
+        "src"
+    ],
+    "module": "./dist/es/index.mjs",
+    "main": "./dist/cjs/index.cjs",
+    "typings": "./src/index.ts",
     "scripts": {
-        "test": "vitest run"
+        "test": "vitest run",
+        "clean": "rm -rf dist",
+        "build": "pnpm clean & vite build"
     },
     "keywords": [],
     "author": "",

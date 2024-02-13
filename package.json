@@ -3,27 +3,40 @@
     "version": "1.0.0",
     "description": "",
     "workspaces": [
+        "app/**",
         "packages/**",
         "tools/**"
     ],
     "scripts": {
-        "test": "vitest run"
+        "test": "vitest run",
+        "clean": "rm -rf node_modules && pnpm -r --parallel exec rm -rf node_modules",
+        "build": "turbo build"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
         "@tools/tsconfig": "workspace:*",
+        "@types/uuid": "^9.0.8",
         "@typescript-eslint/eslint-plugin": "^6.21.0",
         "@typescript-eslint/parser": "^6.21.0",
+        "@vitejs/plugin-vue": "^5.0.4",
         "eslint": "^8.56.0",
         "eslint-plugin-simple-import-sort": "^12.0.0",
         "eslint-plugin-unused-imports": "^3.0.0",
+        "rollup-plugin-visualizer": "^5.12.0",
+        "turbo": "^1.12.3",
         "typescript": "^5.3.3",
         "vite": "^5.0.12",
-        "vitest": "^1.2.2"
+        "vite-plugin-compression": "^0.5.1",
+        "vitest": "^1.2.2",
+        "vue-eslint-parser": "^9.4.2"
     },
     "dependencies": {
-        "rxjs": "^7.8.1"
+        "@blitz/core": "workspace:*",
+        "less": "^4.2.0",
+        "rxjs": "^7.8.1",
+        "uuid": "^9.0.1",
+        "vue": "^3.4.19"
     }
 }
