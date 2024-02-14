@@ -2,12 +2,16 @@
     <div class="app-container">
         <canvas ref="canvas" class="editor-fullscreen"></canvas>
     </div>
+    <CreationBar></CreationBar>
+    <BrushBar></BrushBar>
 </template>
 
 <script setup lang="ts">
 import { BlitzRenderer, GraphicsRendererPlugin } from '@blitz/canvas';
 import { Editor, GraphicsElement } from '@blitz/core';
 import { onMounted, ref } from 'vue';
+
+import { BrushBar, CreationBar } from './creation';
 
 const canvas = ref(null);
 

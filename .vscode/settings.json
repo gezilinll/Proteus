@@ -95,5 +95,14 @@
     ],
 
     "vue.complete.casing.props": "autoCamel",
-    "cSpell.words": ["cullable", "PIXI", "Skia", "uuidv"]
+    "cSpell.words": [
+        "cullable",
+        "iconsets",
+        "materialdesignicons",
+        "Pinia",
+        "PIXI",
+        "Skia",
+        "uuidv",
+        "Vuetify"
+    ]
 }

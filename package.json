@@ -16,6 +16,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "@mdi/font": "^7.4.47",
         "@tools/tsconfig": "workspace:*",
         "@types/uuid": "^9.0.8",
         "@typescript-eslint/eslint-plugin": "^6.21.0",
@@ -33,8 +34,8 @@
         "vue-eslint-parser": "^9.4.2"
     },
     "dependencies": {
-        "@blitz/core": "workspace:*",
         "@blitz/canvas": "workspace:*",
+        "@blitz/core": "workspace:*",
         "less": "^4.2.0",
         "rxjs": "^7.8.1",
         "uuid": "^9.0.1",

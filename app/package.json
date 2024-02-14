@@ -8,6 +8,8 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "devDependencies": {},
-    "dependencies": {}
+    "dependencies": {
+        "pinia": "^2.1.7",
+        "vuetify": "^3.5.4"
+    }
 }
