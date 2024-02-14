@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { BlitzRenderer, GraphicsRendererPlugin } from '@blitz/canvas';
-import { Editor } from '@blitz/core';
+import { Editor, GraphicsElement } from '@blitz/core';
 import { onMounted, ref } from 'vue';
 
 const canvas = ref(null);
@@ -16,6 +16,10 @@ onMounted(() => {
     const renderer = new BlitzRenderer(canvas.value!);
     const graphicsRendererPlugin = new GraphicsRendererPlugin(renderer);
     editor.registerPlugin(graphicsRendererPlugin);
+
+    (canvas.value! as HTMLCanvasElement).addEventListener('mousedown', () => {
+        editor.addElement(new GraphicsElement());
+    });
 });
 </script>
 

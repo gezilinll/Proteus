@@ -8,18 +8,21 @@ export class GraphicsRendererPlugin implements Plugin {
     name: string = 'graphics-renderer-plugin';
 
     private _renderer: BlitzRenderer;
-    private _sprite: PIXI.Graphics;
     private _subscriptions: Subscription[] = [];
 
     constructor(renderer: BlitzRenderer) {
         this._renderer = renderer;
-        this._sprite = new PIXI.Graphics();
     }
 
     mount(editor: Editor): void {
         this._subscriptions.push(
             editor.events.addElement.subscribe((element) => {
-                console.error(element);
+                if (element.type === 'graphics') {
+                    const sprite = new PIXI.Graphics();
+                    sprite.beginFill(0xff0000);
+                    sprite.drawRect(0, 0, 200, 100);
+                    this._renderer.addSprite(sprite);
+                }
             })
         );
     }

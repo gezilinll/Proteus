@@ -16,4 +16,8 @@ export class BlitzRenderer {
         this._pixi.stage.eventMode = 'static';
         (globalThis as any).__PIXI_APP__ = this._pixi;
     }
+
+    addSprite(sprite: PIXI.DisplayObject) {
+        this._pixi.stage.addChild(sprite);
+    }
 }

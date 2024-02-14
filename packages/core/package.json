@@ -10,6 +10,12 @@
     "module": "./dist/es/index.mjs",
     "main": "./dist/cjs/index.cjs",
     "typings": "./src/index.ts",
+    "exports": {
+        ".": {
+            "import": "./src",
+            "require": "./src"
+        }
+    },
     "scripts": {
         "test": "vitest run",
         "clean": "rm -rf dist",
