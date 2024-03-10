@@ -14,8 +14,6 @@
         "pflannery.vscode-versionlens",
         "streetsidesoftware.code-spell-checker",
         "stylelint.vscode-stylelint",
-        "Vue.volar",
-        "Vue.vscode-typescript-vue-plugin",
         "vunguyentuan.vscode-css-variables",
         "yoavbls.pretty-ts-errors",
         "YuTengjing.vscode-neo-file-utils",
@@ -23,7 +21,8 @@
         "YuTengjing.better-colorizer",
         "YuTengjing.reload-can-solve-any-problems",
         "YuTengjing.vscode-archive",
-        "zyrong.node-modules"
+        "zyrong.node-modules",
+        "vue.volar"
     ],
     "unwantedRecommendations": ["octref.vetur"]
 }

@@ -1,6 +1,8 @@
 import 'vuetify/styles';
 import '@mdi/font/css/materialdesignicons.css';
+import 'virtual:svg-icons-register';
 
+import { SvgIcon } from '@blitz/components';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createVuetify } from 'vuetify';
@@ -27,4 +29,5 @@ const vuetify = createVuetify({
 const app = createApp(App);
 app.use(pinia);
 app.use(vuetify);
+app.component('svg-icon', SvgIcon);
 app.mount('#app');

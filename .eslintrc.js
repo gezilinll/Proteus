@@ -2,7 +2,7 @@ module.exports = {
     root: true,
     extends: ['plugin:@typescript-eslint/recommended'],
     plugins: ['unused-imports', 'simple-import-sort'],
-    parser: 'vue-eslint-parser',
+    parser: 'vue-eslint-parser', // https://stackoverflow.com/questions/66597732/eslint-vue-3-parsing-error-expected-eslint
     parserOptions: {
         parser: '@typescript-eslint/parser',
     },

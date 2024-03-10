@@ -1,5 +1,7 @@
 packages:
     - 'app/**'
 
-    - 'packages/**'
+    - 'editor/**'
     - 'tools/**'
+    - 'store/**'
+    - 'components/**'
