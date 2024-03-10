@@ -1,3 +1,5 @@
+import { watch } from 'vue';
+
 import { MouseType, useCreationStore } from '../store/creation';
 
 const usePresenter = () => {
@@ -24,27 +26,33 @@ const usePresenter = () => {
     };
 
     const handleItemClicked = (type: MouseType) => {
+        if (creation.secondaryPanelType === type) {
+            creation.secondaryPanelType = 'none';
+        } else if (type === 'brush') {
+            creation.secondaryPanelType = 'brush';
+        } else {
+            creation.secondaryPanelType = 'none';
+        }
         creation.mouseType = type;
     };
 
-    // watch(
-    //     () => model.selected.value,
-    //     () => {
-    //         if (model.selected.value === 'selector') {
-    //             document.getElementsByTagName('body')[0].style.cursor = 'auto';
-    //         } else if (model.selected.value === 'grab') {
-    //             document.getElementsByTagName('body')[0].style.cursor = 'grab';
-    //         } else if (model.selected.value === 'brush') {
-    //             document.getElementsByTagName('body')[0].style.cursor =
-    //                 'url("cursor-brush.png") 0 10, auto';
-    //         } else if (model.selected.value === 'shape') {
-    //             document.getElementsByTagName('body')[0].style.cursor = 'crosshair';
-    //         } else if (model.selected.value === 'text') {
-    //             document.getElementsByTagName('body')[0].style.cursor = 'text';
-    //         }
-    //         blitz.selectedFunction = model.selected.value;
-    //     }
-    // );
+    watch(
+        () => creation.mouseType,
+        () => {
+            if (creation.mouseType === 'select') {
+                document.getElementsByTagName('body')[0].style.cursor = 'auto';
+            } else if (creation.mouseType === 'grab') {
+                document.getElementsByTagName('body')[0].style.cursor = 'grab';
+            } else if (creation.mouseType === 'brush') {
+                document.getElementsByTagName('body')[0].style.cursor =
+                    'url("cursor-brush.png") 0 10, auto';
+            } else if (creation.mouseType === 'shape') {
+                document.getElementsByTagName('body')[0].style.cursor = 'crosshair';
+            } else if (creation.mouseType === 'text') {
+                document.getElementsByTagName('body')[0].style.cursor = 'text';
+            }
+        }
+    );
 
     return {
         handleSelectClicked,

@@ -2,6 +2,7 @@
     <v-app class="app-container">
         <Workspace></Workspace>
         <CreationBar></CreationBar>
+        <BrushBar v-if="store.secondaryPanelType === 'brush'"></BrushBar>
     </v-app>
 </template>
 
@@ -9,8 +10,10 @@
 import { Workspace } from '@blitz/editor';
 import { onMounted } from 'vue';
 
-import { CreationBar } from './creation';
+import { BrushBar, CreationBar } from './creation';
+import { useCreationStore } from './store/creation';
 
+const store = useCreationStore();
 onMounted(() => {
     // const editor = useEditorStore().editor!;
     // editor.events.mouseDown.subscribe((event) => {
