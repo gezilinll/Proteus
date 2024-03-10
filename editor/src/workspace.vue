@@ -1,5 +1,5 @@
 <template>
-    <div class="workspace-container">
+    <div class="fullscreen" ref="workspaceContainer">
         <canvas class="fullscreen" ref="canvasForDoc"></canvas>
         <canvas class="fullscreen"></canvas>
         <div class="fullscreen" ref="userLayer"></div>
@@ -16,9 +16,11 @@ useEditorStore().setEditor(editor);
 
 const canvasForDoc = ref(null);
 const userLayer = ref(null);
+const workspaceContainer = ref(null);
 
-onMounted(() => {
-    const renderer = new DocRenderer(canvasForDoc.value!);
+onMounted(async () => {
+    const renderer = new DocRenderer();
+    await renderer.init(workspaceContainer.value!, canvasForDoc.value!);
     (userLayer.value! as HTMLDivElement).addEventListener('mousedown', (event) => {
         editor.events.mouseDown.next(event);
     });
@@ -29,14 +31,6 @@ onMounted(() => {
 </script>
 
 <style lang="less">
-.workspace-container {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    margin: 0px;
-    overflow: hidden;
-}
-
 .fullscreen {
     position: absolute;
     width: 100vw;

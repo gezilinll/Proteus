@@ -25,6 +25,6 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "pixi.js": "^7.4.0"
+        "pixi.js": "8.0.1"
     }
 }

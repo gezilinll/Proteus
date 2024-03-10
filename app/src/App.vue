@@ -1,19 +1,21 @@
 <template>
-    <div class="app-container">
+    <v-app class="app-container">
         <Workspace></Workspace>
-    </div>
+        <CreationBar></CreationBar>
+    </v-app>
 </template>
 
 <script setup lang="ts">
-import { useEditorStore, Workspace } from '@blitz/editor';
+import { Workspace } from '@blitz/editor';
 import { onMounted } from 'vue';
 
-onMounted(() => {
-    const editor = useEditorStore().editor!;
+import { CreationBar } from './creation';
 
-    editor.events.mouseDown.subscribe((event) => {
-        console.log(event);
-    });
+onMounted(() => {
+    // const editor = useEditorStore().editor!;
+    // editor.events.mouseDown.subscribe((event) => {
+    //     console.log(event);
+    // });
 });
 </script>
 
@@ -25,10 +27,16 @@ body {
 }
 
 .app-container {
-    position: absolute;
+    position: relative;
     width: 100vw;
     height: 100vh;
     margin: 0px;
     overflow: hidden;
 }
+
+// .fullscreen {
+//     position: absolute;
+//     width: 100vw;
+//     height: 100vh;
+// }
 </style>
