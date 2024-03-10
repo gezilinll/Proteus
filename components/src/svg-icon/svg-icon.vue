@@ -1,6 +1,15 @@
 <template>
-    <svg aria-hidden="true">
-        <use :href="symbolId" :fill="color" />
+    <svg
+        aria-hidden="true"
+        :width="width"
+        :height="height"
+        :viewBox="viewBox"
+        :stroke="stroke"
+        :stroke-width="strokeWidth"
+        :fill="fill"
+        :color="color"
+    >
+        <use :href="symbolId" />
     </svg>
 </template>
 
@@ -18,9 +27,33 @@ export default defineComponent({
             type: String,
             required: true,
         },
+        stroke: {
+            type: String,
+            default: 'currentColor',
+        },
+        strokeWidth: {
+            type: [Number, String],
+            default: 0,
+        },
         color: {
             type: String,
-            default: '#333',
+            default: 'currentColor',
+        },
+        fill: {
+            type: String,
+            default: 'currentColor',
+        },
+        width: {
+            type: [Number, String],
+            default: '30px',
+        },
+        height: {
+            type: [Number, String],
+            default: '30px',
+        },
+        viewBox: {
+            type: String,
+            default: '0 0 24 24',
         },
     },
     setup(props) {
