@@ -15,6 +15,7 @@ export class DocRenderer {
             canvas,
             hello: true,
             background: '#fff',
+            backgroundAlpha: 0,
             antialias: true,
             autoDensity: true,
             resizeTo: container,

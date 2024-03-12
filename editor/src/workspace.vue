@@ -1,5 +1,6 @@
 <template>
     <div class="fullscreen" ref="workspaceContainer">
+        <canvas class="fullscreen" ref="canvasForBackground"></canvas>
         <canvas class="fullscreen" ref="canvasForDoc"></canvas>
         <canvas class="fullscreen"></canvas>
         <div class="fullscreen" ref="userLayer"></div>
@@ -7,24 +8,36 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, Ref, ref } from 'vue';
 
 import { DocRenderer, Editor, useEditorStore } from '.';
+import { BackgroundRenderer } from './renderer/background-renderer';
 
 const editor = new Editor();
-useEditorStore().setEditor(editor);
 
-const canvasForDoc = ref(null);
-const userLayer = ref(null);
+const canvasForBackground: Ref<HTMLCanvasElement | null> = ref(null);
+const canvasForDoc: Ref<HTMLCanvasElement | null> = ref(null);
+const userLayer: Ref<HTMLDivElement | null> = ref(null);
 const workspaceContainer = ref(null);
 
 onMounted(async () => {
-    const renderer = new DocRenderer();
-    await renderer.init(workspaceContainer.value!, canvasForDoc.value!);
-    (userLayer.value! as HTMLDivElement).addEventListener('mousedown', (event) => {
+    const docRenderer = new DocRenderer();
+    await docRenderer.init(workspaceContainer.value!, canvasForDoc.value!);
+
+    canvasForBackground.value!.width = canvasForDoc.value!.width;
+    canvasForBackground.value!.height = canvasForDoc.value!.height;
+    canvasForBackground.value!.style.width = canvasForDoc.value!.style.width;
+    canvasForBackground.value!.style.height = canvasForDoc.value!.style.height;
+
+    const bgRenderer = new BackgroundRenderer(canvasForBackground.value!);
+    bgRenderer.render();
+
+    useEditorStore().setupWorkspace(editor, docRenderer, bgRenderer);
+
+    userLayer.value!.addEventListener('mousedown', (event) => {
         editor.events.mouseDown.next(event);
     });
-    (userLayer.value! as HTMLDivElement).addEventListener('mousemove', (event) => {
+    userLayer.value!.addEventListener('mousemove', (event) => {
         editor.events.mouseMove.next(event);
     });
 });

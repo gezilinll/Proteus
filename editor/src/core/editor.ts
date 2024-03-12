@@ -10,6 +10,7 @@ export class Editor {
         removeElement: new Subject<Element>(),
         mouseDown: new Subject<MouseEvent>(),
         mouseMove: new Subject<MouseEvent>(),
+        zoom: new Subject<number>(),
     };
 
     constructor(doc?: Doc) {
