@@ -9,6 +9,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@vueuse/core": "^10.9.0",
         "vuetify": "^3.5.8"
     },
     "devDependencies": {

@@ -1,9 +1,20 @@
 export class BackgroundRenderer {
     private _canvas: HTMLCanvasElement;
     private _zoom: number = 1.0;
+    private _moveX: number = 0;
+    private _moveY: number = 0;
 
     constructor(canvas: HTMLCanvasElement) {
         this._canvas = canvas;
+    }
+
+    zoomTo(value: number) {
+        this._zoom = value;
+    }
+
+    dragTo(x: number, y: number) {
+        this._moveX = x;
+        this._moveY = y;
     }
 
     render(): void {

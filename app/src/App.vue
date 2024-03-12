@@ -3,6 +3,7 @@
         <Workspace></Workspace>
         <CreationBar></CreationBar>
         <BrushBar v-if="store.secondaryPanelType === 'brush'"></BrushBar>
+        <ToolboxBar></ToolboxBar>
     </v-app>
 </template>
 
@@ -12,6 +13,7 @@ import { onMounted } from 'vue';
 
 import { BrushBar, CreationBar } from './creation';
 import { useCreationStore } from './store/creation';
+import { ToolboxBar } from './toolbox';
 
 const store = useCreationStore();
 onMounted(() => {

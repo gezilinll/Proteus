@@ -11,6 +11,7 @@
 import { onMounted, Ref, ref } from 'vue';
 
 import { DocRenderer, Editor, useEditorStore } from '.';
+import { ZoomDragPlugin } from './actions/zoom-drag-plugin';
 import { BackgroundRenderer } from './renderer/background-renderer';
 
 const editor = new Editor();
@@ -33,6 +34,8 @@ onMounted(async () => {
     bgRenderer.render();
 
     useEditorStore().setupWorkspace(editor, docRenderer, bgRenderer);
+
+    editor.registerPlugin(new ZoomDragPlugin());
 
     userLayer.value!.addEventListener('mousedown', (event) => {
         editor.events.mouseDown.next(event);
