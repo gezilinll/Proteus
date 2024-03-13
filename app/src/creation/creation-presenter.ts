@@ -1,8 +1,9 @@
-import { watch } from 'vue';
+import { useEditorStore } from '@blitz/editor';
 
 import { MouseType, useCreationStore } from '../store/creation';
 
 const usePresenter = () => {
+    const editor = useEditorStore();
     const creation = useCreationStore();
 
     const handleSelectClicked = () => {
@@ -33,26 +34,8 @@ const usePresenter = () => {
         } else {
             creation.secondaryPanelType = 'none';
         }
-        creation.mouseType = type;
+        editor.mouseType = type;
     };
-
-    watch(
-        () => creation.mouseType,
-        () => {
-            if (creation.mouseType === 'select') {
-                document.getElementsByTagName('body')[0].style.cursor = 'auto';
-            } else if (creation.mouseType === 'grab') {
-                document.getElementsByTagName('body')[0].style.cursor = 'grab';
-            } else if (creation.mouseType === 'brush') {
-                document.getElementsByTagName('body')[0].style.cursor =
-                    'url("cursor-brush.png") 0 10, auto';
-            } else if (creation.mouseType === 'shape') {
-                document.getElementsByTagName('body')[0].style.cursor = 'crosshair';
-            } else if (creation.mouseType === 'text') {
-                document.getElementsByTagName('body')[0].style.cursor = 'text';
-            }
-        }
-    );
 
     return {
         handleSelectClicked,

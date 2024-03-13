@@ -9,14 +9,15 @@
 
 <script setup lang="ts">
 import { usePinch, useWheel } from '@vueuse/gesture';
-import { onMounted, Ref, ref } from 'vue';
+import { onMounted, Ref, ref, watch } from 'vue';
 
 import { DocRenderer, Editor, useEditorStore } from '.';
 import { ZoomDragPlugin } from './actions/zoom-drag-plugin';
 import { BackgroundRenderer } from './renderer/background-renderer';
 
+const store = useEditorStore();
 const editor = new Editor();
-useEditorStore().setupEditor(editor);
+store.setupEditor(editor);
 
 const canvasForBackground: Ref<HTMLCanvasElement | null> = ref(null);
 const canvasForDoc: Ref<HTMLCanvasElement | null> = ref(null);
@@ -35,7 +36,7 @@ onMounted(async () => {
     const bgRenderer = new BackgroundRenderer(canvasForBackground.value!);
     bgRenderer.render();
 
-    useEditorStore().setupRenderer(docRenderer, bgRenderer);
+    store.setupRenderer(docRenderer, bgRenderer);
 
     editor.registerPlugin(new ZoomDragPlugin());
 
@@ -45,6 +46,24 @@ onMounted(async () => {
     userLayer.value!.addEventListener('mousemove', (event) => {
         editor.events.mouseMove.next(event);
     });
+
+    watch(
+        () => store.mouseType,
+        () => {
+            if (store.mouseType === 'select') {
+                document.getElementsByTagName('body')[0].style.cursor = 'auto';
+            } else if (store.mouseType === 'grab') {
+                document.getElementsByTagName('body')[0].style.cursor = 'grab';
+            } else if (store.mouseType === 'brush') {
+                document.getElementsByTagName('body')[0].style.cursor =
+                    'url("cursor-brush.png") 0 10, auto';
+            } else if (store.mouseType === 'shape') {
+                document.getElementsByTagName('body')[0].style.cursor = 'crosshair';
+            } else if (store.mouseType === 'text') {
+                document.getElementsByTagName('body')[0].style.cursor = 'text';
+            }
+        }
+    );
 });
 
 const cancelEvent = (e: Event) => e.preventDefault();
@@ -104,3 +123,4 @@ useWheel(wheelHandler, {
     height: 100vh;
 }
 </style>
+, watch
