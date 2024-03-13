@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePinch } from '@vueuse/gesture';
+import { usePinch, useWheel } from '@vueuse/gesture';
 import { onMounted, Ref, ref } from 'vue';
 
 import { DocRenderer, Editor, useEditorStore } from '.';
@@ -47,24 +47,53 @@ onMounted(async () => {
     });
 });
 
+const cancelEvent = (e: Event) => e.preventDefault();
+window.addEventListener('wheel', cancelEvent, { passive: false });
+
+const gestureState: { pinching: boolean; wheeling: boolean } = { pinching: false, wheeling: false };
 const pinchHandler = ({
     offset: [d, _a],
     previous: [pd, _pa],
+    pinching,
 }: {
     offset: [d: number, a: number];
     previous: [d: number, a: number];
+    pinching: boolean;
 }) => {
-    const zoomOffset = ((d - pd) / 50 / 10) * editor.zoom;
-    const result = Math.max(0.1, Math.min(4, editor.zoom + zoomOffset));
-    editor.zoomTo(result);
+    gestureState.pinching = pinching;
+    if (pinching) {
+        const zoomOffset = ((d - pd) / 50 / 10) * editor.zoom;
+        const result = Math.max(0.1, Math.min(4, editor.zoom + zoomOffset));
+        editor.zoomTo(result);
+    }
 };
-
 usePinch(pinchHandler, {
     domTarget: userLayer,
     eventOptions: {
         capture: true,
         passive: false,
     },
+});
+
+const wheelHandler = ({
+    offset: [x, y],
+    previous: [px, py],
+    wheeling,
+}: {
+    offset: [d: number, a: number];
+    previous: [d: number, a: number];
+    wheeling: boolean;
+}) => {
+    gestureState.wheeling = wheeling;
+    if (gestureState.wheeling && !gestureState.pinching) {
+        editor.dragTo(
+            editor.drag.x + (x - px) * window.devicePixelRatio,
+            editor.drag.y + (y - py) * window.devicePixelRatio
+        );
+    }
+};
+useWheel(wheelHandler, {
+    domTarget: userLayer,
 });
 </script>
 

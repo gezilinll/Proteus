@@ -29,8 +29,8 @@ export class BackgroundRenderer {
 
         ctx.strokeStyle = 'rgb(222, 222, 222)';
         ctx.beginPath();
-        const startY = canvasHeight / 2.0;
-        const startX = canvasWidth / 2.0;
+        const startY = canvasHeight / 2.0 + this._moveY;
+        const startX = canvasWidth / 2.0 + this._moveX;
         ctx.moveTo(0, startY);
         ctx.lineTo(canvasWidth, startY);
         ctx.moveTo(startX, 0);

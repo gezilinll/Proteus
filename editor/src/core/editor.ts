@@ -45,4 +45,8 @@ export class Editor {
     get zoom() {
         return this._zoom;
     }
+
+    get drag() {
+        return this._drag;
+    }
 }
