@@ -9,10 +9,13 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@vueuse/core": "^10.9.0",
-        "vuetify": "^3.5.8"
+        "vuetify": "^3.5.8",
+        "vue": "^3.4.21",
+        "@vueuse/gesture": "^2.0.0",
+        "@blitz/editor": "workspace:*"
     },
     "devDependencies": {
+        "vite": "^5.1.5",
         "vite-plugin-svg-icons": "^2.0.1"
     }
 }

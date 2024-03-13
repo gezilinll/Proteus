@@ -1,19 +1,20 @@
 import { useEditorStore } from '@blitz/editor';
 import { Fn, useRafFn } from '@vueuse/core';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const usePresenter = () => {
     const store = useEditorStore();
+    const editor = store.editor!;
 
     const currentZoom = ref(100);
-    const targetZoom = ref(100);
+    let targetZoom = editor.zoom;
 
     const handleZoomOutClicked = () => {
-        zoomOut(25);
+        zoomOut(0.25);
     };
 
     const handleZoomInClicked = () => {
-        zoomIn(25);
+        zoomIn(0.25);
     };
 
     const handleZoomTo100Clicked = () => {
@@ -24,47 +25,45 @@ const usePresenter = () => {
 
     let pauseAnimation: Fn | null = null;
     const zoomIn = (step: number) => {
-        if (currentZoom.value >= 400) {
+        if (editor.zoom >= 4) {
             return;
         }
         pauseAnimation?.();
-        animationToTarget(Math.min(400, currentZoom.value + step), 1);
+        animationToTarget(Math.min(4, editor.zoom + step), 1);
     };
 
     const zoomOut = (step: number) => {
-        if (currentZoom.value <= 10) {
+        if (editor.zoom <= 0.1) {
             return;
         }
-        animationToTarget(Math.max(10, currentZoom.value - step), -1);
+        animationToTarget(Math.max(0.1, editor.zoom - step), -1);
     };
 
     const zoomTo100 = () => {
-        if (currentZoom.value === 100) {
+        if (editor.zoom === 1) {
             return;
         }
-        animationToTarget(100, currentZoom.value < 100 ? 1 : -1);
+        animationToTarget(1, editor.zoom < 1 ? 1 : -1);
     };
 
     const fitToScreen = () => {};
 
     const animationToTarget = (target: number, direction: number) => {
         pauseAnimation?.();
-        if (Math.abs(target - currentZoom.value) <= 3) {
-            currentZoom.value = target;
+        if (Math.abs(target - editor.zoom) <= 0.03) {
+            editor.zoomTo(target);
         } else {
-            targetZoom.value = target;
-            const animStep =
-                Math.max(1, Math.floor(Math.abs(target - currentZoom.value) / (300 / 16))) *
-                direction;
+            targetZoom = target;
+            const animStep = 0.01 * direction;
             const { pause } = useRafFn(() => {
-                if (currentZoom.value !== targetZoom.value) {
-                    let result = currentZoom.value + animStep;
+                if (editor.zoom !== targetZoom) {
+                    let result = editor.zoom + animStep;
                     if (direction === 1 && result > target) {
                         result = target;
                     } else if (direction === -1 && result < target) {
                         result = target;
                     }
-                    currentZoom.value = result;
+                    editor.zoomTo(result);
                 } else {
                     pauseAnimation?.();
                 }
@@ -73,12 +72,9 @@ const usePresenter = () => {
         }
     };
 
-    watch(
-        () => currentZoom.value,
-        () => {
-            store.editor?.zoomTo(currentZoom.value / 100);
-        }
-    );
+    store.editor!.events.zoom.subscribe((value) => {
+        currentZoom.value = Math.floor(value * 100);
+    });
 
     return {
         currentZoom,

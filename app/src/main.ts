@@ -3,6 +3,7 @@ import '@mdi/font/css/materialdesignicons.css';
 import 'virtual:svg-icons-register';
 
 import { SvgIcon } from '@blitz/components';
+import { GesturePlugin } from '@vueuse/gesture';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createVuetify } from 'vuetify';
@@ -29,5 +30,6 @@ const vuetify = createVuetify({
 const app = createApp(App);
 app.use(pinia);
 app.use(vuetify);
+app.use(GesturePlugin);
 app.component('svg-icon', SvgIcon);
 app.mount('#app');

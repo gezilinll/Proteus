@@ -103,6 +103,7 @@
         "PIXI",
         "Skia",
         "uuidv",
-        "Vuetify"
+        "Vuetify",
+        "vueuse"
     ]
 }

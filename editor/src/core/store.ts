@@ -19,8 +19,10 @@ export const useEditorStore = defineStore('editor', {
         } as State;
     },
     actions: {
-        setupWorkspace(editor: Editor, docRenderer: DocRenderer, bgRenderer: BackgroundRenderer) {
+        setupEditor(editor: Editor) {
             this.editor = editor;
+        },
+        setupRenderer(docRenderer: DocRenderer, bgRenderer: BackgroundRenderer) {
             this.backgroundRenderer = bgRenderer;
             this.docRenderer = docRenderer;
         },

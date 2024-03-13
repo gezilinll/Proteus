@@ -39,6 +39,7 @@
         "@blitz/components": "workspace:*",
         "@blitz/editor": "workspace:*",
         "@blitz/store": "workspace:*",
+        "@vueuse/core": "^10.9.0",
         "less": "^4.2.0",
         "pinia": "^2.1.7",
         "rxjs": "^7.8.1",

@@ -8,6 +8,7 @@
 </template>
 
 <script setup lang="ts">
+import { usePinch } from '@vueuse/gesture';
 import { onMounted, Ref, ref } from 'vue';
 
 import { DocRenderer, Editor, useEditorStore } from '.';
@@ -15,6 +16,7 @@ import { ZoomDragPlugin } from './actions/zoom-drag-plugin';
 import { BackgroundRenderer } from './renderer/background-renderer';
 
 const editor = new Editor();
+useEditorStore().setupEditor(editor);
 
 const canvasForBackground: Ref<HTMLCanvasElement | null> = ref(null);
 const canvasForDoc: Ref<HTMLCanvasElement | null> = ref(null);
@@ -33,7 +35,7 @@ onMounted(async () => {
     const bgRenderer = new BackgroundRenderer(canvasForBackground.value!);
     bgRenderer.render();
 
-    useEditorStore().setupWorkspace(editor, docRenderer, bgRenderer);
+    useEditorStore().setupRenderer(docRenderer, bgRenderer);
 
     editor.registerPlugin(new ZoomDragPlugin());
 
@@ -43,6 +45,26 @@ onMounted(async () => {
     userLayer.value!.addEventListener('mousemove', (event) => {
         editor.events.mouseMove.next(event);
     });
+});
+
+const pinchHandler = ({
+    offset: [d, _a],
+    previous: [pd, _pa],
+}: {
+    offset: [d: number, a: number];
+    previous: [d: number, a: number];
+}) => {
+    const zoomOffset = ((d - pd) / 50 / 10) * editor.zoom;
+    const result = Math.max(0.1, Math.min(4, editor.zoom + zoomOffset));
+    editor.zoomTo(result);
+};
+
+usePinch(pinchHandler, {
+    domTarget: userLayer,
+    eventOptions: {
+        capture: true,
+        passive: false,
+    },
 });
 </script>
 

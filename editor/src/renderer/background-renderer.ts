@@ -27,7 +27,7 @@ export class BackgroundRenderer {
         ctx.fillStyle = 'rgb(240, 240, 240)';
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-        ctx.strokeStyle = 'rgb(224, 224, 224)';
+        ctx.strokeStyle = 'rgb(222, 222, 222)';
         ctx.beginPath();
         const startY = canvasHeight / 2.0;
         const startX = canvasWidth / 2.0;

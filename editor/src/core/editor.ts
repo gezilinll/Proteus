@@ -41,4 +41,8 @@ export class Editor {
     registerPlugin(plugin: Plugin) {
         plugin.mount(this);
     }
+
+    get zoom() {
+        return this._zoom;
+    }
 }
