@@ -51,7 +51,7 @@ const usePresenter = () => {
     const animationToTarget = (target: number, direction: number) => {
         pauseAnimation?.();
         if (Math.abs(target - editor.zoom) <= 0.03) {
-            editor.zoomTo(target);
+            editor.zoomCanvasTo(target);
         } else {
             targetZoom = target;
             const animStep = 0.01 * direction;
@@ -63,7 +63,7 @@ const usePresenter = () => {
                     } else if (direction === -1 && result < target) {
                         result = target;
                     }
-                    editor.zoomTo(result);
+                    editor.zoomCanvasTo(result);
                 } else {
                     pauseAnimation?.();
                 }
@@ -72,7 +72,7 @@ const usePresenter = () => {
         }
     };
 
-    store.editor!.events.zoom.subscribe((value) => {
+    store.editor!.events.zoomCanvasTo.subscribe((value) => {
         currentZoom.value = Math.floor(value * 100);
     });
 

@@ -1,4 +1,4 @@
-import { Doc, Element } from '@blitz/store';
+import { Doc, Element, ElementType } from '@blitz/store';
 import { Subject } from 'rxjs';
 
 import { Plugin } from './plugin';
@@ -15,8 +15,11 @@ export class Editor {
         removeElement: new Subject<Element>(),
         mouseDown: new Subject<MouseEvent>(),
         mouseMove: new Subject<MouseEvent>(),
-        zoom: new Subject<number>(),
-        drag: new Subject<{ x: number; y: number }>(),
+        zoomCanvasTo: new Subject<number>(),
+        moveCanvasTo: new Subject<{ x: number; y: number }>(),
+        dragStart: new Subject<{ x: number; y: number; type: ElementType }>(),
+        dragging: new Subject<{ movementX: number; movementY: number; type: ElementType }>(),
+        dragEnd: new Subject<{ type: ElementType }>(),
     };
 
     constructor(doc?: Doc) {
@@ -27,15 +30,15 @@ export class Editor {
         this._doc.addElement(element);
     }
 
-    zoomTo(value: number) {
+    zoomCanvasTo(value: number) {
         this._zoom = value;
-        this.events.zoom.next(this._zoom);
+        this.events.zoomCanvasTo.next(this._zoom);
     }
 
-    dragTo(x: number, y: number) {
+    moveCanvasTo(x: number, y: number) {
         this._drag.x = x;
         this._drag.y = y;
-        this.events.drag.next(this._drag);
+        this.events.moveCanvasTo.next(this._drag);
     }
 
     registerPlugin(plugin: Plugin) {

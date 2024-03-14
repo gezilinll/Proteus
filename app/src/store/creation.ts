@@ -1,3 +1,4 @@
+import { ElementType } from '@blitz/store';
 import { defineStore } from 'pinia';
 
 export type SecondaryPanelType = 'none' | 'brush';
@@ -52,5 +53,11 @@ export const useCreationStore = defineStore('creation', {
             },
         } as State;
     },
-    actions: {},
+    actions: {
+        mouseTypeToElementType(): ElementType {
+            return this.mouseType === 'grab' || this.mouseType === 'select'
+                ? 'none'
+                : this.mouseType;
+        },
+    },
 });

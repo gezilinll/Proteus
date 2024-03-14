@@ -8,12 +8,12 @@ export class ZoomDragPlugin implements Plugin {
     mount(editor: Editor): void {
         const store = useEditorStore();
 
-        editor.events.zoom.subscribe((value) => {
+        editor.events.zoomCanvasTo.subscribe((value) => {
             store.backgroundRenderer?.zoomTo(value);
             store.backgroundRenderer?.render();
         });
-        editor.events.drag.subscribe((value) => {
-            store.backgroundRenderer?.dragTo(value.x, value.y);
+        editor.events.moveCanvasTo.subscribe((value) => {
+            store.backgroundRenderer?.moveTo(value.x, value.y);
             store.backgroundRenderer?.render();
         });
     }

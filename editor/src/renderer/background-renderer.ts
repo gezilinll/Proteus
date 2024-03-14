@@ -12,7 +12,7 @@ export class BackgroundRenderer {
         this._zoom = value;
     }
 
-    dragTo(x: number, y: number) {
+    moveTo(x: number, y: number) {
         this._moveX = x;
         this._moveY = y;
     }

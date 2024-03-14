@@ -56,11 +56,12 @@ const pinchHandler = ({
     pinching: boolean;
 }) => {
     gestureState.pinching = pinching;
-    if (pinching) {
-        const zoomOffset = ((d - pd) / 50 / 10) * editor.zoom;
-        const result = Math.max(0.1, Math.min(4, editor.zoom + zoomOffset));
-        editor.zoomTo(result);
+    if (!pinching) {
+        return;
     }
+    const zoomOffset = ((d - pd) / 50 / 10) * editor.zoom;
+    const result = Math.max(0.1, Math.min(4, editor.zoom + zoomOffset));
+    editor.zoomCanvasTo(result);
 };
 usePinch(pinchHandler, {
     domTarget: userLayer,
@@ -81,7 +82,7 @@ const wheelHandler = ({
 }) => {
     gestureState.wheeling = wheeling;
     if (gestureState.wheeling && !gestureState.pinching) {
-        editor.dragTo(
+        editor.moveCanvasTo(
             editor.drag.x + (x - px) * window.devicePixelRatio,
             editor.drag.y + (y - py) * window.devicePixelRatio
         );
@@ -93,25 +94,39 @@ useWheel(wheelHandler, {
 
 const lastDragMovement: { x: number; y: number } = { x: 0, y: 0 };
 const dragHandler = ({
+    first,
+    last,
     initial: [ix, iy],
     movement: [mx, my],
-    dragging,
 }: {
+    first: boolean;
+    last: boolean;
     initial: [x: number, y: number];
     movement: [x: number, y: number];
-    dragging: boolean;
 }) => {
-    if (!dragging) {
+    if (last) {
         lastDragMovement.x = 0;
         lastDragMovement.y = 0;
+        if (store.mouseType !== 'grab') {
+            editor.events.dragEnd.next({ type: store.mouseTypeToElementType() });
+        }
         return;
     }
     if (store.mouseType === 'grab') {
-        editor.dragTo(
+        editor.moveCanvasTo(
             editor.drag.x + (mx - lastDragMovement.x) * window.devicePixelRatio,
             editor.drag.y + (my - lastDragMovement.y) * window.devicePixelRatio
         );
+    } else if (first) {
+        editor.events.dragStart.next({ x: ix, y: iy, type: store.mouseTypeToElementType() });
+    } else {
+        editor.events.dragging.next({
+            movementX: mx,
+            movementY: my,
+            type: store.mouseTypeToElementType(),
+        });
     }
+
     lastDragMovement.x = mx;
     lastDragMovement.y = my;
 };
