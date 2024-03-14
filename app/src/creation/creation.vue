@@ -2,7 +2,7 @@
     <div class="function-container">
         <div
             :class="
-                editor.mouseType === 'select'
+                creation.mouseType === 'select'
                     ? 'function-item-container-selected'
                     : 'function-item-container'
             "
@@ -12,13 +12,13 @@
             <span class="function-item">
                 <svg-icon
                     name="selector"
-                    :color="editor.mouseType === 'select' ? 'blue' : 'black'"
+                    :color="creation.mouseType === 'select' ? 'blue' : 'black'"
                 ></svg-icon>
             </span>
         </div>
         <div
             :class="
-                editor.mouseType === 'grab'
+                creation.mouseType === 'grab'
                     ? 'function-item-container-selected'
                     : 'function-item-container'
             "
@@ -31,13 +31,13 @@
                     viewBox="0 0 36 36"
                     width="30px"
                     height="30px"
-                    :color="editor.mouseType === 'grab' ? 'blue' : 'black'"
+                    :color="creation.mouseType === 'grab' ? 'blue' : 'black'"
                 ></svg-icon>
             </span>
         </div>
         <div
             :class="
-                editor.mouseType === 'brush'
+                creation.mouseType === 'brush'
                     ? 'function-item-container-selected'
                     : 'function-item-container'
             "
@@ -47,15 +47,15 @@
             <span class="function-item">
                 <svg-icon
                     name="brush"
-                    :stroke="editor.mouseType === 'brush' ? 'blue' : 'black'"
+                    :stroke="creation.mouseType === 'brush' ? 'blue' : 'black'"
                     strokeWidth="2"
-                    :color="editor.mouseType === 'brush' ? 'blue' : 'black'"
+                    :color="creation.mouseType === 'brush' ? 'blue' : 'black'"
                 ></svg-icon>
             </span>
         </div>
         <div
             :class="
-                editor.mouseType === 'text'
+                creation.mouseType === 'text'
                     ? 'function-item-container-selected'
                     : 'function-item-container'
             "
@@ -68,14 +68,14 @@
                     width="30px"
                     height="30px"
                     viewBox="0 0 24 24"
-                    :color="editor.mouseType === 'text' ? 'blue' : 'black'"
+                    :color="creation.mouseType === 'text' ? 'blue' : 'black'"
                 ></svg-icon>
             </span>
         </div>
 
         <div
             :class="
-                editor.mouseType === 'shape'
+                creation.mouseType === 'shape'
                     ? 'function-item-container-selected'
                     : 'function-item-container'
             "
@@ -88,7 +88,7 @@
                     width="30px"
                     height="30px"
                     viewBox="0 0 24 24"
-                    :color="editor.mouseType === 'shape' ? 'blue' : 'black'"
+                    :color="creation.mouseType === 'shape' ? 'blue' : 'black'"
                 ></svg-icon>
             </span>
         </div>
@@ -96,10 +96,9 @@
 </template>
 
 <script lang="ts" setup>
-import { useEditorStore } from '@blitz/editor';
-
+import { useCreationStore } from '../store/creation';
 import usePresenter from './creation-presenter';
-const editor = useEditorStore();
+const creation = useCreationStore();
 
 const presenter = usePresenter();
 </script>

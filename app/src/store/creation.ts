@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 
 export type SecondaryPanelType = 'none' | 'brush';
 export type BrushType = 'pen' | 'highlighter' | 'eraser';
+export type MouseType = 'grab' | 'select' | 'brush' | 'text' | 'shape';
 
 export interface BrushConfig {
     type: BrushType;
@@ -14,6 +15,7 @@ export interface BrushConfig {
 }
 
 interface State {
+    mouseType: MouseType;
     secondaryPanelType: SecondaryPanelType;
     brushConfig: BrushConfig;
 }
@@ -21,6 +23,8 @@ interface State {
 export const useCreationStore = defineStore('creation', {
     state: () => {
         return {
+            mouseType: 'select',
+
             secondaryPanelType: 'none',
 
             brushConfig: {

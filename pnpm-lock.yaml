@@ -79,12 +79,10 @@ importers:
 
   editor:
     specifiers:
-      '@vueuse/gesture': ^2.0.0
       pixi.js: 8.0.1
       vite: ^5.1.5
       vue: ^3.4.21
     dependencies:
-      '@vueuse/gesture': 2.0.0_vue@3.4.21
       pixi.js: 8.0.1
       vue: 3.4.21
     devDependencies:
