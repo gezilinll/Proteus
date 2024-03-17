@@ -11,8 +11,6 @@ import { onMounted, Ref, ref } from 'vue';
 
 import { DocRenderer, useEditorStore } from '.';
 import { BrushElementPlugin } from './plugins/brush-element-plugin';
-import { ZoomDragPlugin } from './plugins/zoom-drag-plugin';
-import { BackgroundRenderer } from './renderer/background-renderer';
 
 const store = useEditorStore();
 const editor = store.editor;
@@ -22,19 +20,13 @@ const canvasForDoc: Ref<HTMLCanvasElement | null> = ref(null);
 const workspaceContainer = ref(null);
 
 onMounted(async () => {
-    const docRenderer = new DocRenderer(editor, canvasForDoc.value!, workspaceContainer.value!);
+    const _docRenderer = new DocRenderer(editor, canvasForDoc.value!, workspaceContainer.value!);
 
     canvasForBackground.value!.width = canvasForDoc.value!.width;
     canvasForBackground.value!.height = canvasForDoc.value!.height;
     canvasForBackground.value!.style.width = canvasForDoc.value!.style.width;
     canvasForBackground.value!.style.height = canvasForDoc.value!.style.height;
 
-    const bgRenderer = new BackgroundRenderer(canvasForBackground.value!);
-    bgRenderer.render();
-
-    store.setupRenderer(docRenderer, bgRenderer);
-
-    editor.registerPlugin(new ZoomDragPlugin());
     editor.registerPlugin(new BrushElementPlugin());
 });
 </script>
@@ -46,4 +38,4 @@ onMounted(async () => {
     height: 100vh;
 }
 </style>
-, watch
+, watch ./renderer/plugins/zoom-drag-plugin

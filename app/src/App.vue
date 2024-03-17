@@ -82,10 +82,7 @@ const wheelHandler = ({
 }) => {
     gestureState.wheeling = wheeling;
     if (gestureState.wheeling && !gestureState.pinching) {
-        editor.moveCanvasTo(
-            editor.drag.x + (x - px) * window.devicePixelRatio,
-            editor.drag.y + (y - py) * window.devicePixelRatio
-        );
+        editor.moveCanvasTo(editor.drag.x + (x - px), editor.drag.y + (y - py));
     }
 };
 useWheel(wheelHandler, {
@@ -115,8 +112,8 @@ const dragHandler = ({
     }
     if (store.mouseType === 'grab') {
         editor.moveCanvasTo(
-            editor.drag.x + (mx - lastDragState.x) * window.devicePixelRatio,
-            editor.drag.y + (my - lastDragState.y) * window.devicePixelRatio
+            editor.drag.x + (mx - lastDragState.x),
+            editor.drag.y + (my - lastDragState.y)
         );
     } else if (!first) {
         if (!lastDragState.dragging) {

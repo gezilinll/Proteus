@@ -1,11 +1,21 @@
-export class BackgroundRenderer {
+import * as PIXI from 'pixi.js';
+
+export class BackgroundSprite {
+    renderObject: PIXI.Sprite;
+
     private _canvas: HTMLCanvasElement;
     private _zoom: number = 1.0;
     private _moveX: number = 0;
     private _moveY: number = 0;
 
-    constructor(canvas: HTMLCanvasElement) {
-        this._canvas = canvas;
+    constructor(width: number, height: number) {
+        this._canvas = document.createElement('canvas');
+        this._canvas.width = width * window.devicePixelRatio;
+        this._canvas.height = height * window.devicePixelRatio;
+        this._canvas.style.width = `${width}px`;
+        this._canvas.style.height = `${height}px`;
+
+        this.renderObject = PIXI.Sprite.from(this._canvas, { resolution: window.devicePixelRatio });
     }
 
     zoomTo(value: number) {
@@ -29,8 +39,8 @@ export class BackgroundRenderer {
 
         ctx.strokeStyle = 'rgb(222, 222, 222)';
         ctx.beginPath();
-        const startY = canvasHeight / 2.0 + this._moveY;
-        const startX = canvasWidth / 2.0 + this._moveX;
+        const startY = canvasHeight / 2.0 + this._moveY * window.devicePixelRatio;
+        const startX = canvasWidth / 2.0 + this._moveX * window.devicePixelRatio;
         ctx.moveTo(0, startY);
         ctx.lineTo(canvasWidth, startY);
         ctx.moveTo(startX, 0);
@@ -59,5 +69,7 @@ export class BackgroundRenderer {
         }
         ctx.closePath();
         ctx.stroke();
+
+        this.renderObject.texture.update();
     }
 }
