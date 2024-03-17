@@ -87,7 +87,7 @@
             "
         >
             <v-slider
-                v-model="store.brushConfig.currentWeight"
+                v-model="editor.brushParam.weight"
                 style="position: absolute; left: 12px; right: 12px; top: 16px"
                 thumb-size="10px"
                 min="2"
@@ -97,17 +97,21 @@
             <p style="position: absolute; font-size: 10px; left: 18px; top: 45px">Thickness</p>
             <v-color-picker
                 style="position: absolute; left: 12px; right: 12px; top: 80px; border-radius: 0px"
-                v-model="store.brushConfig.currentColor"
+                v-model="editor.brushParam.color"
             ></v-color-picker>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+import { useEditorStore } from '@blitz/editor';
+
 import { useCreationStore } from '../../store/creation';
 import usePresenter from './brush-presenter';
 
 const store = useCreationStore();
+
+const editor = useEditorStore();
 
 const presenter = usePresenter();
 </script>

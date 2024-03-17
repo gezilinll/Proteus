@@ -1,6 +1,6 @@
 import * as Y from 'yjs';
 
-import { Element } from './element';
+import { Element } from './base-element';
 
 export class Doc {
     private _liveDoc: Y.Doc;

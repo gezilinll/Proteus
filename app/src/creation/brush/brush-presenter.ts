@@ -1,27 +1,29 @@
+import { useEditorStore } from '@blitz/editor';
 import { ref, watch } from 'vue';
 
 import { BrushType, useCreationStore } from '../../store/creation';
 
 const usePresenter = () => {
     const store = useCreationStore();
+    const editor = useEditorStore();
 
     const showConfigPanel = ref(true);
 
     const handlePenClicked = () => {
         handleItemClicked('pen');
-        store.brushConfig.currentWeight =
+        editor.brushParam.weight =
             store.brushConfig.penConfigs[store.brushConfig.currentPenConfigIndex].weight;
-        store.brushConfig.currentColor =
+        editor.brushParam.color =
             store.brushConfig.penConfigs[store.brushConfig.currentPenConfigIndex].color;
     };
 
     const handleHighlighterClicked = () => {
         handleItemClicked('highlighter');
-        store.brushConfig.currentWeight =
+        editor.brushParam.weight =
             store.brushConfig.highlighterConfigs[
                 store.brushConfig.currentHighlighterConfigIndex
             ].weight;
-        store.brushConfig.currentColor =
+        editor.brushParam.color =
             store.brushConfig.highlighterConfigs[
                 store.brushConfig.currentHighlighterConfigIndex
             ].color;
@@ -48,14 +50,14 @@ const usePresenter = () => {
         if (type === 'pen') {
             sameIndexClicked = store.brushConfig.currentPenConfigIndex === index;
             store.brushConfig.currentPenConfigIndex = index;
-            store.brushConfig.currentWeight = store.brushConfig.penConfigs[index].weight;
-            store.brushConfig.currentColor = store.brushConfig.penConfigs[index].color;
+            editor.brushParam.weight = store.brushConfig.penConfigs[index].weight;
+            editor.brushParam.color = store.brushConfig.penConfigs[index].color;
         } else if (type === 'highlighter') {
             sameIndexClicked = store.brushConfig.currentHighlighterConfigIndex === index;
 
             store.brushConfig.currentHighlighterConfigIndex = index;
-            store.brushConfig.currentWeight = store.brushConfig.highlighterConfigs[index].weight;
-            store.brushConfig.currentColor = store.brushConfig.highlighterConfigs[index].color;
+            editor.brushParam.weight = store.brushConfig.highlighterConfigs[index].weight;
+            editor.brushParam.color = store.brushConfig.highlighterConfigs[index].color;
         }
         if (sameIndexClicked) {
             showConfigPanel.value = !showConfigPanel.value;
@@ -63,29 +65,29 @@ const usePresenter = () => {
     };
 
     watch(
-        () => store.brushConfig.currentColor,
+        () => editor.brushParam.color,
         () => {
             if (store.brushConfig.type === 'pen') {
                 store.brushConfig.penConfigs[store.brushConfig.currentPenConfigIndex].color =
-                    store.brushConfig.currentColor;
+                    editor.brushParam.color;
             } else if (store.brushConfig.type === 'highlighter') {
                 store.brushConfig.highlighterConfigs[
                     store.brushConfig.currentHighlighterConfigIndex
-                ].color = store.brushConfig.currentColor;
+                ].color = editor.brushParam.color;
             }
         }
     );
 
     watch(
-        () => store.brushConfig.currentWeight,
+        () => editor.brushParam.weight,
         () => {
             if (store.brushConfig.type === 'pen') {
                 store.brushConfig.penConfigs[store.brushConfig.currentPenConfigIndex].weight =
-                    store.brushConfig.currentWeight;
+                    editor.brushParam.weight;
             } else if (store.brushConfig.type === 'highlighter') {
                 store.brushConfig.highlighterConfigs[
                     store.brushConfig.currentHighlighterConfigIndex
-                ].weight = store.brushConfig.currentWeight;
+                ].weight = editor.brushParam.weight;
             }
         }
     );

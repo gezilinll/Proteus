@@ -1,6 +1,9 @@
-import { MouseType, useCreationStore } from '../store/creation';
+import { MouseType, useEditorStore } from '@blitz/editor';
+
+import { useCreationStore } from '../store/creation';
 
 const usePresenter = () => {
+    const editor = useEditorStore();
     const creation = useCreationStore();
 
     const handleSelectClicked = () => {
@@ -31,7 +34,7 @@ const usePresenter = () => {
         } else {
             creation.secondaryPanelType = 'none';
         }
-        creation.mouseType = type;
+        editor.mouseType = type;
     };
 
     return {

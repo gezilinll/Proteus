@@ -18,24 +18,25 @@ import { useCreationStore } from './store/creation';
 import { ToolboxBar } from './toolbox';
 
 const store = useCreationStore();
-const editor = useEditorStore().editor!;
+const editorStore = useEditorStore();
+const editor = editorStore.editor!;
 
 const userLayer: Ref<HTMLDivElement | null> = ref(null);
 
 onMounted(() => {
     watch(
-        () => store.mouseType,
+        () => editorStore.mouseType,
         () => {
-            if (store.mouseType === 'select') {
+            if (editorStore.mouseType === 'select') {
                 document.getElementsByTagName('body')[0].style.cursor = 'auto';
-            } else if (store.mouseType === 'grab') {
+            } else if (editorStore.mouseType === 'grab') {
                 document.getElementsByTagName('body')[0].style.cursor = 'grab';
-            } else if (store.mouseType === 'brush') {
+            } else if (editorStore.mouseType === 'brush') {
                 document.getElementsByTagName('body')[0].style.cursor =
                     'url("cursor-brush.png") 0 10, auto';
-            } else if (store.mouseType === 'shape') {
+            } else if (editorStore.mouseType === 'shape') {
                 document.getElementsByTagName('body')[0].style.cursor = 'crosshair';
-            } else if (store.mouseType === 'text') {
+            } else if (editorStore.mouseType === 'text') {
                 document.getElementsByTagName('body')[0].style.cursor = 'text';
             }
         }
@@ -105,12 +106,12 @@ const dragHandler = ({
         lastDragState.x = 0;
         lastDragState.y = 0;
         lastDragState.dragging = false;
-        if (store.mouseType !== 'grab') {
-            editor.events.dragEnd.next({ type: store.mouseTypeToElementType() });
+        if (editorStore.mouseType !== 'grab') {
+            editor.events.dragEnd.next({ type: editorStore.mouseTypeToElementType() });
         }
         return;
     }
-    if (store.mouseType === 'grab') {
+    if (editorStore.mouseType === 'grab') {
         editor.moveCanvasTo(
             editor.drag.x + (mx - lastDragState.x),
             editor.drag.y + (my - lastDragState.y)
@@ -121,13 +122,13 @@ const dragHandler = ({
             editor.events.dragStart.next({
                 x: editor.drag.x + ix,
                 y: editor.drag.y + iy,
-                type: store.mouseTypeToElementType(),
+                type: editorStore.mouseTypeToElementType(),
             });
         }
         editor.events.dragging.next({
             movementX: mx,
             movementY: my,
-            type: store.mouseTypeToElementType(),
+            type: editorStore.mouseTypeToElementType(),
         });
     }
 

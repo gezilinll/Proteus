@@ -1,9 +1,7 @@
-import { ElementType } from '@blitz/store';
 import { defineStore } from 'pinia';
 
 export type SecondaryPanelType = 'none' | 'brush';
 export type BrushType = 'pen' | 'highlighter' | 'eraser';
-export type MouseType = 'grab' | 'select' | 'brush' | 'text' | 'shape';
 
 export interface BrushConfig {
     type: BrushType;
@@ -11,12 +9,9 @@ export interface BrushConfig {
     currentPenConfigIndex: number;
     highlighterConfigs: { index: number; weight: number; color: string }[];
     currentHighlighterConfigIndex: number;
-    currentWeight: number;
-    currentColor: string;
 }
 
 interface State {
-    mouseType: MouseType;
     secondaryPanelType: SecondaryPanelType;
     brushConfig: BrushConfig;
 }
@@ -24,8 +19,6 @@ interface State {
 export const useCreationStore = defineStore('creation', {
     state: () => {
         return {
-            mouseType: 'select',
-
             secondaryPanelType: 'none',
 
             brushConfig: {
@@ -48,16 +41,8 @@ export const useCreationStore = defineStore('creation', {
                     { weight: 20, color: 'rgba(227, 241, 156, 0.6)' },
                 ],
                 currentHighlighterConfigIndex: 0,
-                currentWeight: 0,
-                currentColor: 'rgba(0, 0, 0, 0)',
             },
         } as State;
     },
-    actions: {
-        mouseTypeToElementType(): ElementType {
-            return this.mouseType === 'grab' || this.mouseType === 'select'
-                ? 'none'
-                : this.mouseType;
-        },
-    },
+    actions: {},
 });
