@@ -23,7 +23,7 @@ export const useEditorStore = defineStore('editor', {
         return {
             mouseType: 'select',
 
-            brushParam: { weight: 10, color: 'rgb(128, 128, 128)' },
+            brushParam: { weight: 2, color: 'rgb(0, 0, 0)' },
         } as State;
     },
 
