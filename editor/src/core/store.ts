@@ -5,18 +5,24 @@ import { DocRenderer } from '../renderer/doc-renderer';
 import { Editor } from './editor';
 
 export interface State {
-    editor: Editor;
     docRenderer: DocRenderer | null;
     backgroundRenderer: BackgroundRenderer | null;
 }
 
+const _editor = new Editor();
+
 export const useEditorStore = defineStore('editor', {
     state: () => {
         return {
-            editor: new Editor(),
             docRenderer: null,
             backgroundRenderer: null,
         } as State;
+    },
+
+    getters: {
+        editor: () => {
+            return _editor as Editor;
+        },
     },
     actions: {
         setupRenderer(docRenderer: DocRenderer, bgRenderer: BackgroundRenderer) {

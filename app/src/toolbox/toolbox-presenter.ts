@@ -72,7 +72,7 @@ const usePresenter = () => {
         }
     };
 
-    store.editor!.events.zoomCanvasTo.subscribe((value) => {
+    store.editor.events.zoomCanvasTo.subscribe((value) => {
         currentZoom.value = Math.floor(value * 100);
     });
 

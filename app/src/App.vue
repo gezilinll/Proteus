@@ -92,7 +92,7 @@ useWheel(wheelHandler, {
     domTarget: userLayer,
 });
 
-const lastDragMovement: { x: number; y: number } = { x: 0, y: 0 };
+const lastDragState: { x: number; y: number; dragging: boolean } = { x: 0, y: 0, dragging: false };
 const dragHandler = ({
     first,
     last,
@@ -105,8 +105,9 @@ const dragHandler = ({
     movement: [x: number, y: number];
 }) => {
     if (last) {
-        lastDragMovement.x = 0;
-        lastDragMovement.y = 0;
+        lastDragState.x = 0;
+        lastDragState.y = 0;
+        lastDragState.dragging = false;
         if (store.mouseType !== 'grab') {
             editor.events.dragEnd.next({ type: store.mouseTypeToElementType() });
         }
@@ -114,12 +115,18 @@ const dragHandler = ({
     }
     if (store.mouseType === 'grab') {
         editor.moveCanvasTo(
-            editor.drag.x + (mx - lastDragMovement.x) * window.devicePixelRatio,
-            editor.drag.y + (my - lastDragMovement.y) * window.devicePixelRatio
+            editor.drag.x + (mx - lastDragState.x) * window.devicePixelRatio,
+            editor.drag.y + (my - lastDragState.y) * window.devicePixelRatio
         );
-    } else if (first) {
-        editor.events.dragStart.next({ x: ix, y: iy, type: store.mouseTypeToElementType() });
-    } else {
+    } else if (!first) {
+        if (!lastDragState.dragging) {
+            lastDragState.dragging = true;
+            editor.events.dragStart.next({
+                x: editor.drag.x + ix,
+                y: editor.drag.y + iy,
+                type: store.mouseTypeToElementType(),
+            });
+        }
         editor.events.dragging.next({
             movementX: mx,
             movementY: my,
@@ -127,8 +134,8 @@ const dragHandler = ({
         });
     }
 
-    lastDragMovement.x = mx;
-    lastDragMovement.y = my;
+    lastDragState.x = mx;
+    lastDragState.y = my;
 };
 useDrag(dragHandler, {
     domTarget: userLayer,
@@ -156,4 +163,3 @@ body {
     height: 100vh;
 }
 </style>
-Ref, , ref, watchimport { usePinch, useWheel, useDrag } from '@vueuse/gesture';

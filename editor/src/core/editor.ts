@@ -28,6 +28,7 @@ export class Editor {
 
     addElement(element: Element) {
         this._doc.addElement(element);
+        this.events.addElement.next(element);
     }
 
     zoomCanvasTo(value: number) {
