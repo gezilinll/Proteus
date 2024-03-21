@@ -20,6 +20,7 @@ export class Editor {
         dragStart: new Subject<{ x: number; y: number; type: ElementType }>(),
         dragging: new Subject<{ movementX: number; movementY: number; type: ElementType }>(),
         dragEnd: new Subject<{ type: ElementType }>(),
+        hovering: new Subject<{ x: number; y: number }>(),
     };
 
     constructor(doc?: Doc) {

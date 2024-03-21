@@ -12,4 +12,8 @@ export class Doc {
     addElement(element: Element) {
         this._liveDoc.getArray('elements').push([element.liveElement]);
     }
+
+    get elements() {
+        this._liveDoc.getArray('elements').toArray() as Element[];
+    }
 }

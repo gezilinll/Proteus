@@ -96,6 +96,7 @@
 
     "vue.complete.casing.props": "autoCamel",
     "cSpell.words": [
+        "bbox",
         "cullable",
         "iconsets",
         "materialdesignicons",

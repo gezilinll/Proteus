@@ -53,18 +53,23 @@ export class BrushElementPlugin implements Plugin {
                     this._creatingState.rect.bottom,
                     event.movementY
                 );
-                this._creatingState.element.width = this._creatingState.rect.width;
-                this._creatingState.element.height = this._creatingState.rect.height;
+                this._creatingState.element.width = this._creatingState.rect.width + 2;
+                this._creatingState.element.height = this._creatingState.rect.height + 2;
                 this._creatingState.element.moveTo = {
-                    x: Math.abs(
-                        Math.min(
-                            this._creatingState.element.moveTo.x,
-                            this._creatingState.rect.left
-                        )
-                    ),
-                    y: Math.abs(
-                        Math.min(this._creatingState.element.moveTo.y, this._creatingState.rect.top)
-                    ),
+                    x:
+                        Math.abs(
+                            Math.min(
+                                this._creatingState.element.moveTo.x,
+                                this._creatingState.rect.left
+                            )
+                        ) + 1,
+                    y:
+                        Math.abs(
+                            Math.min(
+                                this._creatingState.element.moveTo.y,
+                                this._creatingState.rect.top
+                            )
+                        ) + 1,
                 };
                 this._creatingState.element.left =
                     this._creatingState.initPoint.x - this._creatingState.element.moveTo.x;

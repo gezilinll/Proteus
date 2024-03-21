@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { useEditorStore, Workspace } from '@blitz/editor';
-import { useDrag, usePinch, useWheel } from '@vueuse/gesture';
+import { useDrag, useMove, usePinch, useWheel } from '@vueuse/gesture';
 import { onMounted, Ref, ref, watch } from 'vue';
 
 import { BrushBar, CreationBar } from './creation';
@@ -136,6 +136,17 @@ const dragHandler = ({
     lastDragState.y = my;
 };
 useDrag(dragHandler, {
+    domTarget: userLayer,
+});
+
+const moveHandler = ({
+    event: { clientX, clientY },
+}: {
+    event: { clientX: number; clientY: number };
+}) => {
+    editor.events.hovering.next({ x: editor.drag.x + clientX, y: editor.drag.y + clientY });
+};
+useMove(moveHandler, {
     domTarget: userLayer,
 });
 </script>

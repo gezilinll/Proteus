@@ -1,13 +1,9 @@
 <template>
-    <div class="fullscreen" ref="workspaceContainer">
-        <canvas class="fullscreen" ref="canvasForBackground"></canvas>
-        <canvas class="fullscreen" ref="canvasForDoc"></canvas>
-        <canvas class="fullscreen"></canvas>
-    </div>
+    <div class="fullscreen" ref="workspaceContainer"></div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, Ref, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import { DocRenderer, useEditorStore } from '.';
 import { BrushElementPlugin } from './plugins/brush-element-plugin';
@@ -15,17 +11,10 @@ import { BrushElementPlugin } from './plugins/brush-element-plugin';
 const store = useEditorStore();
 const editor = store.editor;
 
-const canvasForBackground: Ref<HTMLCanvasElement | null> = ref(null);
-const canvasForDoc: Ref<HTMLCanvasElement | null> = ref(null);
 const workspaceContainer = ref(null);
 
 onMounted(async () => {
-    const _docRenderer = new DocRenderer(editor, canvasForDoc.value!, workspaceContainer.value!);
-
-    canvasForBackground.value!.width = canvasForDoc.value!.width;
-    canvasForBackground.value!.height = canvasForDoc.value!.height;
-    canvasForBackground.value!.style.width = canvasForDoc.value!.style.width;
-    canvasForBackground.value!.style.height = canvasForDoc.value!.style.height;
+    new DocRenderer(editor, workspaceContainer.value!);
 
     editor.registerPlugin(new BrushElementPlugin());
 });
@@ -38,4 +27,3 @@ onMounted(async () => {
     height: 100vh;
 }
 </style>
-, watch ./renderer/plugins/zoom-drag-plugin

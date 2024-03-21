@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import { Editor } from '../core/editor';
 import { BrushSpritePlugin } from './plugins/brush-sprite-plugin';
+import { HoveringPlugin } from './plugins/hovering-plugin';
 import { ZoomDragPlugin } from './plugins/zoom-drag-plugin';
 import { BackgroundSprite } from './sprites/background-sprite';
 import { Sprite } from './sprites/base-sprite';
@@ -10,13 +11,13 @@ export class DocRenderer {
     private _pixi: PIXI.Application;
     private _background: BackgroundSprite;
     private _viewport: PIXI.Container;
+    private _interaction: PIXI.Container;
     private _editor: Editor;
 
-    constructor(editor: Editor, canvas: HTMLCanvasElement, container: HTMLDivElement) {
+    constructor(editor: Editor, container: HTMLDivElement) {
         this._editor = editor;
 
         this._pixi = new PIXI.Application({
-            view: canvas,
             hello: true,
             background: '#fff',
             antialias: true,
@@ -24,6 +25,8 @@ export class DocRenderer {
             resizeTo: container,
             resolution: window.devicePixelRatio,
         });
+        const canvas = this._pixi.view as HTMLCanvasElement;
+        container.appendChild(canvas);
         this._pixi.stage.cullable = true;
         this._pixi.stage.eventMode = 'static';
         (globalThis as any).__PIXI_APP__ = this._pixi;
@@ -37,9 +40,12 @@ export class DocRenderer {
 
         this._viewport = new PIXI.Container();
         this._pixi.stage.addChild(this._viewport);
-
         this._editor.registerPlugin(new BrushSpritePlugin(this));
         this._editor.registerPlugin(new ZoomDragPlugin(this));
+
+        this._interaction = new PIXI.Container();
+        this._pixi.stage.addChild(this._interaction);
+        this._editor.registerPlugin(new HoveringPlugin(this._viewport, this._interaction));
     }
 
     moveCanvasTo(x: number, y: number) {
@@ -58,5 +64,9 @@ export class DocRenderer {
 
     removeSprite(sprite: Sprite) {
         this._viewport.removeChild(sprite.renderObject);
+    }
+
+    get interaction() {
+        return this._interaction;
     }
 }
