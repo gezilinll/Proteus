@@ -18,14 +18,14 @@ export class BrushSpritePlugin implements Plugin {
     mount(editor: Editor): void {
         editor.events.addElement.subscribe((element) => {
             if (element.type === 'brush') {
-                const sprite = new BrushSprite();
+                const sprite = new BrushSprite(element as BrushElement);
                 this._sprites.set(element.id, sprite);
                 this._renderer.addSprite(sprite);
             }
         });
         editor.events.changeElement.subscribe((element) => {
             if (element.type === 'brush') {
-                this._sprites.get(element.id)!.render(element as BrushElement);
+                this._sprites.get(element.id)!.render();
             }
         });
         editor.events.removeElement.subscribe((element) => {

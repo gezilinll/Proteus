@@ -1,11 +1,13 @@
 <template>
     <div class="fullscreen" ref="workspaceContainer"></div>
+    <Interaction></Interaction>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
 import { DocRenderer, useEditorStore } from '.';
+import { Interaction } from './interaction';
 import { BrushElementPlugin } from './plugins/brush-element-plugin';
 
 const store = useEditorStore();

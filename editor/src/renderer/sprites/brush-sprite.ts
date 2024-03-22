@@ -8,15 +8,17 @@ export class BrushSprite extends Sprite {
 
     private _canvas: HTMLCanvasElement;
 
-    constructor() {
-        super();
+    constructor(element: BrushElement) {
+        super(element);
         this._canvas = document.createElement('canvas');
         document.body.appendChild(this._canvas);
         this.renderObject = PIXI.Sprite.from(this._canvas, { resolution: window.devicePixelRatio });
     }
 
-    render(element: BrushElement) {
-        super.render(element);
+    render() {
+        super.render();
+
+        const element = this.brushElement;
 
         if (this._canvas.width !== element.width || this._canvas.height !== element.height) {
             this._canvas.width = Math.ceil(element.width * window.devicePixelRatio);
@@ -46,5 +48,9 @@ export class BrushSprite extends Sprite {
 
     private get _renderObject() {
         return this.renderObject as PIXI.Sprite;
+    }
+
+    private get brushElement() {
+        return this._element as BrushElement;
     }
 }

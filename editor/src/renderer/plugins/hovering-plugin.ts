@@ -3,15 +3,17 @@ import * as PIXI from 'pixi.js';
 import { Editor } from '../../core/editor';
 import { Plugin } from '../../core/plugin';
 import { useEditorStore } from '../../core/store';
+import { BBoxSprite } from '../sprites/bbox-sprite';
+import { ViewportSprite } from '../sprites/viewport-sprite';
 
 export class HoveringPlugin implements Plugin {
     name: string = 'hover-plugin';
 
-    private _viewport: PIXI.Container;
-    private _container: PIXI.Container;
+    private _viewport: ViewportSprite;
+    private _container: BBoxSprite;
     private _bbox: PIXI.Graphics;
 
-    constructor(viewport: PIXI.Container, container: PIXI.Container) {
+    constructor(viewport: ViewportSprite, container: BBoxSprite) {
         this._viewport = viewport;
         this._container = container;
         this._bbox = new PIXI.Graphics();
@@ -26,7 +28,7 @@ export class HoveringPlugin implements Plugin {
                 return;
             }
             for (const child of this._viewport.children) {
-                const bounds = child.getBounds();
+                const bounds = child.renderObject.getBounds();
                 if (bounds.contains(event.x, event.y)) {
                     this._bbox.clear();
                     this._bbox.lineStyle(2, 0x1e90ff, 1);

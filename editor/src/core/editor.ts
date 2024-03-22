@@ -8,6 +8,7 @@ export class Editor {
 
     private _zoom: number = 1.0;
     private _drag: { x: number; y: number } = { x: 0, y: 0 };
+    private _selectedElements: Element[] = [];
 
     readonly events = {
         addElement: new Subject<Element>(),
@@ -21,6 +22,8 @@ export class Editor {
         dragging: new Subject<{ movementX: number; movementY: number; type: ElementType }>(),
         dragEnd: new Subject<{ type: ElementType }>(),
         hovering: new Subject<{ x: number; y: number }>(),
+        click: new Subject<{ x: number; y: number }>(),
+        selectElement: new Subject<Element>(),
     };
 
     constructor(doc?: Doc) {
@@ -30,6 +33,11 @@ export class Editor {
     addElement(element: Element) {
         this._doc.addElement(element);
         this.events.addElement.next(element);
+    }
+
+    selectElement(element: Element) {
+        this._selectedElements = [element];
+        this.events.selectElement.next(element);
     }
 
     zoomCanvasTo(value: number) {
