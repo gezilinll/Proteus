@@ -11,7 +11,6 @@ export class BrushSprite extends Sprite {
     constructor(element: BrushElement) {
         super(element);
         this._canvas = document.createElement('canvas');
-        document.body.appendChild(this._canvas);
         this.renderObject = PIXI.Sprite.from(this._canvas, { resolution: window.devicePixelRatio });
     }
 

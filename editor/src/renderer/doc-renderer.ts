@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import { Editor } from '../core/editor';
 import { BrushSpritePlugin } from './plugins/brush-sprite-plugin';
-import { HoveringPlugin } from './plugins/hovering-plugin';
+import { HoveringSelectPlugin } from './plugins/hovering-select-plugin';
 import { ZoomDragPlugin } from './plugins/zoom-drag-plugin';
 import { BackgroundSprite } from './sprites/background-sprite';
 import { Sprite } from './sprites/base-sprite';
@@ -47,7 +47,7 @@ export class DocRenderer {
 
         this._bbox = new BBoxSprite();
         this._pixi.stage.addChild(this._bbox.renderObject);
-        this._editor.registerPlugin(new HoveringPlugin(this._viewport, this._bbox));
+        this._editor.registerPlugin(new HoveringSelectPlugin(this._viewport, this._bbox));
     }
 
     moveCanvasTo(x: number, y: number) {

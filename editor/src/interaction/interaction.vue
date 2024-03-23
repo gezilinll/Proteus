@@ -5,9 +5,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
+import { useEditorStore } from '../core/store';
+
 const interactionContainer = ref(null);
 
-onMounted(async () => {});
+const store = useEditorStore();
+const editor = store.editor;
+
+onMounted(() => {
+    editor.events.selectElement.subscribe((element) => {});
+});
 </script>
 
 <style lang="less">

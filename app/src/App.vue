@@ -41,6 +41,13 @@ onMounted(() => {
             }
         }
     );
+
+    userLayer.value!.addEventListener('click', (event) => {
+        editor.events.click.next({
+            x: editor.drag.x + event.clientX,
+            y: editor.drag.y + event.clientY,
+        });
+    });
 });
 
 const cancelEvent = (e: Event) => e.preventDefault();

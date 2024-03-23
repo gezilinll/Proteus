@@ -15,7 +15,7 @@ const editor = store.editor;
 
 const workspaceContainer = ref(null);
 
-onMounted(async () => {
+onMounted(() => {
     new DocRenderer(editor, workspaceContainer.value!);
 
     editor.registerPlugin(new BrushElementPlugin());
