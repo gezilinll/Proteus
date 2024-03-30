@@ -36,6 +36,9 @@ onMounted(() => {
 let cursorType: 'move' | 'lt' | 'rt' | 'lb' | 'rb' = 'move';
 const moveHandler = ({ event }: { event: PointerEvent }) => {
     event?.stopPropagation();
+    if (lastDragState.resizing) {
+        return;
+    }
     const validDistance = 12;
     if (
         event.offsetX >= 0 &&
@@ -78,7 +81,7 @@ useMove(moveHandler, {
     domTarget: resizeView,
 });
 
-const lastDragState: { x: number; y: number; dragging: boolean } = { x: 0, y: 0, dragging: false };
+const lastDragState: { x: number; y: number; resizing: boolean } = { x: 0, y: 0, resizing: false };
 const dragHandler = ({
     last,
     movement: [mx, my],
@@ -88,14 +91,14 @@ const dragHandler = ({
     initial: [x: number, y: number];
     movement: [x: number, y: number];
 }) => {
-    if (cursorType === 'move') {
-        if (last) {
-            lastDragState.x = 0;
-            lastDragState.y = 0;
-            return;
-        }
-        const element = editor.getElement(model.value.elementId);
-        if (element) {
+    if (last) {
+        lastDragState.x = 0;
+        lastDragState.y = 0;
+        return;
+    }
+    const element = editor.getElement(model.value.elementId);
+    if (element) {
+        if (cursorType === 'move') {
             const offsetX = mx - lastDragState.x;
             const offsetY = my - lastDragState.y;
             element.left += offsetX;
@@ -103,6 +106,27 @@ const dragHandler = ({
             model.value.left += offsetX;
             model.value.top += offsetY;
             editor.events.changeElement.next(element);
+        } else {
+            lastDragState.resizing = true;
+            let offsetW = 0;
+            let offsetH = 0;
+            let offsetX = 0;
+            let offsetY = 0;
+            if (cursorType === 'lt') {
+                offsetX = mx - lastDragState.x;
+                offsetY = my - lastDragState.x;
+                offsetW = -offsetX;
+                offsetH = -offsetY;
+            }
+
+            element.left += offsetX;
+            element.top += offsetY;
+            element.width += offsetW;
+            element.height += offsetH;
+            model.value.left += offsetX;
+            model.value.top += offsetY;
+            model.value.width += offsetW;
+            model.value.height += offsetH;
         }
     }
 
