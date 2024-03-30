@@ -26,7 +26,8 @@
     "license": "ISC",
     "dependencies": {
         "pixi.js": "7.4.0",
-        "vue": "^3.4.21"
+        "vue": "^3.4.21",
+        "@vueuse/gesture": "^2.0.0"
     },
     "devDependencies": {
         "vite": "^5.1.5"

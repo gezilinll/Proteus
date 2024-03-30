@@ -1,22 +1,20 @@
 <template>
-    <div class="fullscreen" ref="workspaceContainer"></div>
-    <Interaction></Interaction>
+    <div class="fullscreen" ref="canvasContainer"></div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
 import { DocRenderer, useEditorStore } from '.';
-import { Interaction } from './interaction';
 import { BrushElementPlugin } from './plugins/brush-element-plugin';
 
 const store = useEditorStore();
 const editor = store.editor;
 
-const workspaceContainer = ref(null);
+const canvasContainer = ref(null);
 
 onMounted(() => {
-    new DocRenderer(editor, workspaceContainer.value!);
+    new DocRenderer(editor, canvasContainer.value!);
 
     editor.registerPlugin(new BrushElementPlugin());
 });

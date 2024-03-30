@@ -14,7 +14,7 @@ export class HoveringSelectPlugin implements Plugin {
     private _viewport: ViewportSprite;
     private _container: BBoxSprite;
     private _hoverBox: PIXI.Graphics = new PIXI.Graphics();
-    private _selectBox: Map<string, PIXI.Graphics> = new Map();
+    private _selected: Set<string> = new Set();
 
     constructor(viewport: ViewportSprite, container: BBoxSprite) {
         this._viewport = viewport;
@@ -32,17 +32,12 @@ export class HoveringSelectPlugin implements Plugin {
             const bounds = child.renderObject.getBounds();
             if (bounds.contains(event.x, event.y)) {
                 if (type === 'click') {
-                    if (!this._selectBox.has(child.element.id)) {
-                        const box = new PIXI.Graphics();
-                        box.lineStyle(2, 0x1e90ff, 1);
-                        box.drawRect(0, 0, bounds.width + 2, bounds.height + 2);
-                        box.position.x = bounds.left - 1;
-                        box.position.y = bounds.top - 1;
-                        this._container.addChild(box);
-                        this._selectBox.set(child.element.id, box);
+                    if (!this._selected.has(child.element.id)) {
+                        this._hoverBox.visible = false;
+                        this._selected.add(child.element.id);
                         store.editor.selectElement(child.element);
                     }
-                } else if (this._selectBox.has(child.element.id)) {
+                } else if (this._selected.has(child.element.id)) {
                     break;
                 } else {
                     this._hoverBox.clear();
