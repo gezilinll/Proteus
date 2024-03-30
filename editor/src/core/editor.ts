@@ -24,6 +24,7 @@ export class Editor {
         hovering: new Subject<{ x: number; y: number }>(),
         click: new Subject<{ x: number; y: number }>(),
         selectElement: new Subject<Element>(),
+        unselectElement: new Subject<Element>(),
     };
 
     constructor(doc?: Doc) {
@@ -35,9 +36,18 @@ export class Editor {
         this.events.addElement.next(element);
     }
 
+    getElement(id: string) {
+        return this._doc.getElement(id);
+    }
+
     selectElement(element: Element) {
         this._selectedElements = [element];
         this.events.selectElement.next(element);
+    }
+
+    unselectElement(element: Element) {
+        this._selectedElements = [];
+        this.events.unselectElement.next(element);
     }
 
     zoomCanvasTo(value: number) {

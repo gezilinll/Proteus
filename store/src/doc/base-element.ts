@@ -8,7 +8,7 @@ export class Element {
 
     constructor() {
         this._liveElement = new Y.Map();
-        this._liveElement.set('id', uuidv4());
+        this._liveElement.set('id', uuidv4() as string);
         this._liveElement.set('type', 'invalid' as ElementType);
         this.left = 0;
         this.top = 0;

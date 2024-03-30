@@ -1,13 +1,13 @@
 <template>
     <div class="fullscreen" ref="interactionContainer">
-        <ResizeElement v-model="resizeModel" v-if="resizeModel.enabled"></ResizeElement>
+        <ResizeElement v-model="resizeModel" v-if="resizeModel.enable"></ResizeElement>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useEditorStore } from '@blitz/editor';
 import { useDrag, useMove, usePinch, useWheel } from '@vueuse/gesture';
-import { onMounted, Ref, ref } from 'vue';
+import { onMounted, Ref, ref, watch } from 'vue';
 
 import { ResizeElement, ResizeModel } from './resize';
 
@@ -16,7 +16,14 @@ const interactionContainer: Ref<HTMLDivElement | null> = ref(null);
 const editorStore = useEditorStore();
 const editor = editorStore.editor;
 
-const resizeModel = ref<ResizeModel>({ enabled: false, width: 0, height: 0, left: 0, top: 0 });
+const resizeModel = ref<ResizeModel>({
+    width: 0,
+    height: 0,
+    left: 0,
+    top: 0,
+    enable: false,
+    elementId: '',
+});
 
 onMounted(() => {
     interactionContainer.value!.addEventListener('click', (event) => {
@@ -27,12 +34,23 @@ onMounted(() => {
     });
 
     editor.events.selectElement.subscribe((element) => {
-        resizeModel.value.enabled = true;
         resizeModel.value.left = element.left;
         resizeModel.value.top = element.top;
         resizeModel.value.width = element.width;
         resizeModel.value.height = element.height;
+        resizeModel.value.enable = true;
+        resizeModel.value.elementId = element.id;
     });
+
+    watch(
+        () => editorStore.mouseType,
+        () => {
+            if (resizeModel.value.enable) {
+                resizeModel.value.enable = false;
+                editor.unselectElement(editor.getElement(resizeModel.value.elementId)!);
+            }
+        }
+    );
 });
 
 const cancelEvent = (e: Event) => e.preventDefault();

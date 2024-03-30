@@ -60,6 +60,9 @@ export class HoveringSelectPlugin implements Plugin {
         editor.events.click.subscribe((event) => {
             this._handleEvent(event, 'click');
         });
+        editor.events.unselectElement.subscribe((element) => {
+            this._selected.delete(element.id);
+        });
     }
 
     unmount(editor: Editor): void {

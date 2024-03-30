@@ -1,5 +1,6 @@
 export interface ResizeModel {
-    enabled: boolean;
+    enable: boolean;
+    elementId: string;
     left: number;
     top: number;
     width: number;
