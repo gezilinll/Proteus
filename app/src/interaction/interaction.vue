@@ -33,20 +33,23 @@ onMounted(() => {
         });
     });
 
-    editor.events.selectElement.subscribe((element) => {
-        resizeModel.value.left = element.left;
-        resizeModel.value.top = element.top;
-        resizeModel.value.width = element.width;
-        resizeModel.value.height = element.height;
+    editor.events.selectElement.subscribe((elements) => {
+        resizeModel.value.left = elements[0].left;
+        resizeModel.value.top = elements[0].top;
+        resizeModel.value.width = elements[0].width;
+        resizeModel.value.height = elements[0].height;
         resizeModel.value.enable = true;
-        resizeModel.value.elementId = element.id;
+        resizeModel.value.elementId = elements[0].id;
+    });
+
+    editor.events.unselectElement.subscribe(() => {
+        resizeModel.value.enable = false;
     });
 
     watch(
         () => editorStore.mouseType,
         () => {
             if (resizeModel.value.enable) {
-                resizeModel.value.enable = false;
                 editor.unselectElement(editor.getElement(resizeModel.value.elementId)!);
             }
         }

@@ -11,6 +11,10 @@ export class Rect {
         this.bottom = b ?? 0;
     }
 
+    static fromLTWH(l: number, t: number, w: number, h: number) {
+        return new Rect(l, t, l + w, t + h);
+    }
+
     get width() {
         return this.right - this.left;
     }

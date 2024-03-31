@@ -14,6 +14,7 @@
 
 <script setup lang="ts">
 import { useEditorStore } from '@blitz/editor';
+import { Rect } from '@blitz/store';
 import { useDrag, useMove } from '@vueuse/gesture';
 import { onMounted, ref } from 'vue';
 import { Ref } from 'vue';
@@ -36,28 +37,20 @@ onMounted(() => {
 let cursorType: 'move' | 'lt' | 'rt' | 'lb' | 'rb' = 'move';
 const moveHandler = ({ event }: { event: PointerEvent }) => {
     event?.stopPropagation();
-    if (lastDragState.resizing) {
+    if (dragState.resizing) {
         return;
     }
     const validDistance = 12;
-    if (
-        event.offsetX >= 0 &&
-        event.offsetX <= validDistance &&
-        event.offsetY >= 0 &&
-        event.offsetY <= validDistance
-    ) {
+    if (event.offsetX <= validDistance && event.offsetY <= validDistance) {
         resizeView.value!.style.cursor = 'nwse-resize';
         cursorType = 'lt';
     } else if (
         event.offsetX >= model.value.width - validDistance &&
-        event.offsetX <= model.value.width &&
-        event.offsetY >= 0 &&
         event.offsetY <= validDistance
     ) {
         resizeView.value!.style.cursor = 'nesw-resize';
         cursorType = 'rt';
     } else if (
-        event.offsetX >= 0 &&
         event.offsetX <= validDistance &&
         event.offsetY >= model.value.height - validDistance &&
         event.offsetY <= model.value.height
@@ -81,7 +74,7 @@ useMove(moveHandler, {
     domTarget: resizeView,
 });
 
-const lastDragState: { x: number; y: number; resizing: boolean } = { x: 0, y: 0, resizing: false };
+const dragState: { x: number; y: number; resizing: boolean } = { x: 0, y: 0, resizing: false };
 const dragHandler = ({
     last,
     movement: [mx, my],
@@ -92,37 +85,43 @@ const dragHandler = ({
     movement: [x: number, y: number];
 }) => {
     if (last) {
-        lastDragState.x = 0;
-        lastDragState.y = 0;
+        dragState.x = 0;
+        dragState.y = 0;
+        dragState.resizing = false;
         return;
     }
     const element = editor.getElement(model.value.elementId);
     if (element) {
         if (cursorType === 'move') {
-            const offsetX = mx - lastDragState.x;
-            const offsetY = my - lastDragState.y;
+            const offsetX = mx - dragState.x;
+            const offsetY = my - dragState.y;
             element.left += offsetX;
             element.top += offsetY;
             model.value.left += offsetX;
             model.value.top += offsetY;
             editor.events.changeElement.next(element);
         } else {
-            lastDragState.resizing = true;
+            dragState.resizing = true;
             let offsetW = 0;
             let offsetH = 0;
             let offsetX = 0;
             let offsetY = 0;
             if (cursorType === 'lt') {
-                offsetX = mx - lastDragState.x;
-                offsetY = my - lastDragState.x;
+                offsetX = mx - dragState.x;
+                offsetY = my - dragState.y;
                 offsetW = -offsetX;
                 offsetH = -offsetY;
             }
 
-            element.left += offsetX;
-            element.top += offsetY;
-            element.width += offsetW;
-            element.height += offsetH;
+            editor.events.resizeElement.next({
+                target: element,
+                newRect: Rect.fromLTWH(
+                    element.left + offsetX,
+                    element.top + offsetY,
+                    element.width + offsetW,
+                    element.height + offsetH
+                ),
+            });
             model.value.left += offsetX;
             model.value.top += offsetY;
             model.value.width += offsetW;
@@ -130,8 +129,8 @@ const dragHandler = ({
         }
     }
 
-    lastDragState.x = mx;
-    lastDragState.y = my;
+    dragState.x = mx;
+    dragState.y = my;
 };
 useDrag(dragHandler, {
     domTarget: resizeView,

@@ -30,7 +30,7 @@ export class HoveringSelectPlugin implements Plugin {
         }
         for (const child of this._viewport.children) {
             const bounds = child.renderObject.getBounds();
-            if (bounds.contains(event.x, event.y)) {
+            if (bounds.clone().pad(3, 3).contains(event.x, event.y)) {
                 if (type === 'click') {
                     if (!this._selected.has(child.element.id)) {
                         this._hoverBox.visible = false;
@@ -50,6 +50,9 @@ export class HoveringSelectPlugin implements Plugin {
                 return;
             }
         }
+        if (type === 'click') {
+            store.editor.unselectElement();
+        }
         this._hoverBox.visible = false;
     }
 
@@ -60,8 +63,8 @@ export class HoveringSelectPlugin implements Plugin {
         editor.events.click.subscribe((event) => {
             this._handleEvent(event, 'click');
         });
-        editor.events.unselectElement.subscribe((element) => {
-            this._selected.delete(element.id);
+        editor.events.unselectElement.subscribe(() => {
+            this._selected.clear();
         });
     }
 

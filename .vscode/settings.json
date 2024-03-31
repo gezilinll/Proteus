@@ -99,6 +99,7 @@
         "bbox",
         "cullable",
         "iconsets",
+        "LTWH",
         "materialdesignicons",
         "Pinia",
         "PIXI",

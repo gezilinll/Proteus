@@ -1,4 +1,4 @@
-import { BrushElement, Point, Rect } from '@blitz/store';
+import { BrushElement, isBrushElement, Point, Rect } from '@blitz/store';
 import { throttleTime } from 'rxjs';
 
 import { Editor } from '../core/editor';
@@ -84,6 +84,28 @@ export class BrushElementPlugin implements Plugin {
         });
         editor.events.dragEnd.subscribe((_event) => {
             this._creatingState = null;
+        });
+
+        editor.events.resizeElement.subscribe((data) => {
+            if (isBrushElement(data.target)) {
+                const oldW = data.target.width;
+                const oldH = data.target.height;
+                const scaleX = data.newRect.width / oldW;
+                const scaleY = data.newRect.height / oldH;
+                const moveTo = data.target.moveTo;
+                moveTo.x *= scaleX;
+                moveTo.y *= scaleY;
+                const lineToPoints = data.target.lineToPoints;
+                for (const lineTo of lineToPoints) {
+                    lineTo.x *= scaleX;
+                    lineTo.y *= scaleY;
+                }
+                data.target.left = data.newRect.left;
+                data.target.top = data.newRect.top;
+                data.target.width = data.newRect.width;
+                data.target.height = data.newRect.height;
+                editor.events.changeElement.next(data.target);
+            }
         });
     }
 

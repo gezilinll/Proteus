@@ -5,3 +5,4 @@ export { BrushElement } from './doc/brush-element';
 export { Doc } from './doc/doc';
 export { ShapeElement } from './doc/shape-element';
 export type { ElementType } from './doc/types';
+export * from './utils/type-checker';
