@@ -15,6 +15,8 @@ export class DocRenderer {
     private _viewport: ViewportSprite;
     private _bbox: BBoxSprite;
     private _editor: Editor;
+    private _canvasWidth: number;
+    private _canvasHeight: number;
 
     constructor(editor: Editor, container: HTMLDivElement) {
         this._editor = editor;
@@ -22,7 +24,7 @@ export class DocRenderer {
         this._pixi = new PIXI.Application({
             hello: true,
             background: '#fff',
-            antialias: true,
+            antialias: false,
             autoDensity: true,
             resizeTo: container,
             resolution: window.devicePixelRatio,
@@ -38,9 +40,8 @@ export class DocRenderer {
             canvas.height / window.devicePixelRatio
         );
         this._pixi.stage.addChild(this._background.renderObject);
-        this._background.render();
 
-        this._viewport = new ViewportSprite();
+        this._viewport = new ViewportSprite(canvas.width, canvas.height);
         this._pixi.stage.addChild(this._viewport.renderObject);
         this._editor.registerPlugin(new BrushSpritePlugin(this));
         this._editor.registerPlugin(new ZoomDragPlugin(this));
@@ -48,16 +49,25 @@ export class DocRenderer {
         this._bbox = new BBoxSprite();
         this._pixi.stage.addChild(this._bbox.renderObject);
         this._editor.registerPlugin(new HoveringSelectPlugin(this._viewport, this._bbox));
+
+        this._canvasWidth = canvas.width;
+        this._canvasHeight = canvas.height;
     }
 
-    moveCanvasTo(x: number, y: number) {
-        this._background.moveTo(x, y);
-        this._background.render();
+    moveViewport(x: number, y: number) {
+        this._viewport.setPosition(x, y);
     }
 
-    zoomCanvasTo(value: number) {
-        this._background.zoomTo(value);
-        this._background.render();
+    scaleViewport(target: number) {
+        this._viewport.setScale(target);
+    }
+
+    moveBackground(x: number, y: number) {
+        this._background.setPosition(x, y);
+    }
+
+    scaleBackground(target: number) {
+        this._background.setScale(target);
     }
 
     addSprite(sprite: Sprite) {
@@ -66,5 +76,17 @@ export class DocRenderer {
 
     removeSprite(sprite: Sprite) {
         this._viewport.removeChild(sprite);
+    }
+
+    get viewportPosition() {
+        return this._viewport.renderObject.position;
+    }
+
+    get canvasWidth() {
+        return this._canvasWidth;
+    }
+
+    get canvasHeight() {
+        return this._canvasHeight;
     }
 }

@@ -7,7 +7,12 @@ export class ViewportSprite {
 
     private _children: Sprite[] = [];
 
-    constructor() {
+    private _originW: number;
+    private _originH: number;
+
+    constructor(originW: number, originH: number) {
+        this._originW = originW;
+        this._originH = originH;
         this.renderObject = new PIXI.Container();
     }
 
@@ -19,6 +24,14 @@ export class ViewportSprite {
     removeChild(sprite: Sprite) {
         this.renderObject.removeChild(sprite.renderObject);
         this._children = this._children.filter((item) => item.element.id !== sprite.element.id);
+    }
+
+    setScale(value: number) {
+        this.renderObject.scale.set(value, value);
+    }
+
+    setPosition(x: number, y: number) {
+        this.renderObject.position.set(x, y);
     }
 
     get children() {

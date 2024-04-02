@@ -84,4 +84,3 @@ const presenter = usePresenter();
     font-family: 'Gill Sans', sans-serif;
 }
 </style>
-./ToolsBarPresenter ./toolbox-presenter

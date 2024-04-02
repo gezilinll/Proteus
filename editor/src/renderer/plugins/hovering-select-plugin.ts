@@ -23,14 +23,14 @@ export class HoveringSelectPlugin implements Plugin {
         this._container.addChild(this._hoverBox);
     }
 
-    private _handleEvent(event: { x: number; y: number }, type: EventType) {
+    private _handleEvent(event: { globalX: number; globalY: number }, type: EventType) {
         const store = useEditorStore();
         if (store.mouseType !== 'select') {
             return;
         }
         for (const child of this._viewport.children) {
             const bounds = child.renderObject.getBounds();
-            if (bounds.clone().pad(3, 3).contains(event.x, event.y)) {
+            if (bounds.clone().pad(3, 3).contains(event.globalX, event.globalY)) {
                 if (type === 'click') {
                     if (!this._selected.has(child.element.id)) {
                         this._hoverBox.visible = false;

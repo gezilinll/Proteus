@@ -1,4 +1,4 @@
-import { Doc, Element, ElementType, Rect } from '@blitz/store';
+import { Doc, Element, ElementType, Point, Rect } from '@blitz/store';
 import { Subject } from 'rxjs';
 
 import { Plugin } from './plugin';
@@ -6,8 +6,6 @@ import { Plugin } from './plugin';
 export class Editor {
     private _doc: Doc;
 
-    private _zoom: number = 1.0;
-    private _drag: { x: number; y: number } = { x: 0, y: 0 };
     private _selectedElements: Element[] = [];
 
     readonly events = {
@@ -17,13 +15,13 @@ export class Editor {
         resizeElement: new Subject<{ target: Element; newRect: Rect }>(),
         selectElement: new Subject<Element[]>(),
         unselectElement: new Subject<Element[]>(),
-        zoomCanvasTo: new Subject<number>(),
-        moveCanvasTo: new Subject<{ x: number; y: number }>(),
-        dragStart: new Subject<{ x: number; y: number; type: ElementType }>(),
+        scale: new Subject<{ target: number; origin?: Point }>(),
+        move: new Subject<{ movementX: number; movementY: number }>(),
+        dragStart: new Subject<{ globalX: number; globalY: number; type: ElementType }>(),
         dragging: new Subject<{ movementX: number; movementY: number; type: ElementType }>(),
         dragEnd: new Subject<{ type: ElementType }>(),
-        hovering: new Subject<{ x: number; y: number }>(),
-        click: new Subject<{ x: number; y: number }>(),
+        hovering: new Subject<{ globalX: number; globalY: number }>(),
+        click: new Subject<{ globalX: number; globalY: number }>(),
     };
 
     constructor(doc?: Doc) {
@@ -49,26 +47,15 @@ export class Editor {
         this._selectedElements = [];
     }
 
-    zoomCanvasTo(value: number) {
-        this._zoom = value;
-        this.events.zoomCanvasTo.next(this._zoom);
+    scale(value: number, origin?: Point) {
+        this.events.scale.next({ target: value, origin });
     }
 
-    moveCanvasTo(x: number, y: number) {
-        this._drag.x = x;
-        this._drag.y = y;
-        this.events.moveCanvasTo.next(this._drag);
+    move(movementX: number, movementY: number) {
+        this.events.move.next({ movementX, movementY });
     }
 
     registerPlugin(plugin: Plugin) {
         plugin.mount(this);
-    }
-
-    get zoom() {
-        return this._zoom;
-    }
-
-    get drag() {
-        return this._drag;
     }
 }

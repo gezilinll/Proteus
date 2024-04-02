@@ -23,12 +23,12 @@ export class BrushElementPlugin implements Plugin {
                 this._creatingState = {
                     element: new BrushElement(),
                     rect: new Rect(0, 0, 1, 1),
-                    initPoint: new Point(event.x, event.y),
+                    initPoint: new Point(event.globalX, event.globalY),
                 };
                 editor.addElement(this._creatingState.element);
                 this._creatingState.element.moveTo = { x: 0, y: 0 };
-                this._creatingState.element.left = event.x;
-                this._creatingState.element.top = event.y;
+                this._creatingState.element.left = event.globalX;
+                this._creatingState.element.top = event.globalY;
                 this._creatingState.element.weight = store.brushParam.weight;
                 this._creatingState.element.color = store.brushParam.color;
                 this._creatingState.element.width = this._creatingState.rect.width;

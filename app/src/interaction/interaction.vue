@@ -6,6 +6,7 @@
 
 <script setup lang="ts">
 import { useEditorStore } from '@blitz/editor';
+import { Point } from '@blitz/store';
 import { useDrag, useMove, usePinch, useWheel } from '@vueuse/gesture';
 import { onMounted, Ref, ref, watch } from 'vue';
 
@@ -28,8 +29,8 @@ const resizeModel = ref<ResizeModel>({
 onMounted(() => {
     interactionContainer.value!.addEventListener('click', (event) => {
         editor.events.click.next({
-            x: editor.drag.x + event.clientX,
-            y: editor.drag.y + event.clientY,
+            globalX: editorStore.viewport.left + event.clientX,
+            globalY: editorStore.viewport.top + event.clientY,
         });
     });
 
@@ -63,19 +64,21 @@ const gestureState: { pinching: boolean; wheeling: boolean } = { pinching: false
 const pinchHandler = ({
     offset: [d, _a],
     previous: [pd, _pa],
+    origin: [ox, oy],
     pinching,
 }: {
     offset: [d: number, a: number];
     previous: [d: number, a: number];
+    origin: [ox: number, oy: number];
     pinching: boolean;
 }) => {
     gestureState.pinching = pinching;
     if (!pinching) {
         return;
     }
-    const zoomOffset = ((d - pd) / 50 / 10) * editor.zoom;
-    const result = Math.max(0.1, Math.min(4, editor.zoom + zoomOffset));
-    editor.zoomCanvasTo(result);
+    const scaleOffset = ((d - pd) / 50 / 10) * editorStore.viewport.scale;
+    const result = Math.max(0.1, Math.min(4, editorStore.viewport.scale + scaleOffset));
+    editor.scale(result, new Point(ox, oy));
 };
 usePinch(pinchHandler, {
     domTarget: interactionContainer,
@@ -96,7 +99,7 @@ const wheelHandler = ({
 }) => {
     gestureState.wheeling = wheeling;
     if (gestureState.wheeling && !gestureState.pinching) {
-        editor.moveCanvasTo(editor.drag.x + (x - px), editor.drag.y + (y - py));
+        editor.move(px - x, py - y);
     }
 };
 useWheel(wheelHandler, {
@@ -125,16 +128,13 @@ const dragHandler = ({
         return;
     }
     if (editorStore.mouseType === 'grab') {
-        editor.moveCanvasTo(
-            editor.drag.x + (mx - lastDragState.x),
-            editor.drag.y + (my - lastDragState.y)
-        );
+        editor.move(mx - lastDragState.x, my - lastDragState.y);
     } else if (!first) {
         if (!lastDragState.dragging) {
             lastDragState.dragging = true;
             editor.events.dragStart.next({
-                x: editor.drag.x + ix,
-                y: editor.drag.y + iy,
+                globalX: editorStore.viewport.left + ix,
+                globalY: editorStore.viewport.top + iy,
                 type: editorStore.mouseTypeToElementType(),
             });
         }
@@ -157,7 +157,10 @@ const moveHandler = ({
 }: {
     event: { clientX: number; clientY: number };
 }) => {
-    editor.events.hovering.next({ x: editor.drag.x + clientX, y: editor.drag.y + clientY });
+    editor.events.hovering.next({
+        globalX: editorStore.viewport.left + clientX,
+        globalY: editorStore.viewport.top + clientY,
+    });
 };
 useMove(moveHandler, {
     domTarget: interactionContainer,

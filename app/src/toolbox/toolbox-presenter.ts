@@ -7,7 +7,7 @@ const usePresenter = () => {
     const editor = store.editor!;
 
     const currentZoom = ref(100);
-    let targetZoom = editor.zoom;
+    let targetZoom = store.viewport.scale;
 
     const handleZoomOutClicked = () => {
         zoomOut(0.25);
@@ -25,45 +25,45 @@ const usePresenter = () => {
 
     let pauseAnimation: Fn | null = null;
     const zoomIn = (step: number) => {
-        if (editor.zoom >= 4) {
+        if (store.viewport.scale >= 4) {
             return;
         }
         pauseAnimation?.();
-        animationToTarget(Math.min(4, editor.zoom + step), 1);
+        animationToTarget(Math.min(4, store.viewport.scale + step), 1);
     };
 
     const zoomOut = (step: number) => {
-        if (editor.zoom <= 0.1) {
+        if (store.viewport.scale <= 0.1) {
             return;
         }
-        animationToTarget(Math.max(0.1, editor.zoom - step), -1);
+        animationToTarget(Math.max(0.1, store.viewport.scale - step), -1);
     };
 
     const zoomTo100 = () => {
-        if (editor.zoom === 1) {
+        if (store.viewport.scale === 1) {
             return;
         }
-        animationToTarget(1, editor.zoom < 1 ? 1 : -1);
+        animationToTarget(1, store.viewport.scale < 1 ? 1 : -1);
     };
 
     const fitToScreen = () => {};
 
     const animationToTarget = (target: number, direction: number) => {
         pauseAnimation?.();
-        if (Math.abs(target - editor.zoom) <= 0.03) {
-            editor.zoomCanvasTo(target);
+        if (Math.abs(target - store.viewport.scale) <= 0.03) {
+            editor.scale(target);
         } else {
             targetZoom = target;
-            const animStep = 0.01 * direction;
+            const animStep = direction * Math.abs((target - store.viewport.scale) / 15);
             const { pause } = useRafFn(() => {
-                if (editor.zoom !== targetZoom) {
-                    let result = editor.zoom + animStep;
+                if (store.viewport.scale !== targetZoom) {
+                    let result = store.viewport.scale + animStep;
                     if (direction === 1 && result > target) {
                         result = target;
                     } else if (direction === -1 && result < target) {
                         result = target;
                     }
-                    editor.zoomCanvasTo(result);
+                    editor.scale(result);
                 } else {
                     pauseAnimation?.();
                 }
@@ -72,8 +72,8 @@ const usePresenter = () => {
         }
     };
 
-    store.editor.events.zoomCanvasTo.subscribe((value) => {
-        currentZoom.value = Math.floor(value * 100);
+    store.editor.events.scale.subscribe((value) => {
+        currentZoom.value = Math.floor(value.target * 100);
     });
 
     return {
