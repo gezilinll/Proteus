@@ -15,8 +15,8 @@ export class DocRenderer {
     private _viewport: ViewportSprite;
     private _bbox: BBoxSprite;
     private _editor: Editor;
-    private _canvasWidth: number;
-    private _canvasHeight: number;
+    private _styleWidth: number;
+    private _styleHeight: number;
 
     constructor(editor: Editor, container: HTMLDivElement) {
         this._editor = editor;
@@ -35,13 +35,13 @@ export class DocRenderer {
         this._pixi.stage.eventMode = 'static';
         (globalThis as any).__PIXI_APP__ = this._pixi;
 
-        this._background = new BackgroundSprite(
-            canvas.width / window.devicePixelRatio,
-            canvas.height / window.devicePixelRatio
-        );
+        this._styleWidth = canvas.width / window.devicePixelRatio;
+        this._styleHeight = canvas.height / window.devicePixelRatio;
+
+        this._background = new BackgroundSprite(this._styleWidth, this._styleHeight);
         this._pixi.stage.addChild(this._background.renderObject);
 
-        this._viewport = new ViewportSprite(canvas.width, canvas.height);
+        this._viewport = new ViewportSprite(this._styleWidth, this._styleHeight);
         this._pixi.stage.addChild(this._viewport.renderObject);
         this._editor.registerPlugin(new BrushSpritePlugin(this));
         this._editor.registerPlugin(new ZoomDragPlugin(this));
@@ -49,9 +49,6 @@ export class DocRenderer {
         this._bbox = new BBoxSprite();
         this._pixi.stage.addChild(this._bbox.renderObject);
         this._editor.registerPlugin(new HoveringSelectPlugin(this._viewport, this._bbox));
-
-        this._canvasWidth = canvas.width;
-        this._canvasHeight = canvas.height;
     }
 
     moveViewport(x: number, y: number) {
@@ -82,11 +79,11 @@ export class DocRenderer {
         return this._viewport.renderObject.position;
     }
 
-    get canvasWidth() {
-        return this._canvasWidth;
+    get styleWidth() {
+        return this._styleWidth;
     }
 
-    get canvasHeight() {
-        return this._canvasHeight;
+    get styleHeight() {
+        return this._styleHeight;
     }
 }

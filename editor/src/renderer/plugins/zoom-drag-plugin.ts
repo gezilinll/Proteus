@@ -22,7 +22,7 @@ export class ZoomDragPlugin implements Plugin {
         editor.events.scale.subscribe((value) => {
             const origin =
                 value.origin ??
-                new Point(this._renderer.canvasWidth / 2, this._renderer.canvasHeight / 2);
+                new Point(this._renderer.styleWidth / 2, this._renderer.styleHeight / 2);
             this._updateViewport(value.target, origin, 0, 0);
             this._updateBackground(value.target, origin, 0, 0);
         });
@@ -30,7 +30,7 @@ export class ZoomDragPlugin implements Plugin {
         editor.events.move.subscribe((value) => {
             const origin =
                 this._store.viewport.origin ??
-                new Point(this._renderer.canvasWidth / 2, this._renderer.canvasHeight / 2);
+                new Point(this._renderer.styleWidth / 2, this._renderer.styleHeight / 2);
             this._updateViewport(
                 this._store.viewport.scale,
                 origin,
@@ -49,10 +49,7 @@ export class ZoomDragPlugin implements Plugin {
     unmount(editor: Editor): void {}
 
     private _updateViewport(scale: number, origin: Point, movementX: number, movementY: number) {
-        const matrix = PIXI.Matrix.IDENTITY.translate(
-            -origin.x * window.devicePixelRatio,
-            -origin.y * window.devicePixelRatio
-        )
+        const matrix = PIXI.Matrix.IDENTITY.translate(-origin.x, -origin.y)
             .scale(1 / this._store.viewport.scale, 1 / this._store.viewport.scale)
             .scale(scale, scale)
             .translate(origin.x, origin.y);
@@ -69,10 +66,7 @@ export class ZoomDragPlugin implements Plugin {
     }
 
     private _updateBackground(scale: number, origin: Point, movementX: number, movementY: number) {
-        const matrix = PIXI.Matrix.IDENTITY.translate(
-            -origin.x * window.devicePixelRatio,
-            -origin.y * window.devicePixelRatio
-        )
+        const matrix = PIXI.Matrix.IDENTITY.translate(-origin.x, -origin.y)
             .scale(this._backgroundParam.scale, this._backgroundParam.scale)
             .scale(1 / scale, 1 / scale)
             .translate(origin.x, origin.y);

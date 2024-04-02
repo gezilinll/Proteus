@@ -8,14 +8,14 @@ export class BackgroundSprite {
     private _moveX: number = 0;
     private _moveY: number = 0;
 
-    constructor(width: number, height: number) {
+    constructor(styleWidth: number, styleHeight: number) {
         this._canvas = document.createElement('canvas');
-        this._canvas.width = width * window.devicePixelRatio;
-        this._canvas.height = height * window.devicePixelRatio;
-        this._canvas.style.width = `${width}px`;
-        this._canvas.style.height = `${height}px`;
+        this._canvas.width = styleWidth * window.devicePixelRatio;
+        this._canvas.height = styleHeight;
+        this._canvas.style.width = `${styleWidth}px`;
+        this._canvas.style.height = `${styleHeight}px`;
 
-        this.renderObject = PIXI.Sprite.from(this._canvas, { resolution: window.devicePixelRatio });
+        this.renderObject = PIXI.Sprite.from(this._canvas);
         this._render();
     }
 

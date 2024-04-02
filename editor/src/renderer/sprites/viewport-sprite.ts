@@ -7,12 +7,12 @@ export class ViewportSprite {
 
     private _children: Sprite[] = [];
 
-    private _originW: number;
-    private _originH: number;
+    private _styleWidth: number;
+    private _styleHeight: number;
 
-    constructor(originW: number, originH: number) {
-        this._originW = originW;
-        this._originH = originH;
+    constructor(styleWidth: number, styleHeight: number) {
+        this._styleWidth = styleWidth;
+        this._styleHeight = styleHeight;
         this.renderObject = new PIXI.Container();
     }
 
