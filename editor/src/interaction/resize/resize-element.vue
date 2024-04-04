@@ -18,6 +18,7 @@ import { Rect } from '@blitz/store';
 import { useDrag, useMove } from '@vueuse/gesture';
 import { Subscription } from 'rxjs';
 import { onUnmounted } from 'vue';
+import { watch } from 'vue';
 import { onMounted, ref } from 'vue';
 import { Ref } from 'vue';
 
@@ -27,6 +28,13 @@ const editor = editorStore.editor;
 const selectedElements = defineModel<string[]>({
     required: true,
 });
+
+watch(
+    () => selectedElements.value,
+    () => {
+        updateBBOX();
+    }
+);
 
 const bbox = ref<{ left: number; top: number; width: number; height: number }>({
     left: 0,

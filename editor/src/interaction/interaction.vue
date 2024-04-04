@@ -31,6 +31,7 @@ onMounted(() => {
     });
 
     editor.events.selectElement.subscribe((elements) => {
+        selectedElements.value = [];
         selectedElements.value.push(elements[0].id);
     });
 

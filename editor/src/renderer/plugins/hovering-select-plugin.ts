@@ -36,6 +36,7 @@ export class HoveringSelectPlugin implements Plugin {
                 if (type === 'click') {
                     if (!this._selected.has(child.element.id)) {
                         this._hoverBox.visible = false;
+                        this._selected.clear();
                         this._selected.add(child.element.id);
                         store.editor.selectElement(child.element);
                     }
