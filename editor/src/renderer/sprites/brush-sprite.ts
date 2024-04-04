@@ -65,6 +65,11 @@ export class BrushSprite extends Sprite {
         this.renderObject.height = this._element.height;
     }
 
+    destroy(): void {
+        this._canvas.width = 0;
+        this._canvas.height = 0;
+    }
+
     private get brushElement() {
         return this._element as BrushElement;
     }

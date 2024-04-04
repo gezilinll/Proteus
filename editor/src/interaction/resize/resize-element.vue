@@ -16,6 +16,8 @@
 import { useBoardStore } from '@blitz/editor';
 import { Rect } from '@blitz/store';
 import { useDrag, useMove } from '@vueuse/gesture';
+import { Subscription } from 'rxjs';
+import { onUnmounted } from 'vue';
 import { onMounted, ref } from 'vue';
 import { Ref } from 'vue';
 
@@ -45,12 +47,19 @@ updateBBOX();
 
 const resizeView: Ref<HTMLDivElement | null> = ref(null);
 
+let subscription: Subscription | null = null;
+
 onMounted(() => {
     resizeView.value!.style.cursor = 'move';
 
-    editor.events.viewportChanged.subscribe(() => {
+    subscription = editor.events.viewportChanged.subscribe(() => {
         updateBBOX();
     });
+});
+
+onUnmounted(() => {
+    subscription?.unsubscribe();
+    subscription = null;
 });
 
 let cursorType: 'move' | 'lt' | 'rt' | 'lb' | 'rb' = 'move';

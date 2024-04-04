@@ -21,4 +21,8 @@ export class BBoxSprite {
     clear() {
         this.renderObject.removeChildren();
     }
+
+    destroy() {
+        this.renderObject.destroy(true);
+    }
 }

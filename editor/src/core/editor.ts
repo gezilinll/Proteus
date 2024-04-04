@@ -6,6 +6,7 @@ import { Plugin } from './plugin';
 export class Editor {
     private _doc: Doc;
 
+    private _plugins: Plugin[] = [];
     private _selectedElements: Element[] = [];
 
     readonly events = {
@@ -58,5 +59,13 @@ export class Editor {
 
     registerPlugin(plugin: Plugin) {
         plugin.mount(this);
+        this._plugins.push(plugin);
+    }
+
+    destroy() {
+        for (const plugin of this._plugins) {
+            plugin.unmount(this);
+        }
+        this._plugins = [];
     }
 }

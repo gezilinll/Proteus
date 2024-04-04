@@ -30,6 +30,12 @@ export class BackgroundSprite {
         this._render();
     }
 
+    destroy() {
+        this.renderObject.destroy(true);
+        this._canvas.width = 0;
+        this._canvas.height = 0;
+    }
+
     private _render(): void {
         const ctx = this._canvas.getContext('2d')!;
 

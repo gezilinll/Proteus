@@ -35,6 +35,10 @@ export class ViewportSprite {
         return this._childrenMap.get(id)!.renderObject.getBounds();
     }
 
+    destroy() {
+        this.renderObject.destroy(true);
+    }
+
     get children() {
         return this._children;
     }

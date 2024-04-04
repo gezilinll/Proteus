@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { Subscription } from 'rxjs';
 
 import { Editor } from '../../core/editor';
 import { Plugin } from '../../core/plugin';
@@ -15,6 +16,7 @@ export class HoveringSelectPlugin implements Plugin {
     private _container: BBoxSprite;
     private _hoverBox: PIXI.Graphics = new PIXI.Graphics();
     private _selected: Set<string> = new Set();
+    private _subscriptions: Subscription[] = [];
 
     constructor(viewport: ViewportSprite, container: BBoxSprite) {
         this._viewport = viewport;
@@ -57,18 +59,27 @@ export class HoveringSelectPlugin implements Plugin {
     }
 
     mount(editor: Editor): void {
-        editor.events.hovering.subscribe((event) => {
-            this._handleEvent(event, 'hovering');
-        });
-        editor.events.click.subscribe((event) => {
-            this._handleEvent(event, 'click');
-        });
-        editor.events.unselectElement.subscribe(() => {
-            this._selected.clear();
-        });
+        this._subscriptions.push(
+            editor.events.hovering.subscribe((event) => {
+                this._handleEvent(event, 'hovering');
+            })
+        );
+        this._subscriptions.push(
+            editor.events.click.subscribe((event) => {
+                this._handleEvent(event, 'click');
+            })
+        );
+        this._subscriptions.push(
+            editor.events.unselectElement.subscribe(() => {
+                this._selected.clear();
+            })
+        );
     }
 
     unmount(editor: Editor): void {
-        throw new Error('Method not implemented.');
+        for (const subscription of this._subscriptions) {
+            subscription.unsubscribe();
+        }
+        this._subscriptions = [];
     }
 }

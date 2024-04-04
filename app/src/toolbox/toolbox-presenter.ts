@@ -73,9 +73,13 @@ const usePresenter = () => {
         }
     };
 
-    store.editor.events.scale.subscribe((value) => {
+    const subscription = store.editor.events.scale.subscribe((value) => {
         currentZoom.value = Math.floor(value.target * 100);
     });
+
+    const destroy = () => {
+        subscription.unsubscribe();
+    };
 
     return {
         currentZoom,
@@ -83,6 +87,7 @@ const usePresenter = () => {
         handleZoomInClicked,
         handleZoomTo100Clicked,
         handleFitToScreenClicked,
+        destroy,
     };
 };
 

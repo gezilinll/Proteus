@@ -108,6 +108,12 @@ export class DocRenderer {
         return this._viewport!.getSpriteBound(elementID);
     }
 
+    destroy() {
+        this._viewport!.destroy();
+        this._background!.destroy();
+        this._bbox!.destroy();
+    }
+
     get viewportParam() {
         return this._viewportParam;
     }

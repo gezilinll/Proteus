@@ -22,4 +22,6 @@ export abstract class Sprite {
     get element() {
         return this._element;
     }
+
+    abstract destroy(): void;
 }

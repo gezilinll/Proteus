@@ -5,6 +5,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { onUnmounted } from 'vue';
 
 import { useBoardStore } from '.';
 import { Interaction } from './interaction';
@@ -19,6 +20,11 @@ onMounted(() => {
     store.renderer.init(editor, canvasContainer.value!);
 
     editor.registerPlugin(new BrushElementPlugin());
+});
+
+onUnmounted(() => {
+    editor.destroy();
+    store.renderer.destroy();
 });
 </script>
 

@@ -30,9 +30,15 @@
 </template>
 
 <script setup lang="ts">
+import { onUnmounted } from 'vue';
+
 import usePresenter from './toolbox-presenter';
 
 const presenter = usePresenter();
+
+onUnmounted(() => {
+    presenter.destroy();
+});
 </script>
 
 <style lang="less" scoped>
