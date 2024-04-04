@@ -7,11 +7,14 @@ export class BrushSprite extends Sprite {
     renderObject: PIXI.Container;
 
     private _canvas: HTMLCanvasElement;
+    private _texture: PIXI.Texture;
+    private _lastScale: number = 1.0;
 
     constructor(element: BrushElement) {
         super(element);
         this._canvas = document.createElement('canvas');
-        this.renderObject = PIXI.Sprite.from(this._canvas, { resolution: window.devicePixelRatio });
+        this._texture = PIXI.Texture.from(this._canvas);
+        this.renderObject = PIXI.Sprite.from(this._texture);
     }
 
     render() {
@@ -19,11 +22,15 @@ export class BrushSprite extends Sprite {
 
         const element = this.brushElement;
 
-        if (this._canvas.width !== element.width || this._canvas.height !== element.height) {
-            this._canvas.width = Math.ceil(element.width * window.devicePixelRatio);
-            this._canvas.height = Math.ceil(element.height * window.devicePixelRatio);
-            this._canvas.style.width = `${element.width}px`;
-            this._canvas.style.height = `${element.height}px`;
+        const ratio = window.devicePixelRatio * this._scale;
+        if (
+            this._canvas.width !== element.width ||
+            this._canvas.height !== element.height ||
+            this._lastScale !== this._scale
+        ) {
+            this._canvas.width = Math.ceil(element.width * ratio);
+            this._canvas.height = Math.ceil(element.height * ratio);
+            this._lastScale = this._scale;
         }
         const moveTo = element.moveTo;
         const points = element.lineToPoints;
@@ -36,7 +43,7 @@ export class BrushSprite extends Sprite {
         ctx.lineWidth = element.weight;
         ctx.strokeStyle = element.color;
         ctx.beginPath();
-        ctx.moveTo(moveTo.x * window.devicePixelRatio, moveTo.y * window.devicePixelRatio);
+        ctx.moveTo(moveTo.x * ratio, moveTo.y * ratio);
         for (let index = 0; index < points.length - 1; index++) {
             const firstPoint = { x: moveTo.x + points[index].x, y: moveTo.y + points[index].y };
             const secondPoint = {
@@ -44,19 +51,18 @@ export class BrushSprite extends Sprite {
                 y: moveTo.y + points[index + 1].y,
             };
             ctx.quadraticCurveTo(
-                firstPoint.x * window.devicePixelRatio,
-                firstPoint.y * window.devicePixelRatio,
-                ((firstPoint.x + secondPoint.x) / 2) * window.devicePixelRatio,
-                ((firstPoint.y + secondPoint.y) / 2) * window.devicePixelRatio
+                firstPoint.x * ratio,
+                firstPoint.y * ratio,
+                ((firstPoint.x + secondPoint.x) / 2) * ratio,
+                ((firstPoint.y + secondPoint.y) / 2) * ratio
             );
         }
         ctx.stroke();
 
-        this._renderObject.texture.update();
-    }
-
-    private get _renderObject() {
-        return this.renderObject as PIXI.Sprite;
+        this._texture.baseTexture.update();
+        this._texture.update();
+        this.renderObject.width = this._element.width;
+        this.renderObject.height = this._element.height;
     }
 
     private get brushElement() {

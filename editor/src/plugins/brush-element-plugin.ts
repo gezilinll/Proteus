@@ -3,7 +3,7 @@ import { throttleTime } from 'rxjs';
 
 import { Editor } from '../core/editor';
 import { Plugin } from '../core/plugin';
-import { useEditorStore } from '../core/store';
+import { useBoardStore } from '../store/board';
 
 interface CreatingState {
     element: BrushElement;
@@ -16,7 +16,7 @@ export class BrushElementPlugin implements Plugin {
     private _creatingState: CreatingState | null = null;
 
     mount(editor: Editor): void {
-        const store = useEditorStore();
+        const store = useBoardStore();
 
         editor.events.dragStart.subscribe((event) => {
             if (event.type === 'brush') {

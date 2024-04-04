@@ -19,6 +19,7 @@ export class BrushSpritePlugin implements Plugin {
         editor.events.addElement.subscribe((element) => {
             if (element.type === 'brush') {
                 const sprite = new BrushSprite(element as BrushElement);
+                sprite.scale = this._renderer.viewportParam.scale;
                 this._sprites.set(element.id, sprite);
                 this._renderer.addSprite(sprite);
             }

@@ -1,11 +1,11 @@
-import { useEditorStore } from '@blitz/editor';
+import { useBoardStore } from '@blitz/editor';
 import { ref, watch } from 'vue';
 
 import { BrushType, useCreationStore } from '../../store/creation';
 
 const usePresenter = () => {
     const store = useCreationStore();
-    const editor = useEditorStore();
+    const editor = useBoardStore();
 
     const showConfigPanel = ref(true);
 

@@ -1,13 +1,13 @@
-import { useEditorStore } from '@blitz/editor';
+import { useBoardStore } from '@blitz/editor';
 import { Fn, useRafFn } from '@vueuse/core';
 import { ref } from 'vue';
 
 const usePresenter = () => {
-    const store = useEditorStore();
+    const store = useBoardStore();
     const editor = store.editor!;
 
     const currentZoom = ref(100);
-    let targetZoom = store.viewport.scale;
+    let targetZoom = store.renderer.viewportParam.scale;
 
     const handleZoomOutClicked = () => {
         zoomOut(0.25);
@@ -25,39 +25,40 @@ const usePresenter = () => {
 
     let pauseAnimation: Fn | null = null;
     const zoomIn = (step: number) => {
-        if (store.viewport.scale >= 4) {
+        if (store.renderer.viewportParam.scale >= 4) {
             return;
         }
         pauseAnimation?.();
-        animationToTarget(Math.min(4, store.viewport.scale + step), 1);
+        animationToTarget(Math.min(4, store.renderer.viewportParam.scale + step), 1);
     };
 
     const zoomOut = (step: number) => {
-        if (store.viewport.scale <= 0.1) {
+        if (store.renderer.viewportParam.scale <= 0.1) {
             return;
         }
-        animationToTarget(Math.max(0.1, store.viewport.scale - step), -1);
+        animationToTarget(Math.max(0.1, store.renderer.viewportParam.scale - step), -1);
     };
 
     const zoomTo100 = () => {
-        if (store.viewport.scale === 1) {
+        if (store.renderer.viewportParam.scale === 1) {
             return;
         }
-        animationToTarget(1, store.viewport.scale < 1 ? 1 : -1);
+        animationToTarget(1, store.renderer.viewportParam.scale < 1 ? 1 : -1);
     };
 
     const fitToScreen = () => {};
 
     const animationToTarget = (target: number, direction: number) => {
         pauseAnimation?.();
-        if (Math.abs(target - store.viewport.scale) <= 0.03) {
+        if (Math.abs(target - store.renderer.viewportParam.scale) <= 0.03) {
             editor.scale(target);
         } else {
             targetZoom = target;
-            const animStep = direction * Math.abs((target - store.viewport.scale) / 15);
+            const animStep =
+                direction * Math.abs((target - store.renderer.viewportParam.scale) / 15);
             const { pause } = useRafFn(() => {
-                if (store.viewport.scale !== targetZoom) {
-                    let result = store.viewport.scale + animStep;
+                if (store.renderer.viewportParam.scale !== targetZoom) {
+                    let result = store.renderer.viewportParam.scale + animStep;
                     if (direction === 1 && result > target) {
                         result = target;
                     } else if (direction === -1 && result < target) {

@@ -1,9 +1,9 @@
-import { MouseType, useEditorStore } from '@blitz/editor';
+import { MouseType, useBoardStore, useBoardStore } from '@blitz/editor';
 
 import { useCreationStore } from '../store/creation';
 
 const usePresenter = () => {
-    const editor = useEditorStore();
+    const editor = useBoardStore();
     const creation = useCreationStore();
 
     const handleSelectClicked = () => {

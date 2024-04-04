@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 
 import { Editor } from '../../core/editor';
 import { Plugin } from '../../core/plugin';
-import { useEditorStore } from '../../core/store';
+import { useBoardStore } from '../../store/board';
 import { BBoxSprite } from '../sprites/bbox-sprite';
 import { ViewportSprite } from '../sprites/viewport-sprite';
 
@@ -24,7 +24,7 @@ export class HoveringSelectPlugin implements Plugin {
     }
 
     private _handleEvent(event: { globalX: number; globalY: number }, type: EventType) {
-        const store = useEditorStore();
+        const store = useBoardStore();
         if (store.mouseType !== 'select') {
             return;
         }

@@ -104,14 +104,14 @@
 </template>
 
 <script lang="ts" setup>
-import { useEditorStore } from '@blitz/editor';
+import { useBoardStore } from '@blitz/editor';
 
 import { useCreationStore } from '../../store/creation';
 import usePresenter from './brush-presenter';
 
 const store = useCreationStore();
 
-const editor = useEditorStore();
+const editor = useBoardStore();
 
 const presenter = usePresenter();
 </script>

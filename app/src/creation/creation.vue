@@ -96,10 +96,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useEditorStore } from '@blitz/editor';
+import { useBoardStore } from '@blitz/editor';
 
 import usePresenter from './creation-presenter';
-const editor = useEditorStore();
+const editor = useBoardStore();
 
 const presenter = usePresenter();
 </script>

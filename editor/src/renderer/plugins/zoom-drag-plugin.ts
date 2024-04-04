@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 
 import { Editor } from '../../core/editor';
 import { Plugin } from '../../core/plugin';
-import { useEditorStore, ViewportParam } from '../../core/store';
+import { ViewportParam } from '../../store/board';
 import { DocRenderer } from '../doc-renderer';
 
 export class ZoomDragPlugin implements Plugin {
@@ -11,7 +11,6 @@ export class ZoomDragPlugin implements Plugin {
 
     private _renderer: DocRenderer;
 
-    private _store = useEditorStore();
     private _backgroundParam: ViewportParam = { left: 0, top: 0, scale: 1.0 };
 
     constructor(renderer: DocRenderer) {
@@ -22,24 +21,28 @@ export class ZoomDragPlugin implements Plugin {
         editor.events.scale.subscribe((value) => {
             const origin =
                 value.origin ??
-                new Point(this._renderer.styleWidth / 2, this._renderer.styleHeight / 2);
+                new Point(
+                    this._renderer.viewportParam.styleWidth / 2,
+                    this._renderer.viewportParam.styleHeight / 2
+                );
             this._updateViewport(value.target, origin, 0, 0);
             this._updateBackground(value.target, origin, 0, 0);
+            for (const child of this._renderer.sprites) {
+                child.scale = value.target;
+                child.render();
+            }
         });
 
         editor.events.move.subscribe((value) => {
-            const origin =
-                this._store.viewport.origin ??
-                new Point(this._renderer.styleWidth / 2, this._renderer.styleHeight / 2);
             this._updateViewport(
-                this._store.viewport.scale,
-                origin,
+                this._renderer.viewportParam.scale,
+                new Point(0, 0),
                 value.movementX,
                 value.movementY
             );
             this._updateBackground(
                 this._backgroundParam.scale,
-                origin,
+                new Point(0, 0),
                 value.movementX,
                 value.movementY
             );
@@ -50,19 +53,15 @@ export class ZoomDragPlugin implements Plugin {
 
     private _updateViewport(scale: number, origin: Point, movementX: number, movementY: number) {
         const matrix = PIXI.Matrix.IDENTITY.translate(-origin.x, -origin.y)
-            .scale(1 / this._store.viewport.scale, 1 / this._store.viewport.scale)
+            .scale(1 / this._renderer.viewportParam.scale, 1 / this._renderer.viewportParam.scale)
             .scale(scale, scale)
             .translate(origin.x, origin.y);
         const to = matrix.apply({
-            x: this._store.viewport.left + movementX,
-            y: this._store.viewport.top + movementY,
+            x: this._renderer.viewportParam.left + movementX,
+            y: this._renderer.viewportParam.top + movementY,
         });
         this._renderer.moveViewport(to.x, to.y);
         this._renderer.scaleViewport(scale);
-        this._store.viewport.left = to.x;
-        this._store.viewport.top = to.y;
-        this._store.viewport.scale = scale;
-        this._store.viewport.origin = origin;
     }
 
     private _updateBackground(scale: number, origin: Point, movementX: number, movementY: number) {

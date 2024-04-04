@@ -1,10 +1,10 @@
 <template>
     <div
         :style="{
-            left: `${model.left - 2}px`,
-            top: `${model.top - 2}px`,
-            width: `${model.width + 4}px`,
-            height: `${model.height + 4}px`,
+            left: `${bbox.left - 2}px`,
+            top: `${bbox.top - 2}px`,
+            width: `${bbox.width + 4}px`,
+            height: `${bbox.height + 4}px`,
             position: 'absolute',
             border: '2px solid #1e90ff',
         }"
@@ -13,20 +13,36 @@
 </template>
 
 <script setup lang="ts">
-import { useEditorStore } from '@blitz/editor';
+import { useBoardStore } from '@blitz/editor';
 import { Rect } from '@blitz/store';
 import { useDrag, useMove } from '@vueuse/gesture';
 import { onMounted, ref } from 'vue';
 import { Ref } from 'vue';
 
-import { ResizeModel } from './model';
-
-const editorStore = useEditorStore();
+const editorStore = useBoardStore();
 const editor = editorStore.editor;
 
-const model = defineModel<ResizeModel>({
+const selectedElements = defineModel<string[]>({
     required: true,
 });
+
+const bbox = ref<{ left: number; top: number; width: number; height: number }>({
+    left: 0,
+    top: 0,
+    width: 0,
+    height: 0,
+});
+
+function updateBBOX() {
+    const bounds = editorStore.renderer.getSpriteBounds(selectedElements.value[0]);
+    console.log('AAA', bounds);
+    bbox.value.left = bounds.left;
+    bbox.value.top = bounds.top;
+    bbox.value.width = bounds.width;
+    bbox.value.height = bounds.height;
+}
+
+updateBBOX();
 
 const resizeView: Ref<HTMLDivElement | null> = ref(null);
 
@@ -45,23 +61,23 @@ const moveHandler = ({ event }: { event: PointerEvent }) => {
         resizeView.value!.style.cursor = 'nwse-resize';
         cursorType = 'lt';
     } else if (
-        event.offsetX >= model.value.width - validDistance &&
+        event.offsetX >= bbox.value.width - validDistance &&
         event.offsetY <= validDistance
     ) {
         resizeView.value!.style.cursor = 'nesw-resize';
         cursorType = 'rt';
     } else if (
         event.offsetX <= validDistance &&
-        event.offsetY >= model.value.height - validDistance &&
-        event.offsetY <= model.value.height
+        event.offsetY >= bbox.value.height - validDistance &&
+        event.offsetY <= bbox.value.height
     ) {
         resizeView.value!.style.cursor = 'nesw-resize';
         cursorType = 'lb';
     } else if (
-        event.offsetX >= model.value.width - validDistance &&
-        event.offsetX <= model.value.width &&
-        event.offsetY >= model.value.height - validDistance &&
-        event.offsetY <= model.value.height
+        event.offsetX >= bbox.value.width - validDistance &&
+        event.offsetX <= bbox.value.width &&
+        event.offsetY >= bbox.value.height - validDistance &&
+        event.offsetY <= bbox.value.height
     ) {
         resizeView.value!.style.cursor = 'nwse-resize';
         cursorType = 'rb';
@@ -90,15 +106,13 @@ const dragHandler = ({
         dragState.resizing = false;
         return;
     }
-    const element = editor.getElement(model.value.elementId);
+    const element = editor.getElement(selectedElements.value[0]);
     if (element) {
         if (cursorType === 'move') {
             const offsetX = mx - dragState.x;
             const offsetY = my - dragState.y;
             element.left += offsetX;
             element.top += offsetY;
-            model.value.left += offsetX;
-            model.value.top += offsetY;
             editor.events.changeElement.next(element);
         } else {
             dragState.resizing = true;
@@ -122,11 +136,9 @@ const dragHandler = ({
                     element.height + offsetH
                 ),
             });
-            model.value.left += offsetX;
-            model.value.top += offsetY;
-            model.value.width += offsetW;
-            model.value.height += offsetH;
         }
+
+        updateBBOX();
     }
 
     dragState.x = mx;

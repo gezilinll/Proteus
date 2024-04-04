@@ -6,19 +6,16 @@ export class ViewportSprite {
     renderObject: PIXI.Container;
 
     private _children: Sprite[] = [];
+    private _childrenMap: Map<string, Sprite> = new Map();
 
-    private _styleWidth: number;
-    private _styleHeight: number;
-
-    constructor(styleWidth: number, styleHeight: number) {
-        this._styleWidth = styleWidth;
-        this._styleHeight = styleHeight;
+    constructor() {
         this.renderObject = new PIXI.Container();
     }
 
     addChild(sprite: Sprite) {
         this.renderObject.addChild(sprite.renderObject);
         this._children.push(sprite);
+        this._childrenMap.set(sprite.element.id, sprite);
     }
 
     removeChild(sprite: Sprite) {
@@ -32,6 +29,10 @@ export class ViewportSprite {
 
     setPosition(x: number, y: number) {
         this.renderObject.position.set(x, y);
+    }
+
+    getSpriteBound(id: string) {
+        return this._childrenMap.get(id)!.renderObject.getBounds();
     }
 
     get children() {

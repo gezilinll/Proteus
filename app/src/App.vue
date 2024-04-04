@@ -1,7 +1,6 @@
 <template>
     <v-app class="app-container">
-        <EditorView></EditorView>
-        <Interaction></Interaction>
+        <Board></Board>
         <CreationBar></CreationBar>
         <BrushBar v-if="store.secondaryPanelType === 'brush'"></BrushBar>
         <ToolboxBar></ToolboxBar>
@@ -9,16 +8,15 @@
 </template>
 
 <script setup lang="ts">
-import { EditorView, useEditorStore } from '@blitz/editor';
+import { Board, useBoardStore } from '@blitz/editor';
 import { onMounted, watch } from 'vue';
 
 import { BrushBar, CreationBar } from './creation';
-import { Interaction } from './interaction';
 import { useCreationStore } from './store/creation';
 import { ToolboxBar } from './toolbox';
 
 const store = useCreationStore();
-const editorStore = useEditorStore();
+const editorStore = useBoardStore();
 
 onMounted(() => {
     watch(

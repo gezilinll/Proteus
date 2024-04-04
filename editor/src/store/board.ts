@@ -1,7 +1,8 @@
 import { ElementType, Point } from '@blitz/store';
 import { defineStore } from 'pinia';
 
-import { Editor } from './editor';
+import { Editor } from '../core/editor';
+import { DocRenderer } from '../renderer/doc-renderer';
 
 export type MouseType = 'grab' | 'select' | 'brush' | 'text' | 'shape';
 
@@ -21,26 +22,27 @@ interface State {
     mouseType: MouseType;
 
     brushParam: BrushParam;
-
-    viewport: ViewportParam;
 }
 
 const _editor = new Editor();
+const _renderer = new DocRenderer();
 
-export const useEditorStore = defineStore('editor', {
+export const useBoardStore = defineStore('board', {
     state: () => {
         return {
             mouseType: 'select',
 
             brushParam: { weight: 2, color: 'rgb(0, 0, 0)' },
-
-            viewport: { left: 0, top: 0, scale: 1.0 },
         } as State;
     },
 
     getters: {
         editor: () => {
             return _editor as Editor;
+        },
+
+        renderer: () => {
+            return _renderer as DocRenderer;
         },
     },
     actions: {

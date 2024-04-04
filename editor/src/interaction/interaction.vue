@@ -1,57 +1,49 @@
 <template>
     <div class="fullscreen" ref="interactionContainer">
-        <ResizeElement v-model="resizeModel" v-if="resizeModel.enable"></ResizeElement>
+        <ResizeElement
+            v-model="selectedElements"
+            v-if="selectedElements.length > 0"
+        ></ResizeElement>
     </div>
 </template>
 
 <script setup lang="ts">
-import { useEditorStore } from '@blitz/editor';
+import { useBoardStore } from '@blitz/editor';
 import { Point } from '@blitz/store';
 import { useDrag, useMove, usePinch, useWheel } from '@vueuse/gesture';
 import { onMounted, Ref, ref, watch } from 'vue';
 
-import { ResizeElement, ResizeModel } from './resize';
+import { ResizeElement } from './resize';
 
 const interactionContainer: Ref<HTMLDivElement | null> = ref(null);
 
-const editorStore = useEditorStore();
+const editorStore = useBoardStore();
 const editor = editorStore.editor;
 
-const resizeModel = ref<ResizeModel>({
-    width: 0,
-    height: 0,
-    left: 0,
-    top: 0,
-    enable: false,
-    elementId: '',
-});
+let selectedElements: Ref<string[]> = ref([]);
 
 onMounted(() => {
     interactionContainer.value!.addEventListener('click', (event) => {
         editor.events.click.next({
-            globalX: editorStore.viewport.left + event.clientX,
-            globalY: editorStore.viewport.top + event.clientY,
+            globalX: event.clientX,
+            globalY: event.clientY,
         });
     });
 
     editor.events.selectElement.subscribe((elements) => {
-        resizeModel.value.left = elements[0].left;
-        resizeModel.value.top = elements[0].top;
-        resizeModel.value.width = elements[0].width;
-        resizeModel.value.height = elements[0].height;
-        resizeModel.value.enable = true;
-        resizeModel.value.elementId = elements[0].id;
+        console.log('AAAA', elements[0].id);
+        selectedElements.value.push(elements[0].id);
     });
 
     editor.events.unselectElement.subscribe(() => {
-        resizeModel.value.enable = false;
+        selectedElements.value = [];
     });
 
     watch(
         () => editorStore.mouseType,
         () => {
-            if (resizeModel.value.enable) {
-                editor.unselectElement(editor.getElement(resizeModel.value.elementId)!);
+            if (selectedElements.value.length > 0) {
+                editor.unselectElement(editor.getElement(selectedElements.value[0])!);
             }
         }
     );
@@ -76,8 +68,11 @@ const pinchHandler = ({
     if (!pinching) {
         return;
     }
-    const scaleOffset = ((d - pd) / 50 / 10) * editorStore.viewport.scale;
-    const result = Math.max(0.1, Math.min(4, editorStore.viewport.scale + scaleOffset));
+    const scaleOffset = ((d - pd) / 50 / 10) * editorStore.renderer.viewportParam.scale;
+    const result = Math.max(
+        0.1,
+        Math.min(4, editorStore.renderer.viewportParam.scale + scaleOffset)
+    );
     editor.scale(result, new Point(ox, oy));
 };
 usePinch(pinchHandler, {
@@ -133,14 +128,18 @@ const dragHandler = ({
         if (!lastDragState.dragging) {
             lastDragState.dragging = true;
             editor.events.dragStart.next({
-                globalX: editorStore.viewport.left + ix,
-                globalY: editorStore.viewport.top + iy,
+                globalX:
+                    (-editorStore.renderer.viewportParam.left + ix) /
+                    editorStore.renderer.viewportParam.scale,
+                globalY:
+                    (-editorStore.renderer.viewportParam.top + iy) /
+                    editorStore.renderer.viewportParam.scale,
                 type: editorStore.mouseTypeToElementType(),
             });
         }
         editor.events.dragging.next({
-            movementX: mx,
-            movementY: my,
+            movementX: mx / editorStore.renderer.viewportParam.scale,
+            movementY: my / editorStore.renderer.viewportParam.scale,
             type: editorStore.mouseTypeToElementType(),
         });
     }
@@ -158,8 +157,8 @@ const moveHandler = ({
     event: { clientX: number; clientY: number };
 }) => {
     editor.events.hovering.next({
-        globalX: editorStore.viewport.left + clientX,
-        globalY: editorStore.viewport.top + clientY,
+        globalX: clientX,
+        globalY: clientY,
     });
 };
 useMove(moveHandler, {
