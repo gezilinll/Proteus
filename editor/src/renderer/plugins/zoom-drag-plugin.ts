@@ -31,6 +31,7 @@ export class ZoomDragPlugin implements Plugin {
                 child.scale = value.target;
                 child.render();
             }
+            editor.events.viewportChanged.next({ ...this._renderer.viewportParam });
         });
 
         editor.events.move.subscribe((value) => {
@@ -46,6 +47,7 @@ export class ZoomDragPlugin implements Plugin {
                 value.movementX,
                 value.movementY
             );
+            editor.events.viewportChanged.next({ ...this._renderer.viewportParam });
         });
     }
 

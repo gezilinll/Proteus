@@ -17,6 +17,7 @@ export class Editor {
         unselectElement: new Subject<Element[]>(),
         scale: new Subject<{ target: number; origin?: Point }>(),
         move: new Subject<{ movementX: number; movementY: number }>(),
+        viewportChanged: new Subject<{ left: number; top: number; scale: number }>(),
         dragStart: new Subject<{ globalX: number; globalY: number; type: ElementType }>(),
         dragging: new Subject<{ movementX: number; movementY: number; type: ElementType }>(),
         dragEnd: new Subject<{ type: ElementType }>(),

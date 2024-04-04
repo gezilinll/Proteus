@@ -35,7 +35,6 @@ const bbox = ref<{ left: number; top: number; width: number; height: number }>({
 
 function updateBBOX() {
     const bounds = editorStore.renderer.getSpriteBounds(selectedElements.value[0]);
-    console.log('AAA', bounds);
     bbox.value.left = bounds.left;
     bbox.value.top = bounds.top;
     bbox.value.width = bounds.width;
@@ -48,6 +47,10 @@ const resizeView: Ref<HTMLDivElement | null> = ref(null);
 
 onMounted(() => {
     resizeView.value!.style.cursor = 'move';
+
+    editor.events.viewportChanged.subscribe(() => {
+        updateBBOX();
+    });
 });
 
 let cursorType: 'move' | 'lt' | 'rt' | 'lb' | 'rb' = 'move';
@@ -111,8 +114,8 @@ const dragHandler = ({
         if (cursorType === 'move') {
             const offsetX = mx - dragState.x;
             const offsetY = my - dragState.y;
-            element.left += offsetX;
-            element.top += offsetY;
+            element.left += offsetX / editorStore.renderer.viewportParam.scale;
+            element.top += offsetY / editorStore.renderer.viewportParam.scale;
             editor.events.changeElement.next(element);
         } else {
             dragState.resizing = true;
@@ -130,10 +133,10 @@ const dragHandler = ({
             editor.events.resizeElement.next({
                 target: element,
                 newRect: Rect.fromLTWH(
-                    element.left + offsetX,
-                    element.top + offsetY,
-                    element.width + offsetW,
-                    element.height + offsetH
+                    element.left + offsetX / editorStore.renderer.viewportParam.scale,
+                    element.top + offsetY / editorStore.renderer.viewportParam.scale,
+                    element.width + offsetW / editorStore.renderer.viewportParam.scale,
+                    element.height + offsetH / editorStore.renderer.viewportParam.scale
                 ),
             });
         }
