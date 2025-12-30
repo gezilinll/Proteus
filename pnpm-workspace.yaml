@@ -1,7 +1,0 @@
-packages:
-    - 'app/**'
-
-    - 'editor/**'
-    - 'tools/**'
-    - 'store/**'
-    - 'components/**'

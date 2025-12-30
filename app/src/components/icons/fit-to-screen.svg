@@ -1,6 +1,0 @@
-<svg>
-    <g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-width="2">
-        <path d="M2 6v12V6zm20 0v12V6zM6 12h12"></path>
-        <path stroke-linecap="round" d="m8 9-3 3 3 3m8-6 3 3-3 3"></path>
-    </g>
-</svg>
