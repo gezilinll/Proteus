@@ -1,3 +1,1 @@
-// Scene graph implementation will be added in Step 2
-export {};
-
+export * from './Scene';

@@ -23,6 +23,8 @@
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0",
     "vitest": "^4.0.0"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.6"
   }
 }
-

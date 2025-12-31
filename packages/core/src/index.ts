@@ -1,11 +1,14 @@
-// Proteus Editor Core
-// Framework-agnostic editor core implementation
-
+// Types
 export * from './types';
-export * from './scene';
-export * from './command';
-export * from './viewport';
-export * from './renderer';
-// Editor will be exported in Step 4
-// export * from './Editor';
 
+// Utils
+export * from './utils';
+
+// Scene
+export * from './scene';
+
+// Command
+export * from './command';
+
+// Editor (placeholder for now)
+export * from './Editor';
