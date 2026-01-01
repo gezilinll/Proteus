@@ -79,9 +79,14 @@ export function EditorCanvas({
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    // 计算缩放增量（向下滚动缩小，向上滚动放大）
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    // 计算缩放增量（更平滑的缩放：每次 3%）
+    // 使用连续的缩放因子，基于滚轮滚动量
+    const zoomIntensity = 0.002;
+    const delta = Math.exp(-e.deltaY * zoomIntensity);
     editor.viewport.zoomBy(delta, mouseX, mouseY);
+    
+    // 立即请求重新渲染
+    editor.requestRender();
   };
 
   // 键盘状态跟踪
