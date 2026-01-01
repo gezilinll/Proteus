@@ -145,9 +145,11 @@ export function EditorCanvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // 阻止默认的文本选择行为
+    e.preventDefault();
+
     // 空格键 + 左键 或 中键 = 拖拽视口
     if (e.button === 1 || (e.button === 0 && spaceKeyRef.current)) {
-      e.preventDefault();
       setIsDragging(true);
       dragStartRef.current = {
         x: e.clientX,
@@ -162,6 +164,7 @@ export function EditorCanvas({
     if (e.button === 0) {
       const coords = getCanvasCoordinates(e.clientX, e.clientY);
       const currentTool = editor.toolManager.getCurrentTool();
+      
       if (currentTool) {
         currentTool.onMouseDown(coords.x, coords.y, {
           ctrlKey: e.ctrlKey || e.metaKey,
@@ -174,6 +177,11 @@ export function EditorCanvas({
 
   // 鼠标移动（拖拽中或框选中）
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // 阻止默认的文本选择行为
+    if (isDragging || e.buttons !== 0) {
+      e.preventDefault();
+    }
+
     if (isDragging && dragStartRef.current) {
       // 拖拽视口
       const deltaX = e.clientX - dragStartRef.current.x;
@@ -212,6 +220,28 @@ export function EditorCanvas({
     dragStartRef.current = null;
   };
 
+  // 根据当前工具获取鼠标样式
+  const getCursor = () => {
+    if (isDragging) return 'grabbing';
+    
+    const currentTool = editor.toolManager.getCurrentTool();
+    if (!currentTool) return 'default';
+
+    switch (currentTool.name) {
+      case 'select':
+        return 'default';
+      case 'rectangle':
+      case 'ellipse':
+        return 'crosshair';
+      case 'text':
+        return 'text';
+      case 'image':
+        return 'copy';
+      default:
+        return 'default';
+    }
+  };
+
   return (
     <canvas
       ref={canvasRef}
@@ -221,10 +251,15 @@ export function EditorCanvas({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
+      onDragStart={(e) => e.preventDefault()} // 阻止拖拽图片等默认行为
       style={{
-        cursor: isDragging ? 'grabbing' : 'default',
+        cursor: getCursor(),
         width: `${width}px`,
         height: `${height}px`,
+        userSelect: 'none', // CSS 方式阻止文本选择
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        msUserSelect: 'none',
       }}
     />
   );

@@ -26,6 +26,8 @@ export interface Style {
   imageUrl?: string;
   /** 是否正在编辑（内部标记，编辑时隐藏渲染） */
   _editing?: boolean;
+  /** 图片是否正在加载（内部标记） */
+  _loading?: boolean;
 }
 
 /**

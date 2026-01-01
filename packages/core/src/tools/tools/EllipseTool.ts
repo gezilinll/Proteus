@@ -100,6 +100,12 @@ export class EllipseTool implements Tool {
     const command = new AddElementCommand(this.scene, element);
     this.editor.executeCommand(command);
 
+    // 自动选中新创建的元素
+    this.editor.selectionManager.select(element.id);
+    
+    // 自动切换回 select 工具
+    this.editor.toolManager.setTool('select');
+
     // 清理
     this.startPos = null;
     this.previewElement = null;

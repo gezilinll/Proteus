@@ -9,7 +9,7 @@ interface TopBarProps {
  * 顶部导航栏 - Miro 风格
  * 分区域的浮动设计
  */
-export function TopBar({ editor }: TopBarProps) {
+export function TopBar({ editor: _editor }: TopBarProps) {
 
   return (
     <div className="flex items-center justify-between">

@@ -10,6 +10,7 @@ import { SelectTool } from './tools/tools/SelectTool';
 import { RectangleTool } from './tools/tools/RectangleTool';
 import { EllipseTool } from './tools/tools/EllipseTool';
 import { TextTool } from './tools/tools/TextTool';
+import { ImageTool } from './tools/tools/ImageTool';
 
 /**
  * Editor 主类
@@ -47,6 +48,7 @@ export class Editor {
     this.toolManager.register(new RectangleTool(this.scene, this));
     this.toolManager.register(new EllipseTool(this.scene, this));
     this.toolManager.register(new TextTool(this.scene, this));
+    this.toolManager.register(new ImageTool(this.scene, this));
 
     // 设置默认工具
     this.toolManager.setTool('select');

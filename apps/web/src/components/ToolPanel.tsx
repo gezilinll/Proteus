@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   MousePointer2, 
   Square, 
   Circle, 
   Type,
+  Image as ImageIcon,
   Sparkles,
   Plus,
   Undo2,
@@ -21,6 +22,7 @@ const toolIcons: Record<string, React.ComponentType<{ size?: number; className?:
   rectangle: Square,
   ellipse: Circle,
   text: Type,
+  image: ImageIcon,
 };
 
 // 工具分组配置 - Miro 风格
@@ -31,7 +33,7 @@ const toolGroups = [
   },
   {
     name: 'create',
-    tools: ['rectangle', 'ellipse', 'text'],
+    tools: ['rectangle', 'ellipse', 'text', 'image'],
   },
 ];
 
@@ -45,6 +47,7 @@ export function ToolPanel({ editor }: ToolPanelProps) {
   );
   const [canUndo, setCanUndo] = useState(editor.canUndo());
   const [canRedo, setCanRedo] = useState(editor.canRedo());
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleToolChanged = (tool: { name: string }) => {
@@ -71,6 +74,35 @@ export function ToolPanel({ editor }: ToolPanelProps) {
 
   const handleToolClick = (toolName: string) => {
     editor.toolManager.setTool(toolName);
+    
+    // 如果选择图片工具，打开文件选择器
+    if (toolName === 'image' && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []).filter(file => file.type.startsWith('image/'));
+    if (files.length === 0) return;
+
+    const tool = editor.toolManager.getTool('image');
+    if (!tool || tool.name !== 'image') return;
+
+    const imageTool = tool as any; // 临时使用 any，因为 ImageTool 类型未导出到 React 层
+    
+    // 设置图片源
+    imageTool.setImageSource(files[0]);
+    
+    // 触发自定义事件，通知 CanvasArea 在画布中心创建图片
+    // CanvasArea 会监听此事件并处理
+    window.dispatchEvent(new CustomEvent('imageFileSelected', {
+      detail: { file: files[0] }
+    }));
+
+    // 清空 input，允许重复选择同一文件
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const allTools = editor.toolManager.getAllTools();
@@ -127,7 +159,7 @@ export function ToolPanel({ editor }: ToolPanelProps) {
                   `}
                   title={`${tool.name} (${tool.shortcut})`}
                 >
-                  <IconComponent size={20} strokeWidth={isActive ? 2 : 1.5} />
+                  <IconComponent size={20} />
                   
                   {/* 悬停提示 */}
                   <div className="
@@ -212,6 +244,16 @@ export function ToolPanel({ editor }: ToolPanelProps) {
           </div>
         </button>
       </div>
+
+      {/* 隐藏的文件选择器（用于图片工具） */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple={false}
+        onChange={handleFileSelect}
+        className="hidden"
+      />
     </div>
   );
 }

@@ -30,13 +30,31 @@ export class TextTool implements Tool {
       altKey?: boolean;
     }
   ): void {
+    // 检查是否有正在编辑的文字元素
+    const allElements = this.scene.getAll();
+    const editingElement = allElements.find(
+      (el) => el.type === ElementType.TEXT && el.style._editing === true
+    );
+
+    if (editingElement) {
+      // 如果有正在编辑的元素，清空选择并切换回 select 工具
+      // 注意：实际的退出逻辑在 TextEditOverlay 中处理（通过工具切换事件）
+      this.editor.selectionManager.clear();
+      this.editor.toolManager.setTool('select');
+      return;
+    }
+
     // 创建默认大小的文字元素
+    // 注意：transform.x, y 是左上角坐标，但用户点击的位置应该是中心
+    // 所以需要减去 width/2 和 height/2
+    const defaultWidth = 200;
+    const defaultHeight = 40;
     const element = createElement(ElementType.TEXT, {
       transform: {
-        x: canvasX,
-        y: canvasY,
-        width: 200, // 默认宽度
-        height: 40, // 默认高度（会根据内容自动调整）
+        x: canvasX - defaultWidth / 2,
+        y: canvasY - defaultHeight / 2,
+        width: defaultWidth,
+        height: defaultHeight,
         rotation: 0,
       },
       style: {
@@ -58,6 +76,9 @@ export class TextTool implements Tool {
     // 触发元素创建事件，React 层可以监听此事件进入编辑模式
     // 注意：这里需要通过 editor 来触发，因为 toolManager 需要访问 editor
     (this.editor.toolManager as any).emit('elementCreated', element);
+
+    // 注意：不立即切换回 select，因为文字会自动进入编辑模式
+    // 编辑模式退出时会通过点击外部区域自动切换回 select
 
     this.editor.requestRender();
   }

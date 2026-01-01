@@ -1,6 +1,6 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { EditorCanvas, TextEditOverlay } from '@proteus/react';
-import { Editor, screenToCanvas } from '@proteus/core';
+import { Editor, screenToCanvas, ImageTool } from '@proteus/core';
 import { StatusBar } from './StatusBar';
 
 // 网格配置常量
@@ -68,8 +68,11 @@ export function CanvasArea({ editor, onMouseMove }: CanvasAreaProps) {
       const resizeObserver = new ResizeObserver(updateDimensions);
       resizeObserver.observe(node);
 
-      return () => resizeObserver.disconnect();
+      return () => {
+        resizeObserver.disconnect();
+      };
     }
+    return undefined;
   }, [updateDimensions]);
 
   // 处理鼠标移动
@@ -110,6 +113,130 @@ export function CanvasArea({ editor, onMouseMove }: CanvasAreaProps) {
   const gridOffsetX = offset.x % gridSize;
   const gridOffsetY = offset.y % gridSize;
 
+  // 图片导入处理
+  const handleImageImport = useCallback((file: File, canvasX: number, canvasY: number) => {
+    const tool = editor.toolManager.getTool('image');
+    if (!tool || tool.name !== 'image') return;
+
+    const imageTool = tool as ImageTool;
+    // 设置图片源
+    imageTool.setImageSource(file);
+    
+    // 模拟点击创建图片元素
+    imageTool.onMouseDown(canvasX, canvasY);
+  }, [editor]);
+
+  // 文件选择器
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []).filter(file => file.type.startsWith('image/'));
+    if (files.length === 0) return;
+
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const canvasPos = screenToCanvas(centerX, centerY, {
+      zoom: editor.viewport.zoom,
+      offsetX: editor.viewport.offsetX,
+      offsetY: editor.viewport.offsetY,
+    });
+
+    handleImageImport(files[0], canvasPos.x, canvasPos.y);
+    
+    // 清空 input，允许重复选择同一文件
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [editor, handleImageImport]);
+
+  // 处理拖拽
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+    if (files.length === 0) return;
+
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const screenX = e.clientX - rect.left;
+    const screenY = e.clientY - rect.top;
+
+    const canvasPos = screenToCanvas(screenX, screenY, {
+      zoom: editor.viewport.zoom,
+      offsetX: editor.viewport.offsetX,
+      offsetY: editor.viewport.offsetY,
+    });
+
+    // 导入第一个图片文件
+    handleImageImport(files[0], canvasPos.x, canvasPos.y);
+  }, [editor, handleImageImport]);
+
+  // 监听来自 ToolPanel 的图片文件选择事件
+  useEffect(() => {
+    const handleImageFileSelected = (e: CustomEvent<{ file: File }>) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const canvasPos = screenToCanvas(centerX, centerY, {
+        zoom: editor.viewport.zoom,
+        offsetX: editor.viewport.offsetX,
+        offsetY: editor.viewport.offsetY,
+      });
+
+      handleImageImport(e.detail.file, canvasPos.x, canvasPos.y);
+    };
+
+    window.addEventListener('imageFileSelected', handleImageFileSelected as EventListener);
+    return () => {
+      window.removeEventListener('imageFileSelected', handleImageFileSelected as EventListener);
+    };
+  }, [editor, handleImageImport]);
+
+  // 处理粘贴
+  useEffect(() => {
+    const handlePaste = async (e: ClipboardEvent) => {
+      const items = Array.from(e.clipboardData?.items || []);
+      const imageItem = items.find(item => item.type.startsWith('image/'));
+
+      if (!imageItem) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const file = imageItem.getAsFile();
+      if (!file) return;
+
+      // 在画布中心位置粘贴
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const canvasPos = screenToCanvas(centerX, centerY, {
+        zoom: editor.viewport.zoom,
+        offsetX: editor.viewport.offsetX,
+        offsetY: editor.viewport.offsetY,
+      });
+
+      handleImageImport(file, canvasPos.x, canvasPos.y);
+    };
+
+    window.addEventListener('paste', handlePaste);
+    return () => {
+      window.removeEventListener('paste', handlePaste);
+    };
+  }, [editor, handleImageImport]);
+
   return (
     <div
       ref={handleRef}
@@ -124,6 +251,8 @@ export function CanvasArea({ editor, onMouseMove }: CanvasAreaProps) {
         backgroundPosition: `${gridOffsetX}px ${gridOffsetY}px`,
       }}
       onMouseMove={handleMouseMove}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
     >
       {/* 画布容器 */}
       {dimensions.width > 0 && dimensions.height > 0 && (
@@ -141,6 +270,16 @@ export function CanvasArea({ editor, onMouseMove }: CanvasAreaProps) {
 
       {/* 浮动状态栏 */}
       <StatusBar editor={editor} />
+
+      {/* 隐藏的文件选择器 */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple={false}
+        onChange={handleFileSelect}
+        className="hidden"
+      />
     </div>
   );
 }

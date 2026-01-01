@@ -43,15 +43,24 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
   // 进入编辑模式
   const enterEditMode = useCallback(
     (element: Element) => {
+      // 先选中元素（如果是双击进入编辑）
+      if (!editor.selectionManager.isSelected(element.id)) {
+        editor.selectionManager.select(element.id);
+      }
+
       // 设置编辑标记，隐藏 Canvas 渲染
       editor.scene.update(element.id, {
         style: { ...element.style, _editing: true },
       });
       editor.requestRender();
 
-      originalTextRef.current = element.style.text || '';
-      setEditingElement(element);
-      updateEditPosition(element);
+      // 获取更新后的元素
+      const updatedElement = editor.scene.get(element.id);
+      if (!updatedElement) return;
+
+      originalTextRef.current = updatedElement.style.text || '';
+      setEditingElement(updatedElement);
+      updateEditPosition(updatedElement);
     },
     [editor, updateEditPosition]
   );
@@ -72,6 +81,11 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
 
       setEditingElement(null);
       setEditPosition(null);
+
+      // 自动切换回 select 工具
+      if (editor.toolManager.getCurrentTool()?.name === 'text') {
+        editor.toolManager.setTool('select');
+      }
     },
     [editingElement, editor]
   );
@@ -127,6 +141,42 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
       window.removeEventListener('dblclick', handleDoubleClick);
     };
   }, [editor, enterEditMode]);
+
+  // 监听工具切换，如果切换到非 text 工具，退出编辑模式
+  useEffect(() => {
+    if (!editingElement) return;
+
+    const handleToolChanged = (tool: { name: string }) => {
+      if (tool.name !== 'text') {
+        // 工具切换为非 text，退出编辑模式
+        exitEditMode(editingElement.style.text || '');
+      }
+    };
+
+    editor.toolManager.on('toolChanged', handleToolChanged);
+
+    return () => {
+      editor.toolManager.off('toolChanged', handleToolChanged);
+    };
+  }, [editingElement, exitEditMode, editor.toolManager]);
+
+  // 监听选择变化，如果编辑的元素被取消选择，退出编辑模式
+  useEffect(() => {
+    if (!editingElement) return;
+
+    const handleSelectionChanged = (selectedIds: Set<string>) => {
+      // 如果当前编辑的元素不在选择集中，退出编辑模式
+      if (!selectedIds.has(editingElement.id)) {
+        exitEditMode(editingElement.style.text || '');
+      }
+    };
+
+    editor.selectionManager.on('selectionChanged', handleSelectionChanged);
+
+    return () => {
+      editor.selectionManager.off('selectionChanged', handleSelectionChanged);
+    };
+  }, [editingElement, exitEditMode, editor.selectionManager]);
 
   // 监听视口变化
   useEffect(() => {
@@ -190,7 +240,23 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Escape') {
         // 取消，恢复原始文本
-        exitEditMode(originalTextRef.current);
+        if (editingElement) {
+          editor.scene.update(editingElement.id, {
+            style: {
+              ...editingElement.style,
+              text: originalTextRef.current,
+              _editing: false,
+            },
+          });
+          editor.requestRender();
+        }
+        setEditingElement(null);
+        setEditPosition(null);
+        
+        // 自动切换回 select 工具
+        if (editor.toolManager.getCurrentTool()?.name === 'text') {
+          editor.toolManager.setTool('select');
+        }
         return;
       }
 
@@ -199,7 +265,7 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
         editorRef.current?.blur();
       }
     },
-    [exitEditMode]
+    [editingElement, editor]
   );
 
   if (!editingElement || !editPosition) {

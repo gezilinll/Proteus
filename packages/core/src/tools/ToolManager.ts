@@ -51,6 +51,13 @@ export class ToolManager extends EventEmitter<ToolManagerEvents> {
   }
 
   /**
+   * 根据名称获取工具
+   */
+  getTool(toolName: string): Tool | null {
+    return this.tools.get(toolName) ?? null;
+  }
+
+  /**
    * 根据快捷键获取工具
    */
   getToolByShortcut(shortcut: string): Tool | null {
