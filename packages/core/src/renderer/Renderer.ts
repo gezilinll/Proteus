@@ -251,7 +251,6 @@ export class Renderer {
     // TODO: 实现图片渲染
     const { width, height } = element.transform;
     ctx.setFillStyle('#cccccc');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ctx.fillRect(-width / 2, -height / 2, width, height);
   }
 

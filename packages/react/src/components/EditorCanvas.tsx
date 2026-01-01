@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Renderer, Scene, Viewport } from '@proteus/core';
+import { Editor } from '@proteus/core';
 
 export interface EditorCanvasProps {
-  scene: Scene;
-  viewport: Viewport;
+  editor: Editor;
   width?: number;
   height?: number;
   className?: string;
@@ -21,14 +20,12 @@ function getDevicePixelRatio(): number {
  * 负责渲染画布和处理用户交互
  */
 export function EditorCanvas({
-  scene,
-  viewport,
+  editor,
   width = 800,
   height = 600,
   className,
 }: EditorCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rendererRef = useRef<Renderer | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{ x: number; y: number; offsetX: number; offsetY: number } | null>(null);
 
@@ -50,26 +47,26 @@ export function EditorCanvas({
     return dpr;
   }, [width, height]);
 
-  // 初始化渲染器
+  // 初始化 Editor
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const dpr = setupCanvas() ?? 1;
-    const renderer = new Renderer(canvas, scene, viewport, dpr);
-    rendererRef.current = renderer;
-    renderer.start();
+    
+    if (!editor.isInitialized()) {
+      editor.init(canvas, dpr);
+    }
 
     return () => {
-      renderer.destroy();
-      rendererRef.current = null;
+      // 注意：不在这里销毁 Editor，由外部管理生命周期
     };
-  }, [scene, viewport, setupCanvas]);
+  }, [editor, setupCanvas]);
 
   // 处理视口变化，触发重渲染
   useEffect(() => {
-    rendererRef.current?.requestRender();
-  }, [viewport.zoom, viewport.offsetX, viewport.offsetY]);
+    editor.requestRender();
+  }, [editor.viewport.zoom, editor.viewport.offsetX, editor.viewport.offsetY, editor]);
 
   // 滚轮缩放
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
@@ -84,7 +81,7 @@ export function EditorCanvas({
 
     // 计算缩放增量（向下滚动缩小，向上滚动放大）
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    viewport.zoomBy(delta, mouseX, mouseY);
+    editor.viewport.zoomBy(delta, mouseX, mouseY);
   };
 
   // 键盘状态跟踪
@@ -120,8 +117,8 @@ export function EditorCanvas({
       dragStartRef.current = {
         x: e.clientX,
         y: e.clientY,
-        offsetX: viewport.offsetX,
-        offsetY: viewport.offsetY,
+        offsetX: editor.viewport.offsetX,
+        offsetY: editor.viewport.offsetY,
       };
     }
   };
@@ -131,7 +128,7 @@ export function EditorCanvas({
     if (isDragging && dragStartRef.current) {
       const deltaX = e.clientX - dragStartRef.current.x;
       const deltaY = e.clientY - dragStartRef.current.y;
-      viewport.setOffset(
+      editor.viewport.setOffset(
         dragStartRef.current.offsetX + deltaX,
         dragStartRef.current.offsetY + deltaY
       );
@@ -167,4 +164,3 @@ export function EditorCanvas({
     />
   );
 }
-

@@ -16,5 +16,5 @@ export * from './viewport';
 // Renderer
 export * from './renderer';
 
-// Editor (placeholder for now)
+// Editor
 export * from './Editor';

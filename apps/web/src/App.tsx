@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { EditorCanvas } from '@proteus/react';
-import { Scene, Viewport, createElement, ElementType, CommandHistory, AddElementCommand } from '@proteus/core';
+import { Editor, createElement, ElementType, AddElementCommand } from '@proteus/core';
 
 function App() {
-  const [scene] = useState(() => new Scene());
-  const [viewport] = useState(() => new Viewport());
-  const [commandHistory] = useState(() => new CommandHistory());
+  const [editor] = useState(() => new Editor());
+  const [, forceUpdate] = useState({});
+
+  // 触发 UI 更新
+  const refreshUI = useCallback(() => {
+    forceUpdate({});
+  }, []);
 
   // 添加测试元素
   const addRectangle = () => {
@@ -13,8 +17,9 @@ function App() {
       transform: { x: 100, y: 100, width: 200, height: 150 },
       style: { fill: '#3b82f6', stroke: '#1e40af', strokeWidth: 2 },
     });
-    const command = new AddElementCommand(scene, element);
-    commandHistory.execute(command);
+    const command = new AddElementCommand(editor.scene, element);
+    editor.executeCommand(command);
+    refreshUI();
   };
 
   const addCircle = () => {
@@ -22,8 +27,9 @@ function App() {
       transform: { x: 300, y: 200, width: 150, height: 150 },
       style: { fill: '#ef4444', stroke: '#dc2626', strokeWidth: 2 },
     });
-    const command = new AddElementCommand(scene, element);
-    commandHistory.execute(command);
+    const command = new AddElementCommand(editor.scene, element);
+    editor.executeCommand(command);
+    refreshUI();
   };
 
   const addText = () => {
@@ -36,8 +42,19 @@ function App() {
         text: 'Hello Proteus!',
       },
     });
-    const command = new AddElementCommand(scene, element);
-    commandHistory.execute(command);
+    const command = new AddElementCommand(editor.scene, element);
+    editor.executeCommand(command);
+    refreshUI();
+  };
+
+  const handleUndo = () => {
+    editor.undo();
+    refreshUI();
+  };
+
+  const handleRedo = () => {
+    editor.redo();
+    refreshUI();
   };
 
   return (
@@ -64,15 +81,15 @@ function App() {
         </button>
         <div className="ml-auto flex gap-2">
           <button
-            onClick={() => commandHistory.undo()}
-            disabled={!commandHistory.canUndo()}
+            onClick={handleUndo}
+            disabled={!editor.canUndo()}
             className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50"
           >
             撤销
           </button>
           <button
-            onClick={() => commandHistory.redo()}
-            disabled={!commandHistory.canRedo()}
+            onClick={handleRedo}
+            disabled={!editor.canRedo()}
             className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50"
           >
             重做
@@ -83,8 +100,7 @@ function App() {
       {/* 画布 */}
       <div className="flex-1 flex items-center justify-center overflow-hidden">
         <EditorCanvas
-          scene={scene}
-          viewport={viewport}
+          editor={editor}
           width={1200}
           height={800}
           className="border border-gray-300 shadow-lg bg-white"
@@ -93,8 +109,8 @@ function App() {
 
       {/* 状态栏 */}
       <div className="bg-white border-t border-gray-200 p-2 text-sm text-gray-600">
-        缩放: {viewport.zoom.toFixed(2)}x | 元素数: {scene.size()} | 
-        偏移: ({viewport.offsetX.toFixed(0)}, {viewport.offsetY.toFixed(0)})
+        缩放: {editor.viewport.zoom.toFixed(2)}x | 元素数: {editor.scene.size()} | 
+        偏移: ({editor.viewport.offsetX.toFixed(0)}, {editor.viewport.offsetY.toFixed(0)})
       </div>
     </div>
   );
