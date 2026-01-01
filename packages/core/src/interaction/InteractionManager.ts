@@ -3,9 +3,12 @@ import { SelectionManager } from '../selection/SelectionManager';
 import { HitTester } from './HitTester';
 import { ControlPointHitTester } from './ControlPointHitTester';
 import { DragHandler } from './handlers/DragHandler';
+import { ResizeHandler } from './handlers/ResizeHandler';
+import { RotateHandler } from './handlers/RotateHandler';
 import { Scene } from '../scene/Scene';
 import { Viewport } from '../viewport/Viewport';
 import { Editor } from '../Editor';
+import { ControlPointType } from '../renderer/overlays/SelectionOverlay';
 
 /**
  * 交互状态
@@ -39,6 +42,8 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
   private hitTester: HitTester;
   private controlPointHitTester: ControlPointHitTester;
   private dragHandler: DragHandler;
+  private resizeHandler: ResizeHandler;
+  private rotateHandler: RotateHandler;
   private marqueeStart: { x: number; y: number } | null = null;
 
   constructor(
@@ -51,6 +56,8 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
     this.hitTester = new HitTester(scene);
     this.controlPointHitTester = new ControlPointHitTester();
     this.dragHandler = new DragHandler(scene);
+    this.resizeHandler = new ResizeHandler(scene);
+    this.rotateHandler = new RotateHandler(scene);
   }
 
   /**
@@ -112,10 +119,13 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
       ctrlKey?: boolean;
       /** 是否按住 Shift */
       shiftKey?: boolean;
+      /** 是否按住 Alt */
+      altKey?: boolean;
     }
   ): void {
     const ctrlKey = options?.ctrlKey ?? false;
     const shiftKey = options?.shiftKey ?? false;
+    const altKey = options?.altKey ?? false;
 
     // 先检查是否点击到控制点
     const selectedIds = Array.from(this.selectionManager.getSelectedIds());
@@ -132,7 +142,20 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
 
       if (controlPoint) {
         // 点击到控制点，开始缩放或旋转
-        // TODO: 实现缩放和旋转
+        if (controlPoint.type === ControlPointType.ROTATE) {
+          // 开始旋转
+          this.rotateHandler.start(selectedIds, canvasX, canvasY, {
+            snapToAngle: shiftKey,
+          });
+          this.setState(InteractionState.ROTATING);
+        } else {
+          // 开始缩放
+          this.resizeHandler.start(selectedIds, controlPoint.type, canvasX, canvasY, {
+            keepAspectRatio: shiftKey,
+            fromCenter: altKey,
+          });
+          this.setState(InteractionState.RESIZING);
+        }
         return;
       }
     }
@@ -184,6 +207,18 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
       if (this.editor) {
         this.editor.requestRender();
       }
+    } else if (this.state === InteractionState.RESIZING) {
+      // 更新缩放
+      this.resizeHandler.update(canvasX, canvasY);
+      if (this.editor) {
+        this.editor.requestRender();
+      }
+    } else if (this.state === InteractionState.ROTATING) {
+      // 更新旋转
+      this.rotateHandler.update(canvasX, canvasY);
+      if (this.editor) {
+        this.editor.requestRender();
+      }
     }
   }
 
@@ -197,6 +232,20 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
     } else if (this.state === InteractionState.DRAGGING) {
       // 完成拖拽，生成命令
       const command = this.dragHandler.finish();
+      if (command && this.editor) {
+        this.editor.executeCommand(command);
+      }
+      this.setState(InteractionState.IDLE);
+    } else if (this.state === InteractionState.RESIZING) {
+      // 完成缩放，生成命令
+      const command = this.resizeHandler.finish();
+      if (command && this.editor) {
+        this.editor.executeCommand(command);
+      }
+      this.setState(InteractionState.IDLE);
+    } else if (this.state === InteractionState.ROTATING) {
+      // 完成旋转，生成命令
+      const command = this.rotateHandler.finish();
       if (command && this.editor) {
         this.editor.executeCommand(command);
       }

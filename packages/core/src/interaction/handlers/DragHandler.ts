@@ -104,6 +104,11 @@ export class DragHandler {
       commands.push(command);
     }
 
+    // 清理状态
+    this.startPositions.clear();
+    this.currentPositions.clear();
+    this.startMousePos = null;
+
     if (commands.length === 0) return null;
 
     // 如果只有一个元素，直接返回单个命令

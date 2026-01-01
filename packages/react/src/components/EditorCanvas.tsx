@@ -148,6 +148,7 @@ export function EditorCanvas({
       editor.interactionManager.handleMouseDown(coords.x, coords.y, {
         ctrlKey: e.ctrlKey || e.metaKey,
         shiftKey: e.shiftKey,
+        altKey: e.altKey,
       });
     }
   };
