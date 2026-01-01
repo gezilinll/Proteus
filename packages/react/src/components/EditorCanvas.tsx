@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Editor } from '@proteus/core';
+import { Editor, screenToCanvas } from '@proteus/core';
 
 export interface EditorCanvasProps {
   editor: Editor;
@@ -108,9 +108,28 @@ export function EditorCanvas({
     };
   }, []);
 
-  // 鼠标按下（开始拖拽）
+  // 获取画布坐标
+  const getCanvasCoordinates = useCallback((clientX: number, clientY: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+
+    const rect = canvas.getBoundingClientRect();
+    const screenX = clientX - rect.left;
+    const screenY = clientY - rect.top;
+
+    return screenToCanvas(screenX, screenY, {
+      zoom: editor.viewport.zoom,
+      offsetX: editor.viewport.offsetX,
+      offsetY: editor.viewport.offsetY,
+    });
+  }, [editor.viewport]);
+
+  // 鼠标按下（开始拖拽或选择）
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // 空格键 + 左键 或 中键
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // 空格键 + 左键 或 中键 = 拖拽视口
     if (e.button === 1 || (e.button === 0 && spaceKeyRef.current)) {
       e.preventDefault();
       setIsDragging(true);
@@ -120,25 +139,45 @@ export function EditorCanvas({
         offsetX: editor.viewport.offsetX,
         offsetY: editor.viewport.offsetY,
       };
+      return;
+    }
+
+    // 左键 = 选择或框选
+    if (e.button === 0) {
+      const coords = getCanvasCoordinates(e.clientX, e.clientY);
+      editor.interactionManager.handleMouseDown(coords.x, coords.y, {
+        ctrlKey: e.ctrlKey || e.metaKey,
+        shiftKey: e.shiftKey,
+      });
     }
   };
 
-  // 鼠标移动（拖拽中）
+  // 鼠标移动（拖拽中或框选中）
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (isDragging && dragStartRef.current) {
+      // 拖拽视口
       const deltaX = e.clientX - dragStartRef.current.x;
       const deltaY = e.clientY - dragStartRef.current.y;
       editor.viewport.setOffset(
         dragStartRef.current.offsetX + deltaX,
         dragStartRef.current.offsetY + deltaY
       );
+    } else {
+      // 框选或交互
+      const coords = getCanvasCoordinates(e.clientX, e.clientY);
+      editor.interactionManager.handleMouseMove(coords.x, coords.y);
     }
   };
 
-  // 鼠标抬起（结束拖拽）
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    dragStartRef.current = null;
+  // 鼠标抬起（结束拖拽或选择）
+  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isDragging) {
+      setIsDragging(false);
+      dragStartRef.current = null;
+    } else {
+      const coords = getCanvasCoordinates(e.clientX, e.clientY);
+      editor.interactionManager.handleMouseUp(coords.x, coords.y);
+    }
   };
 
   // 鼠标离开画布（结束拖拽）
