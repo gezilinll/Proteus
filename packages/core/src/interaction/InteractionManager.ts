@@ -1,8 +1,11 @@
 import { EventEmitter } from '../utils/EventEmitter';
 import { SelectionManager } from '../selection/SelectionManager';
 import { HitTester } from './HitTester';
+import { ControlPointHitTester } from './ControlPointHitTester';
+import { DragHandler } from './handlers/DragHandler';
 import { Scene } from '../scene/Scene';
 import { Viewport } from '../viewport/Viewport';
+import { Editor } from '../Editor';
 
 /**
  * 交互状态
@@ -12,6 +15,12 @@ export enum InteractionState {
   IDLE = 'idle',
   /** 框选状态 */
   SELECTING = 'selecting',
+  /** 拖拽移动状态 */
+  DRAGGING = 'dragging',
+  /** 缩放状态 */
+  RESIZING = 'resizing',
+  /** 旋转状态 */
+  ROTATING = 'rotating',
 }
 
 /**
@@ -28,15 +37,20 @@ export interface InteractionManagerEvents extends Record<string, any[]> {
 export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
   private state: InteractionState = InteractionState.IDLE;
   private hitTester: HitTester;
+  private controlPointHitTester: ControlPointHitTester;
+  private dragHandler: DragHandler;
   private marqueeStart: { x: number; y: number } | null = null;
 
   constructor(
-    scene: Scene,
+    private scene: Scene,
     _viewport: Viewport,
-    private selectionManager: SelectionManager
+    private selectionManager: SelectionManager,
+    private editor?: Editor
   ) {
     super();
     this.hitTester = new HitTester(scene);
+    this.controlPointHitTester = new ControlPointHitTester();
+    this.dragHandler = new DragHandler(scene);
   }
 
   /**
@@ -103,6 +117,26 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
     const ctrlKey = options?.ctrlKey ?? false;
     const shiftKey = options?.shiftKey ?? false;
 
+    // 先检查是否点击到控制点
+    const selectedIds = Array.from(this.selectionManager.getSelectedIds());
+    if (selectedIds.length > 0) {
+      const selectedElements = selectedIds
+        .map((id) => this.scene.get(id))
+        .filter((el) => el !== undefined);
+
+      const controlPoint = this.controlPointHitTester.hitTestFromSelection(
+        canvasX,
+        canvasY,
+        selectedElements
+      );
+
+      if (controlPoint) {
+        // 点击到控制点，开始缩放或旋转
+        // TODO: 实现缩放和旋转
+        return;
+      }
+    }
+
     // 命中检测
     const hits = this.hitTester.hitTest(canvasX, canvasY);
 
@@ -116,7 +150,10 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
       } else {
         // 单选模式
         if (this.selectionManager.isSelected(hitElement.id)) {
-          // 已选中，保持选中（后续可以拖拽）
+          // 已选中，开始拖拽
+          const selectedIds = Array.from(this.selectionManager.getSelectedIds());
+          this.dragHandler.start(selectedIds, canvasX, canvasY);
+          this.setState(InteractionState.DRAGGING);
         } else {
           // 未选中，选择它
           this.selectionManager.select(hitElement.id);
@@ -141,6 +178,12 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
       // 更新框选区域
       this.setMarqueeEnd(canvasX, canvasY);
       this.updateMarquee(this.marqueeStart.x, this.marqueeStart.y, canvasX, canvasY);
+    } else if (this.state === InteractionState.DRAGGING) {
+      // 更新拖拽
+      this.dragHandler.update(canvasX, canvasY);
+      if (this.editor) {
+        this.editor.requestRender();
+      }
     }
   }
 
@@ -151,6 +194,13 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
     if (this.state === InteractionState.SELECTING && this.marqueeStart) {
       // 完成框选
       this.finishMarquee(this.marqueeStart.x, this.marqueeStart.y, canvasX, canvasY);
+    } else if (this.state === InteractionState.DRAGGING) {
+      // 完成拖拽，生成命令
+      const command = this.dragHandler.finish();
+      if (command && this.editor) {
+        this.editor.executeCommand(command);
+      }
+      this.setState(InteractionState.IDLE);
     }
   }
 

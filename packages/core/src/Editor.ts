@@ -31,7 +31,8 @@ export class Editor {
     this.interactionManager = new InteractionManager(
       this.scene,
       this.viewport,
-      this.selectionManager
+      this.selectionManager,
+      this
     );
   }
 
