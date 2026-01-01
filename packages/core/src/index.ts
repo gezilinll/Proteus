@@ -18,3 +18,5 @@ export * from './renderer';
 
 // Editor
 export * from './Editor';
+export * from './selection';
+export * from './interaction';

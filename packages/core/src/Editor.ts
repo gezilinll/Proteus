@@ -3,6 +3,8 @@ import { Viewport } from './viewport/Viewport';
 import { Renderer } from './renderer/Renderer';
 import { CommandHistory } from './command/CommandHistory';
 import { Command } from './command/Command';
+import { SelectionManager } from './selection/SelectionManager';
+import { InteractionManager } from './interaction/InteractionManager';
 
 /**
  * Editor 主类
@@ -12,16 +14,25 @@ export class Editor {
   public readonly scene: Scene;
   public readonly viewport: Viewport;
   public readonly commandHistory: CommandHistory;
+  public readonly selectionManager: SelectionManager;
+  public readonly interactionManager: InteractionManager;
   private renderer: Renderer | null = null;
 
   constructor(options?: {
     scene?: Scene;
     viewport?: Viewport;
     commandHistory?: CommandHistory;
+    selectionManager?: SelectionManager;
   }) {
     this.scene = options?.scene ?? new Scene();
     this.viewport = options?.viewport ?? new Viewport();
     this.commandHistory = options?.commandHistory ?? new CommandHistory();
+    this.selectionManager = options?.selectionManager ?? new SelectionManager();
+    this.interactionManager = new InteractionManager(
+      this.scene,
+      this.viewport,
+      this.selectionManager
+    );
   }
 
   /**
