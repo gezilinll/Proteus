@@ -161,7 +161,7 @@ export class Renderer {
 
     // 移动到元素中心
     ctx.getRawContext().translate(x + width / 2, y + height / 2);
-    
+
     // 应用旋转
     if (rotation !== 0) {
       ctx.getRawContext().rotate(rotation);

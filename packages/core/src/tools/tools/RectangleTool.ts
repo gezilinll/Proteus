@@ -41,11 +41,15 @@ export class RectangleTool implements Tool {
     const width = canvasX - this.startPos.x;
     const height = canvasY - this.startPos.y;
 
+    // 处理负方向拖拽
+    const x = width < 0 ? this.startPos.x + width : this.startPos.x;
+    const y = height < 0 ? this.startPos.y + height : this.startPos.y;
+
     // 创建预览元素
     this.previewElement = createElement(ElementType.RECTANGLE, {
       transform: {
-        x: this.startPos.x,
-        y: this.startPos.y,
+        x,
+        y,
         width: Math.abs(width),
         height: Math.abs(height),
         rotation: 0,
@@ -73,11 +77,15 @@ export class RectangleTool implements Tool {
       return;
     }
 
+    // 处理负方向拖拽
+    const x = width < 0 ? this.startPos.x + width : this.startPos.x;
+    const y = height < 0 ? this.startPos.y + height : this.startPos.y;
+
     // 创建实际元素
     const element = createElement(ElementType.RECTANGLE, {
       transform: {
-        x: this.startPos.x,
-        y: this.startPos.y,
+        x,
+        y,
         width: Math.abs(width),
         height: Math.abs(height),
         rotation: 0,

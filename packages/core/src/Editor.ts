@@ -39,13 +39,13 @@ export class Editor {
       this.selectionManager,
       this
     );
-    
+
     // 初始化工具管理器
     this.toolManager = new ToolManager();
-    this.toolManager.register(new SelectTool(this.interactionManager));
+    this.toolManager.register(new SelectTool(this.interactionManager, this));
     this.toolManager.register(new RectangleTool(this.scene, this));
     this.toolManager.register(new EllipseTool(this.scene, this));
-    
+
     // 设置默认工具
     this.toolManager.setTool('select');
   }
@@ -61,7 +61,7 @@ export class Editor {
     }
 
     const devicePixelRatio = dpr ?? (typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
-    
+
     this.renderer = new Renderer(
       canvas,
       this.scene,
