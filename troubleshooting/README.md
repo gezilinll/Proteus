@@ -69,6 +69,7 @@
 
 ### 渲染相关
 - [Canvas 高分辨率屏幕模糊问题 (DPR)](./rendering/canvas-dpr-blurry.md)
+- [CSS line-height 与 Canvas textBaseline 的渲染差异](./rendering/css-canvas-text-baseline-diff.md)
 
 ### 依赖相关
 - [ESLint 9 Flat Config 迁移](./dependencies/eslint9-flat-config-migration.md)

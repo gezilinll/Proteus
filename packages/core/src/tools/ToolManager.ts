@@ -1,11 +1,13 @@
 import { EventEmitter } from '../utils/EventEmitter';
 import { Tool } from './Tool';
+import { Element } from '../types/element';
 
 /**
  * 工具管理器事件
  */
 export interface ToolManagerEvents extends Record<string, any[]> {
   toolChanged: [tool: Tool];
+  elementCreated: [element: Element];
 }
 
 /**

@@ -20,8 +20,12 @@ export interface Style {
   fontWeight?: string | number;
   /** 文字内容（仅文字） */
   text?: string;
+  /** 文字对齐方式（仅文字）：'left' | 'center' | 'right' */
+  textAlign?: 'left' | 'center' | 'right';
   /** 图片 URL（仅图片） */
   imageUrl?: string;
+  /** 是否正在编辑（内部标记，编辑时隐藏渲染） */
+  _editing?: boolean;
 }
 
 /**

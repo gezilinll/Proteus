@@ -3,6 +3,7 @@ import {
   MousePointer2, 
   Square, 
   Circle, 
+  Type,
   Sparkles,
   Plus,
   Undo2,
@@ -19,6 +20,7 @@ const toolIcons: Record<string, React.ComponentType<{ size?: number; className?:
   select: MousePointer2,
   rectangle: Square,
   ellipse: Circle,
+  text: Type,
 };
 
 // 工具分组配置 - Miro 风格
@@ -29,7 +31,7 @@ const toolGroups = [
   },
   {
     name: 'create',
-    tools: ['rectangle', 'ellipse'],
+    tools: ['rectangle', 'ellipse', 'text'],
   },
 ];
 

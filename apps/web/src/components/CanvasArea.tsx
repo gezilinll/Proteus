@@ -1,5 +1,5 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
-import { EditorCanvas } from '@proteus/react';
+import { EditorCanvas, TextEditOverlay } from '@proteus/react';
 import { Editor, screenToCanvas } from '@proteus/core';
 import { StatusBar } from './StatusBar';
 
@@ -127,12 +127,16 @@ export function CanvasArea({ editor, onMouseMove }: CanvasAreaProps) {
     >
       {/* 画布容器 */}
       {dimensions.width > 0 && dimensions.height > 0 && (
-        <EditorCanvas
-          editor={editor}
-          width={dimensions.width}
-          height={dimensions.height}
-          className="absolute inset-0"
-        />
+        <>
+          <EditorCanvas
+            editor={editor}
+            width={dimensions.width}
+            height={dimensions.height}
+            className="absolute inset-0"
+          />
+          {/* 文字编辑覆盖层 */}
+          <TextEditOverlay editor={editor} />
+        </>
       )}
 
       {/* 浮动状态栏 */}
