@@ -47,6 +47,47 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
   }
 
   /**
+   * 获取框选状态（用于渲染）
+   */
+  getMarqueeBounds(): { startX: number; startY: number; endX: number; endY: number } | null {
+    if (this.state !== InteractionState.SELECTING || !this.marqueeStart) {
+      return null;
+    }
+    // 注意：这里返回的是开始位置，结束位置需要在渲染时从外部传入
+    // 或者我们需要存储当前鼠标位置
+    return null; // 暂时返回 null，后续优化
+  }
+
+  /**
+   * 获取当前框选结束位置（用于实时渲染）
+   */
+  private currentMarqueeEnd: { x: number; y: number } | null = null;
+
+  /**
+   * 设置当前框选结束位置
+   */
+  setMarqueeEnd(x: number, y: number): void {
+    if (this.state === InteractionState.SELECTING) {
+      this.currentMarqueeEnd = { x, y };
+    }
+  }
+
+  /**
+   * 获取完整的框选边界（用于渲染）
+   */
+  getMarqueeBoundsForRender(): { startX: number; startY: number; endX: number; endY: number } | null {
+    if (this.state !== InteractionState.SELECTING || !this.marqueeStart || !this.currentMarqueeEnd) {
+      return null;
+    }
+    return {
+      startX: this.marqueeStart.x,
+      startY: this.marqueeStart.y,
+      endX: this.currentMarqueeEnd.x,
+      endY: this.currentMarqueeEnd.y,
+    };
+  }
+
+  /**
    * 处理鼠标按下
    */
   handleMouseDown(
@@ -98,6 +139,7 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
   handleMouseMove(canvasX: number, canvasY: number): void {
     if (this.state === InteractionState.SELECTING && this.marqueeStart) {
       // 更新框选区域
+      this.setMarqueeEnd(canvasX, canvasY);
       this.updateMarquee(this.marqueeStart.x, this.marqueeStart.y, canvasX, canvasY);
     }
   }
@@ -137,6 +179,7 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
     this.selectionManager.selectMultiple(selectedIds);
 
     this.marqueeStart = null;
+    this.currentMarqueeEnd = null;
     this.setState(InteractionState.IDLE);
   }
 

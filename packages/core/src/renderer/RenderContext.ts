@@ -142,5 +142,12 @@ export class RenderContext {
   rect(x: number, y: number, width: number, height: number): void {
     this.ctx.rect(x, y, width, height);
   }
+
+  /**
+   * 设置虚线样式
+   */
+  setLineDash(segments: number[]): void {
+    this.ctx.setLineDash(segments);
+  }
 }
 

@@ -47,7 +47,15 @@ export class Editor {
 
     const devicePixelRatio = dpr ?? (typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
     
-    this.renderer = new Renderer(canvas, this.scene, this.viewport, devicePixelRatio);
+    this.renderer = new Renderer(
+      canvas,
+      this.scene,
+      this.viewport,
+      devicePixelRatio,
+      undefined,
+      this.selectionManager,
+      this.interactionManager
+    );
     this.renderer.start();
   }
 

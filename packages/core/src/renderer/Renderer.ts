@@ -3,6 +3,10 @@ import { Viewport } from '../viewport/Viewport';
 import { Scene } from '../scene/Scene';
 import { Element } from '../types/element';
 import { RendererRegistry } from './RendererRegistry';
+import { SelectionManager } from '../selection/SelectionManager';
+import { InteractionManager } from '../interaction/InteractionManager';
+import { SelectionOverlay } from './overlays/SelectionOverlay';
+import { MarqueeOverlay } from './overlays/MarqueeOverlay';
 
 /**
  * 渲染器
@@ -13,13 +17,17 @@ export class Renderer {
   private animationFrameId: number | null = null;
   private isRendering: boolean = false;
   private registry: RendererRegistry;
+  private selectionOverlay: SelectionOverlay;
+  private marqueeOverlay: MarqueeOverlay;
 
   constructor(
     private canvas: HTMLCanvasElement,
     private scene: Scene,
     private viewport: Viewport,
     private dpr: number = 1,
-    registry?: RendererRegistry
+    registry?: RendererRegistry,
+    private selectionManager?: SelectionManager,
+    private interactionManager?: InteractionManager
   ) {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -27,12 +35,24 @@ export class Renderer {
     }
     this.context = new RenderContext(ctx);
     this.registry = registry ?? new RendererRegistry();
+    this.selectionOverlay = new SelectionOverlay();
+    this.marqueeOverlay = new MarqueeOverlay();
 
     // 监听 Scene 变化
     this.scene.on('elementAdded', () => this.requestRender());
     this.scene.on('elementUpdated', () => this.requestRender());
     this.scene.on('elementRemoved', () => this.requestRender());
     this.scene.on('orderChanged', () => this.requestRender());
+
+    // 监听选择变化
+    if (this.selectionManager) {
+      this.selectionManager.on('selectionChanged', () => this.requestRender());
+    }
+
+    // 监听交互状态变化
+    if (this.interactionManager) {
+      this.interactionManager.on('stateChanged', () => this.requestRender());
+    }
   }
 
   /**
@@ -100,6 +120,9 @@ export class Renderer {
       this.renderElement(ctx, element);
     }
 
+    // 渲染 Overlay（在元素之上）
+    this.renderOverlays(ctx);
+
     ctx.restore();
 
     // 继续渲染循环
@@ -137,6 +160,36 @@ export class Renderer {
     renderer.render(ctx, element);
 
     ctx.restore();
+  }
+
+  /**
+   * 渲染 Overlay
+   */
+  private renderOverlays(ctx: RenderContext): void {
+    // 渲染选择框
+    if (this.selectionManager) {
+      const selectedIds = this.selectionManager.getSelectedIds();
+      if (selectedIds.size > 0) {
+        const selectedElements = Array.from(selectedIds)
+          .map((id) => this.scene.get(id))
+          .filter((el): el is Element => el !== undefined);
+
+        if (selectedElements.length > 0) {
+          const selectionBox = this.selectionOverlay.computeSelectionBox(selectedElements);
+          if (selectionBox) {
+            this.selectionOverlay.render(ctx, selectionBox);
+          }
+        }
+      }
+    }
+
+    // 渲染框选矩形
+    if (this.interactionManager) {
+      const marqueeBounds = this.interactionManager.getMarqueeBoundsForRender();
+      if (marqueeBounds) {
+        this.marqueeOverlay.render(ctx, marqueeBounds);
+      }
+    }
   }
 
   /**
