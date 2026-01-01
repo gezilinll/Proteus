@@ -2,6 +2,7 @@ import { useRef, useCallback, useState, useEffect } from 'react';
 import { EditorCanvas, TextEditOverlay } from '@proteus/react';
 import { Editor, screenToCanvas, ImageTool } from '@proteus/core';
 import { StatusBar } from './StatusBar';
+import { LayerPanel } from './LayerPanel';
 
 // 网格配置常量
 const GRID_CONFIG = {
@@ -28,6 +29,7 @@ export function CanvasArea({ editor, onMouseMove }: CanvasAreaProps) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [zoom, setZoom] = useState(editor.viewport.zoom);
   const [offset, setOffset] = useState({ x: editor.viewport.offsetX, y: editor.viewport.offsetY });
+  const [isLayerPanelOpen, setIsLayerPanelOpen] = useState(false);
 
   // 监听视口变化
   useEffect(() => {
@@ -269,7 +271,17 @@ export function CanvasArea({ editor, onMouseMove }: CanvasAreaProps) {
       )}
 
       {/* 浮动状态栏 */}
-      <StatusBar editor={editor} />
+      <StatusBar 
+        editor={editor} 
+        onLayersClick={() => setIsLayerPanelOpen(!isLayerPanelOpen)}
+      />
+      
+      {/* 图层面板 */}
+      <LayerPanel 
+        editor={editor}
+        isOpen={isLayerPanelOpen}
+        onClose={() => setIsLayerPanelOpen(false)}
+      />
 
       {/* 隐藏的文件选择器 */}
       <input

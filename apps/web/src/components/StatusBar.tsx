@@ -5,6 +5,7 @@ import { Editor } from '@proteus/core';
 interface StatusBarProps {
   editor: Editor;
   mousePosition?: { x: number; y: number };
+  onLayersClick?: () => void;
 }
 
 // 预设缩放级别（匹配 Viewport 的 minZoom/maxZoom 范围：2%-500%）
@@ -14,7 +15,7 @@ const ZOOM_PRESETS = [0.05, 0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 5];
  * 浮动状态栏 - Miro 风格
  * 右下角浮动的缩放控制和帮助按钮
  */
-export function StatusBar({ editor }: StatusBarProps) {
+export function StatusBar({ editor, onLayersClick }: StatusBarProps) {
   const [zoom, setZoom] = useState(editor.viewport.zoom);
 
   // 监听状态变化
@@ -48,6 +49,7 @@ export function StatusBar({ editor }: StatusBarProps) {
     <div className="absolute bottom-4 right-4 flex items-center gap-2">
       {/* 图层按钮 */}
       <button
+        onClick={onLayersClick}
         className="w-10 h-10 bg-white rounded-lg shadow-md border border-gray-200
                    flex items-center justify-center text-gray-500 hover:text-gray-700
                    hover:bg-gray-50 transition-colors"

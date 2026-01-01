@@ -140,6 +140,27 @@ export class Scene extends EventEmitter<SceneEvents> {
   }
 
   /**
+   * 设置图层顺序（用于撤销操作）
+   */
+  setOrder(order: string[]): void {
+    // 验证所有 ID 都存在
+    for (const id of order) {
+      if (!this.elements.has(id)) {
+        throw new Error(`Element with id "${id}" not found`);
+      }
+    }
+    // 验证所有元素都在新顺序中
+    const orderSet = new Set(order);
+    for (const id of this.elements.keys()) {
+      if (!orderSet.has(id)) {
+        throw new Error(`Element with id "${id}" missing from new order`);
+      }
+    }
+    this.order = [...order];
+    this.emit('orderChanged', this.getOrder());
+  }
+
+  /**
    * 获取子元素
    */
   getChildren(parentId: string): Element[] {

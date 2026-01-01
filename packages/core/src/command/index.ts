@@ -4,3 +4,8 @@ export * from './commands/AddElementCommand';
 export * from './commands/RemoveElementCommand';
 export * from './commands/UpdateElementCommand';
 export * from './commands/BatchCommand';
+export * from './commands/BringToFrontCommand';
+export * from './commands/SendToBackCommand';
+export * from './commands/BringForwardCommand';
+export * from './commands/SendBackwardCommand';
+export * from './commands/ReorderElementsCommand';

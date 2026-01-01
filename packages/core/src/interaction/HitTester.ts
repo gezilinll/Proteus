@@ -29,11 +29,14 @@ export class HitTester {
     options?: {
       /** 是否只测试可见元素 */
       visibleOnly?: boolean;
+      /** 是否只测试未锁定元素 */
+      unlockedOnly?: boolean;
       /** 命中容差（像素） */
       tolerance?: number;
     }
   ): HitTestResult[] {
     const visibleOnly = options?.visibleOnly ?? true;
+    const unlockedOnly = options?.unlockedOnly ?? true;
     const tolerance = options?.tolerance ?? 0;
 
     const results: HitTestResult[] = [];
@@ -44,6 +47,7 @@ export class HitTester {
       const element = elements[i];
 
       if (visibleOnly && !element.meta.visible) continue;
+      if (unlockedOnly && element.meta.locked) continue;
 
       const hit = this.testElement(canvasX, canvasY, element, tolerance);
       if (hit) {
@@ -172,6 +176,7 @@ export class HitTester {
 
     for (const element of elements) {
       if (!element.meta.visible) continue;
+      if (element.meta.locked) continue;
 
       // 检查元素的边界框是否与框选区域相交
       const { x, y, width, height } = element.transform;

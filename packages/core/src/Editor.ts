@@ -1,6 +1,7 @@
 import { Scene } from './scene/Scene';
 import { Viewport } from './viewport/Viewport';
 import { Renderer } from './renderer/Renderer';
+import { RendererRegistry } from './renderer/RendererRegistry';
 import { CommandHistory } from './command/CommandHistory';
 import { Command } from './command/Command';
 import { SelectionManager } from './selection/SelectionManager';
@@ -126,6 +127,17 @@ export class Editor {
    */
   getRenderer(): Renderer | null {
     return this.renderer;
+  }
+
+  /**
+   * 获取渲染器注册表（用于生成缩略图等）
+   */
+  getRendererRegistry(): RendererRegistry | null {
+    if (this.renderer) {
+      return this.renderer.getRegistry();
+    }
+    // 如果渲染器未初始化，返回一个新的注册表实例
+    return new RendererRegistry();
   }
 
   /**

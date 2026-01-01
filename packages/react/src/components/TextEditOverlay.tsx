@@ -67,13 +67,16 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
 
   // 退出编辑模式
   const exitEditMode = useCallback(
-    (saveText: string) => {
+    (saveText?: string) => {
       if (!editingElement) return;
+
+      // 优先使用传入的文本，否则从 DOM 读取最新文本
+      const finalText = saveText ?? (editorRef.current?.innerText || editingElement.style.text || '');
 
       editor.scene.update(editingElement.id, {
         style: {
           ...editingElement.style,
-          text: saveText,
+          text: finalText,
           _editing: false,
         },
       });
@@ -148,8 +151,8 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
 
     const handleToolChanged = (tool: { name: string }) => {
       if (tool.name !== 'text') {
-        // 工具切换为非 text，退出编辑模式
-        exitEditMode(editingElement.style.text || '');
+        // 工具切换为非 text，退出编辑模式（从 DOM 读取最新文本）
+        exitEditMode();
       }
     };
 
@@ -165,9 +168,9 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
     if (!editingElement) return;
 
     const handleSelectionChanged = (selectedIds: Set<string>) => {
-      // 如果当前编辑的元素不在选择集中，退出编辑模式
+      // 如果当前编辑的元素不在选择集中，退出编辑模式（从 DOM 读取最新文本）
       if (!selectedIds.has(editingElement.id)) {
-        exitEditMode(editingElement.style.text || '');
+        exitEditMode();
       }
     };
 
@@ -195,21 +198,23 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
     };
   }, [editingElement, updateEditPosition, editor.viewport]);
 
-  // 自动聚焦并选中
+  // 自动聚焦并选中（只在进入编辑模式时执行一次）
   useEffect(() => {
     if (editingElement && editorRef.current) {
       // 设置初始文本
       editorRef.current.innerText = editingElement.style.text || '';
       editorRef.current.focus();
 
-      // 选中所有文字
+      // 选中所有文字（仅在首次进入编辑模式时）
       const selection = window.getSelection();
       const range = document.createRange();
       range.selectNodeContents(editorRef.current);
       selection?.removeAllRanges();
       selection?.addRange(range);
     }
-  }, [editingElement]);
+    // 注意：依赖项使用 editingElement.id 而不是整个对象，避免输入时触发
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingElement?.id]);
 
   // 处理输入
   const handleInput = useCallback(() => {
@@ -218,6 +223,7 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
     const newText = editorRef.current.innerText;
 
     // 实时更新场景（但保持 _editing 状态）
+    // 注意：不更新 editingElement 状态，避免触发 useEffect 导致全选
     editor.scene.update(editingElement.id, {
       style: {
         ...editingElement.style,
@@ -225,6 +231,7 @@ export function TextEditOverlay({ editor }: TextEditOverlayProps) {
         _editing: true,
       },
     });
+    
     // 不需要 requestRender，因为 _editing: true 会跳过渲染
   }, [editingElement, editor]);
 

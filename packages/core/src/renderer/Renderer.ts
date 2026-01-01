@@ -116,7 +116,7 @@ export class Renderer {
     ctx.getRawContext().scale(transform.scaleX, transform.scaleY);
 
     // 按顺序渲染所有元素
-    const elements = this.scene.getOrdered();
+    const elements = this.scene.getOrdered().filter((el) => el.meta.visible !== false);
     for (const element of elements) {
       if (!element.meta.visible) continue;
       this.renderElement(ctx, element);

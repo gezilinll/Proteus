@@ -45,6 +45,7 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
   private resizeHandler: ResizeHandler;
   private rotateHandler: RotateHandler;
   private marqueeStart: { x: number; y: number } | null = null;
+  private pendingDragStart: { x: number; y: number; selectedIds: string[] } | null = null;
 
   constructor(
     private scene: Scene,
@@ -173,13 +174,16 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
       } else {
         // 单选模式
         if (this.selectionManager.isSelected(hitElement.id)) {
-          // 已选中，开始拖拽
+          // 已选中，立即开始拖拽
           const selectedIds = Array.from(this.selectionManager.getSelectedIds());
           this.dragHandler.start(selectedIds, canvasX, canvasY);
           this.setState(InteractionState.DRAGGING);
+          this.pendingDragStart = null; // 清除待处理的拖拽
         } else {
-          // 未选中，选择它
+          // 未选中，选择它，并准备拖拽（如果鼠标继续移动）
           this.selectionManager.select(hitElement.id);
+          const selectedIds = Array.from(this.selectionManager.getSelectedIds());
+          this.pendingDragStart = { x: canvasX, y: canvasY, selectedIds };
         }
       }
     } else {
@@ -197,6 +201,25 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
    * 处理鼠标移动
    */
   handleMouseMove(canvasX: number, canvasY: number): void {
+    // 检查是否有待处理的拖拽（点击选中后，如果鼠标移动超过阈值，开始拖拽）
+    if (this.pendingDragStart && this.state === InteractionState.IDLE) {
+      const dx = canvasX - this.pendingDragStart.x;
+      const dy = canvasY - this.pendingDragStart.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      // 如果移动距离超过 3 像素，开始拖拽
+      if (distance > 3) {
+        this.dragHandler.start(this.pendingDragStart.selectedIds, this.pendingDragStart.x, this.pendingDragStart.y);
+        this.dragHandler.update(canvasX, canvasY); // 更新到当前位置
+        this.setState(InteractionState.DRAGGING);
+        this.pendingDragStart = null;
+        if (this.editor) {
+          this.editor.requestRender();
+        }
+        return;
+      }
+    }
+
     if (this.state === InteractionState.SELECTING && this.marqueeStart) {
       // 更新框选区域
       this.setMarqueeEnd(canvasX, canvasY);
@@ -226,6 +249,11 @@ export class InteractionManager extends EventEmitter<InteractionManagerEvents> {
    * 处理鼠标抬起
    */
   handleMouseUp(canvasX: number, canvasY: number): void {
+    // 清除待处理的拖拽
+    if (this.pendingDragStart) {
+      this.pendingDragStart = null;
+    }
+
     if (this.state === InteractionState.SELECTING && this.marqueeStart) {
       // 完成框选
       this.finishMarquee(this.marqueeStart.x, this.marqueeStart.y, canvasX, canvasY);
