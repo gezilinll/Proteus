@@ -111,7 +111,7 @@ export class ClipboardManager {
     try {
       // 将元素序列化为 JSON
       const data = JSON.stringify(elements);
-      
+
       // 创建 ClipboardItem
       const clipboardItem = new ClipboardItem({
         'text/plain': new Blob([data], { type: 'text/plain' }),
@@ -119,22 +119,12 @@ export class ClipboardManager {
       });
 
       await navigator.clipboard.write([clipboardItem]);
-    } catch (error) {
-      // 如果失败，尝试使用传统方法（仅文本）
+    } catch {
+      // 如果 ClipboardItem 方式失败，尝试使用 writeText 写入 JSON 字符串
+      // 这样所有类型的元素（矩形、圆形、文本等）都能被正确保存
       try {
-        const textContent = elements
-          .map((el) => {
-            if (el.type === ElementType.TEXT) {
-              return el.style.text || '';
-            }
-            return '';
-          })
-          .filter((text) => text)
-          .join('\n');
-
-        if (textContent) {
-          await navigator.clipboard.writeText(textContent);
-        }
+        const jsonData = JSON.stringify(elements);
+        await navigator.clipboard.writeText(jsonData);
       } catch (err) {
         console.warn('Failed to sync to system clipboard:', err);
       }
@@ -142,38 +132,114 @@ export class ClipboardManager {
   }
 
   /**
-   * 从系统剪贴板读取（检查是否为内部元素）
+   * 从系统剪贴板读取所有内容类型
+   * 返回系统剪贴板的最新内容，包括图片、内部元素、文本等
    */
-  async readFromSystemClipboard(): Promise<{ isInternal: boolean; data: any } | null> {
+  async readFromSystemClipboard(): Promise<{
+    image?: Blob;
+    imageType?: string;
+    internalElements?: Element[];
+    text?: string;
+  } | null> {
     if (typeof navigator === 'undefined' || !navigator.clipboard) {
       return null;
     }
 
     try {
-      // 尝试读取 JSON 格式
       const clipboardItems = await navigator.clipboard.read();
+      const result: {
+        image?: Blob;
+        imageType?: string;
+        internalElements?: Element[];
+        text?: string;
+      } = {};
+
+      // 遍历所有剪贴板项
       for (const item of clipboardItems) {
-        for (const type of item.types) {
-          if (type === 'application/json' || type === 'text/plain') {
-            const blob = await item.getType(type);
-            const text = await blob.text();
+        const types = Array.from(item.types);
+
+        // 1. 优先检查图片（图片数据是最明确的）
+        for (const type of types) {
+          if (type.startsWith('image/')) {
             try {
-              const data = JSON.parse(text);
-              // 检查是否为内部元素格式（有 id 和 type 字段，且 type 是有效的 ElementType）
-              if (
-                Array.isArray(data) &&
-                data.length > 0 &&
-                data[0].id &&
-                data[0].type &&
-                Object.values(ElementType).includes(data[0].type)
-              ) {
-                return { isInternal: true, data };
-              }
-            } catch {
-              // 不是 JSON，继续
+              const blob = await item.getType(type);
+              result.image = blob;
+              result.imageType = type;
+              // 找到图片后，继续检查其他类型（可能同时有文本）
+            } catch (err) {
+              console.warn('Failed to read image from clipboard:', err);
             }
           }
         }
+
+        // 2. 检查 JSON（可能是内部元素）
+        for (const type of types) {
+          if (type === 'application/json') {
+            try {
+              const blob = await item.getType(type);
+              const text = await blob.text();
+              try {
+                const data = JSON.parse(text);
+                // 检查是否为内部元素格式
+                if (
+                  Array.isArray(data) &&
+                  data.length > 0 &&
+                  data[0].id &&
+                  data[0].type &&
+                  Object.values(ElementType).includes(data[0].type)
+                ) {
+                  result.internalElements = data;
+                }
+              } catch {
+                // 不是有效的内部元素 JSON，忽略
+              }
+            } catch (err) {
+              console.warn('Failed to read JSON from clipboard:', err);
+            }
+          }
+        }
+
+        // 3. 检查普通文本（如果没有通过 application/json 找到内部元素，尝试从 text/plain 解析）
+        if (!result.internalElements) {
+          for (const type of types) {
+            if (type === 'text/plain') {
+              try {
+                const blob = await item.getType(type);
+                const text = await blob.text();
+                if (text && text.trim()) {
+                  // 尝试解析为内部元素 JSON
+                  try {
+                    const data = JSON.parse(text);
+                    if (
+                      Array.isArray(data) &&
+                      data.length > 0 &&
+                      data[0].id &&
+                      data[0].type &&
+                      Object.values(ElementType).includes(data[0].type)
+                    ) {
+                      // 找到内部元素，设置到结果中
+                      result.internalElements = data;
+                      break; // 找到内部元素后不再设置文本
+                    }
+                  } catch {
+                    // 不是 JSON，作为普通文本
+                  }
+                  // 如果不是内部元素 JSON，设置为普通文本
+                  if (!result.internalElements) {
+                    result.text = text;
+                  }
+                }
+              } catch (err) {
+                console.warn('Failed to read text from clipboard:', err);
+              }
+            }
+          }
+        }
+      }
+
+      // 如果找到任何内容，返回结果
+      if (result.image || result.internalElements || result.text) {
+        return result;
       }
     } catch (error) {
       // 权限被拒绝或其他错误

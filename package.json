@@ -5,7 +5,7 @@
   "description": "AI-Native Multimodal Collaborative Editor",
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter web dev",
+    "dev": "pnpm --filter proteus-web dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",

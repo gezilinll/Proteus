@@ -93,6 +93,7 @@ export function EditorCanvas({
   const spaceKeyRef = useRef(false);
 
   // 统一的粘贴处理（内部元素 + 外部内容）
+  // 优先使用 clipboardData（事件直接提供，最可靠），然后才用系统剪贴板 API
   const handlePaste = useCallback(async (e: ClipboardEvent | { clipboardData?: DataTransfer }) => {
     // 如果焦点在输入框或文本编辑器中，不处理
     const target = (e as any).target as HTMLElement | undefined;
@@ -104,16 +105,57 @@ export function EditorCanvas({
       (e as any).preventDefault();
     }
 
-    // 1. 先检查是否有内部元素（从系统剪贴板读取）
-    try {
-      const systemClipboardData = await editor.clipboardManager.readFromSystemClipboard();
-      if (systemClipboardData?.isInternal && systemClipboardData.data) {
-        // 恢复内部元素到剪贴板管理器
-        (editor.clipboardManager as any).clipboard = systemClipboardData.data;
-        (editor.clipboardManager as any).isInternalContent = true;
-        
-        // 粘贴内部元素
-        if (editor.clipboardManager.hasContent()) {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const canvasPos = screenToCanvas(centerX - rect.left, centerY - rect.top, {
+      zoom: editor.viewport.zoom,
+      offsetX: editor.viewport.offsetX,
+      offsetY: editor.viewport.offsetY,
+    });
+
+    // ============ 第一优先级：从 clipboardData 检测图片 ============
+    // clipboardData 是事件直接提供的，对于图片来说最可靠
+    if (e.clipboardData) {
+      const items = Array.from(e.clipboardData.items);
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file) {
+            const imageTool = editor.toolManager.getTool('image');
+            if (imageTool) {
+              (imageTool as any).setImageSource(file);
+              imageTool.onMouseDown(canvasPos.x, canvasPos.y);
+            }
+            return; // 找到图片就直接返回
+          }
+        }
+      }
+    }
+
+    // ============ 第二优先级：从 clipboardData 检测文本（可能是内部元素 JSON 或普通文本）============
+    const clipboardText = e.clipboardData?.getData('text/plain');
+    if (clipboardText && clipboardText.trim()) {
+      // 尝试解析为内部元素 JSON
+      try {
+        const data = JSON.parse(clipboardText);
+        const { ElementType } = await import('@proteus/core');
+        if (
+          Array.isArray(data) &&
+          data.length > 0 &&
+          data[0].id &&
+          data[0].type &&
+          Object.values(ElementType).includes(data[0].type)
+        ) {
+          // 这是内部元素 JSON，恢复到剪贴板管理器并粘贴
+          (editor.clipboardManager as any).clipboard = data;
+          (editor.clipboardManager as any).isInternalContent = true;
+          
           const command = new PasteElementsCommand(editor.scene, editor.clipboardManager);
           editor.executeCommand(command);
           const pastedIds = command.getPastedElementIds();
@@ -121,15 +163,106 @@ export function EditorCanvas({
             editor.selectionManager.selectMultiple(pastedIds);
           }
           editor.requestRender();
+          return;
         }
-        return;
+      } catch {
+        // 不是 JSON，继续检查是否为普通文本
       }
-    } catch (err) {
-      // 读取系统剪贴板失败（可能是权限问题），继续处理
-      console.warn('Failed to read system clipboard:', err);
+
+      // 普通文本：创建文本元素
+      const { createElement, ElementType, AddElementCommand } = await import('@proteus/core');
+      const element = createElement(ElementType.TEXT, {
+        transform: {
+          x: canvasPos.x - 100,
+          y: canvasPos.y - 20,
+          width: 200,
+          height: 40,
+          rotation: 0,
+        },
+        style: {
+          text: clipboardText.trim(),
+          fill: '#000000', // 黑色文本
+          fontSize: 16,
+          fontFamily: 'Arial',
+          fontWeight: 'normal',
+          textAlign: 'center',
+        },
+      });
+
+      const command = new AddElementCommand(editor.scene, element);
+      editor.executeCommand(command);
+      editor.selectionManager.select(element.id);
+      editor.toolManager.setTool('select');
+      editor.requestRender();
+      return;
     }
 
-    // 2. 检查内部剪贴板是否有内容
+    // ============ 第三优先级：尝试使用系统剪贴板 API（用于 clipboardData 不可用的情况）============
+    try {
+      const systemClipboardData = await editor.clipboardManager.readFromSystemClipboard();
+      if (systemClipboardData) {
+        // 处理图片
+        if (systemClipboardData.image && systemClipboardData.imageType) {
+          const imageTool = editor.toolManager.getTool('image');
+          if (imageTool) {
+            const imageFile = systemClipboardData.image instanceof File 
+              ? systemClipboardData.image 
+              : new File([systemClipboardData.image], 'pasted-image.png', { type: systemClipboardData.imageType });
+            (imageTool as any).setImageSource(imageFile);
+            imageTool.onMouseDown(canvasPos.x, canvasPos.y);
+          }
+          return;
+        }
+
+        // 处理内部元素
+        if (systemClipboardData.internalElements && systemClipboardData.internalElements.length > 0) {
+          (editor.clipboardManager as any).clipboard = systemClipboardData.internalElements;
+          (editor.clipboardManager as any).isInternalContent = true;
+          
+          const command = new PasteElementsCommand(editor.scene, editor.clipboardManager);
+          editor.executeCommand(command);
+          const pastedIds = command.getPastedElementIds();
+          if (pastedIds.length > 0) {
+            editor.selectionManager.selectMultiple(pastedIds);
+          }
+          editor.requestRender();
+          return;
+        }
+
+        // 处理普通文本
+        if (systemClipboardData.text && systemClipboardData.text.trim()) {
+          const { createElement, ElementType, AddElementCommand } = await import('@proteus/core');
+          const element = createElement(ElementType.TEXT, {
+            transform: {
+              x: canvasPos.x - 100,
+              y: canvasPos.y - 20,
+              width: 200,
+              height: 40,
+              rotation: 0,
+            },
+            style: {
+              text: systemClipboardData.text.trim(),
+              fill: '#000000',
+              fontSize: 16,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              textAlign: 'center',
+            },
+          });
+
+          const command = new AddElementCommand(editor.scene, element);
+          editor.executeCommand(command);
+          editor.selectionManager.select(element.id);
+          editor.toolManager.setTool('select');
+          editor.requestRender();
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to read from system clipboard:', err);
+    }
+
+    // ============ 最后：检查内部剪贴板（兼容旧逻辑）============
     if (editor.clipboardManager.hasContent() && editor.clipboardManager.isInternal()) {
       const command = new PasteElementsCommand(editor.scene, editor.clipboardManager);
       editor.executeCommand(command);
@@ -138,140 +271,6 @@ export function EditorCanvas({
         editor.selectionManager.selectMultiple(pastedIds);
       }
       editor.requestRender();
-      return;
-    }
-
-    // 3. 处理外部内容（文本和图片）
-    // 注意：从键盘事件触发的粘贴，需要从系统剪贴板读取
-    let items: DataTransferItemList | null = null;
-    if (e.clipboardData) {
-      items = e.clipboardData.items;
-    }
-    
-    if (!items || items.length === 0) {
-      // 如果没有 items，尝试从系统剪贴板读取文本
-      try {
-        const text = await navigator.clipboard.readText();
-        if (text && text.trim()) {
-          const canvas = canvasRef.current;
-          if (canvas) {
-            const rect = canvas.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const canvasPos = screenToCanvas(centerX - rect.left, centerY - rect.top, {
-              zoom: editor.viewport.zoom,
-              offsetX: editor.viewport.offsetX,
-              offsetY: editor.viewport.offsetY,
-            });
-
-            const { createElement, ElementType, AddElementCommand } = await import('@proteus/core');
-            const element = createElement(ElementType.TEXT, {
-              transform: {
-                x: canvasPos.x - 100,
-                y: canvasPos.y - 20,
-                width: 200,
-                height: 40,
-                rotation: 0,
-              },
-              style: {
-                text: text.trim(),
-                fontSize: 16,
-                fontFamily: 'Arial',
-                fontWeight: 'normal',
-                textAlign: 'center',
-              },
-            });
-
-            const command = new AddElementCommand(editor.scene, element);
-            editor.executeCommand(command);
-            editor.selectionManager.select(element.id);
-            editor.toolManager.setTool('select');
-            editor.requestRender();
-          }
-        }
-      } catch (err) {
-        console.warn('Failed to read text from clipboard:', err);
-      }
-      return;
-    }
-
-    // 处理图片
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (item.type.indexOf('image') !== -1) {
-        const file = item.getAsFile();
-        if (file) {
-          // 使用 ImageTool 创建图片元素
-          const imageTool = editor.toolManager.getTool('image');
-          if (imageTool) {
-            const canvas = canvasRef.current;
-            if (canvas) {
-              const rect = canvas.getBoundingClientRect();
-              const centerX = rect.left + rect.width / 2;
-              const centerY = rect.top + rect.height / 2;
-              const canvasPos = screenToCanvas(centerX - rect.left, centerY - rect.top, {
-                zoom: editor.viewport.zoom,
-                offsetX: editor.viewport.offsetX,
-                offsetY: editor.viewport.offsetY,
-              });
-              // 设置图片源并触发创建
-              (imageTool as any).setImageSource(file);
-              imageTool.onMouseDown(canvasPos.x, canvasPos.y);
-            }
-          }
-        }
-        return;
-      }
-    }
-
-    // 处理文本（从 clipboardData 或系统剪贴板）
-    let text = e.clipboardData?.getData('text/plain');
-    if (!text || !text.trim()) {
-      // 尝试从系统剪贴板读取文本
-      try {
-        text = await navigator.clipboard.readText();
-      } catch (err) {
-        // 忽略错误
-      }
-    }
-
-    if (text && text.trim()) {
-      // 创建文本元素
-      const canvas = canvasRef.current;
-      if (canvas) {
-        const rect = canvas.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const canvasPos = screenToCanvas(centerX - rect.left, centerY - rect.top, {
-          zoom: editor.viewport.zoom,
-          offsetX: editor.viewport.offsetX,
-          offsetY: editor.viewport.offsetY,
-        });
-
-        const { createElement, ElementType, AddElementCommand } = await import('@proteus/core');
-        const element = createElement(ElementType.TEXT, {
-          transform: {
-            x: canvasPos.x - 100,
-            y: canvasPos.y - 20,
-            width: 200,
-            height: 40,
-            rotation: 0,
-          },
-          style: {
-            text: text.trim(),
-            fontSize: 16,
-            fontFamily: 'Arial',
-            fontWeight: 'normal',
-            textAlign: 'center',
-          },
-        });
-
-        const command = new AddElementCommand(editor.scene, element);
-        editor.executeCommand(command);
-        editor.selectionManager.select(element.id);
-        editor.toolManager.setTool('select');
-        editor.requestRender();
-      }
     }
   }, [editor, canvasRef]);
 
@@ -342,10 +341,10 @@ export function EditorCanvas({
       }
 
       // 粘贴 (Ctrl/Cmd + V)
+      // 不在这里处理，让浏览器触发真正的 paste 事件（通过 window.addEventListener('paste', handlePaste)）
+      // 这样可以获得完整的 clipboardData，包括图片等二进制数据
       if (ctrlOrCmd && e.key === 'v') {
-        e.preventDefault();
-        // 创建一个模拟的 ClipboardEvent
-        handlePaste({ preventDefault: () => {} } as ClipboardEvent);
+        // 不阻止默认行为，让 paste 事件正常触发
         return;
       }
 
