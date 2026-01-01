@@ -21,3 +21,5 @@ export * from './Editor';
 export * from './selection';
 export * from './interaction';
 export * from './tools';
+export * from './clipboard';
+export * from './keyboard';

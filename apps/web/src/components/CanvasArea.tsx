@@ -3,6 +3,7 @@ import { EditorCanvas, TextEditOverlay } from '@proteus/react';
 import { Editor, screenToCanvas, ImageTool } from '@proteus/core';
 import { StatusBar } from './StatusBar';
 import { LayerPanel } from './LayerPanel';
+import { AlignmentToolbar } from './AlignmentToolbar';
 
 // 网格配置常量
 const GRID_CONFIG = {
@@ -269,6 +270,9 @@ export function CanvasArea({ editor, onMouseMove }: CanvasAreaProps) {
           <TextEditOverlay editor={editor} />
         </>
       )}
+
+      {/* 对齐工具栏 */}
+      <AlignmentToolbar editor={editor} />
 
       {/* 浮动状态栏 */}
       <StatusBar 

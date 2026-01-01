@@ -3,4 +3,5 @@ export * from './EventEmitter';
 export * from './clone';
 export * from './math';
 export * from './imageLoader';
+export * from './alignment';
 

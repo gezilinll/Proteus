@@ -7,6 +7,7 @@ import { Command } from './command/Command';
 import { SelectionManager } from './selection/SelectionManager';
 import { InteractionManager } from './interaction/InteractionManager';
 import { ToolManager } from './tools/ToolManager';
+import { ClipboardManager } from './clipboard/ClipboardManager';
 import { SelectTool } from './tools/tools/SelectTool';
 import { RectangleTool } from './tools/tools/RectangleTool';
 import { EllipseTool } from './tools/tools/EllipseTool';
@@ -24,6 +25,7 @@ export class Editor {
   public readonly selectionManager: SelectionManager;
   public readonly interactionManager: InteractionManager;
   public readonly toolManager: ToolManager;
+  public readonly clipboardManager: ClipboardManager;
   private renderer: Renderer | null = null;
 
   constructor(options?: {
@@ -42,6 +44,9 @@ export class Editor {
       this.selectionManager,
       this
     );
+
+    // 初始化剪贴板管理器
+    this.clipboardManager = new ClipboardManager();
 
     // 初始化工具管理器
     this.toolManager = new ToolManager();

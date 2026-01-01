@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Editor, screenToCanvas } from '@proteus/core';
+import { Editor, screenToCanvas, CopyElementsCommand, CutElementsCommand, PasteElementsCommand, DeleteElementsCommand } from '@proteus/core';
 
 export interface EditorCanvasProps {
   editor: Editor;
@@ -94,19 +94,105 @@ export function EditorCanvas({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // 如果焦点在输入框或文本编辑器中，不处理快捷键
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        // 只处理删除键（在文本编辑器中）
+        if ((e.key === 'Delete' || e.key === 'Backspace') && !target.isContentEditable) {
+          const selectedIds = Array.from(editor.selectionManager.getSelectedIds());
+          if (selectedIds.length > 0) {
+            e.preventDefault();
+            const command = new DeleteElementsCommand(editor.scene, selectedIds);
+            editor.executeCommand(command);
+            editor.requestRender();
+          }
+        }
+        return;
+      }
+
       if (e.code === 'Space') {
         spaceKeyRef.current = true;
         return;
       }
 
-      // 工具快捷键（仅在非输入状态下）
-      if (!e.target || (e.target as HTMLElement).tagName !== 'INPUT' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
-        const key = e.key.toUpperCase();
-        const tool = editor.toolManager.getToolByShortcut(key);
-        if (tool) {
-          e.preventDefault();
-          editor.toolManager.setTool(tool.name);
+      const ctrlOrCmd = e.ctrlKey || e.metaKey;
+
+      // 复制 (Ctrl/Cmd + C)
+      if (ctrlOrCmd && e.key === 'c') {
+        e.preventDefault();
+        const selectedIds = Array.from(editor.selectionManager.getSelectedIds());
+        if (selectedIds.length > 0) {
+          const elements = selectedIds
+            .map((id) => editor.scene.get(id))
+            .filter((el) => el !== undefined);
+          if (elements.length > 0) {
+            const command = new CopyElementsCommand(editor.clipboardManager, elements);
+            editor.executeCommand(command);
+          }
         }
+        return;
+      }
+
+      // 剪切 (Ctrl/Cmd + X)
+      if (ctrlOrCmd && e.key === 'x') {
+        e.preventDefault();
+        const selectedIds = Array.from(editor.selectionManager.getSelectedIds());
+        if (selectedIds.length > 0) {
+          const elements = selectedIds
+            .map((id) => editor.scene.get(id))
+            .filter((el) => el !== undefined);
+          if (elements.length > 0) {
+            const command = new CutElementsCommand(editor.scene, editor.clipboardManager, elements);
+            editor.executeCommand(command);
+            editor.requestRender();
+          }
+        }
+        return;
+      }
+
+      // 粘贴 (Ctrl/Cmd + V)
+      if (ctrlOrCmd && e.key === 'v') {
+        e.preventDefault();
+        if (editor.clipboardManager.hasContent()) {
+          const command = new PasteElementsCommand(editor.scene, editor.clipboardManager);
+          editor.executeCommand(command);
+          // 选中粘贴的元素
+          const pastedIds = command.getPastedElementIds();
+          if (pastedIds.length > 0) {
+            editor.selectionManager.selectMultiple(pastedIds);
+          }
+          editor.requestRender();
+        }
+        return;
+      }
+
+      // 全选 (Ctrl/Cmd + A)
+      if (ctrlOrCmd && e.key === 'a') {
+        e.preventDefault();
+        const allIds = editor.scene.getAllIds();
+        editor.selectionManager.selectMultiple(allIds);
+        editor.requestRender();
+        return;
+      }
+
+      // 删除 (Delete/Backspace)
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        const selectedIds = Array.from(editor.selectionManager.getSelectedIds());
+        if (selectedIds.length > 0) {
+          const command = new DeleteElementsCommand(editor.scene, selectedIds);
+          editor.executeCommand(command);
+          editor.requestRender();
+        }
+        return;
+      }
+
+      // 工具快捷键
+      const key = e.key.toUpperCase();
+      const tool = editor.toolManager.getToolByShortcut(key);
+      if (tool) {
+        e.preventDefault();
+        editor.toolManager.setTool(tool.name);
       }
     };
     const handleKeyUp = (e: KeyboardEvent) => {
