@@ -135,5 +135,12 @@ export class RenderContext {
   closePath(): void {
     this.ctx.closePath();
   }
+
+  /**
+   * 绘制矩形路径
+   */
+  rect(x: number, y: number, width: number, height: number): void {
+    this.ctx.rect(x, y, width, height);
+  }
 }
 

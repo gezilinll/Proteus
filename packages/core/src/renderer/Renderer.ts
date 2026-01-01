@@ -2,7 +2,7 @@ import { RenderContext } from './RenderContext';
 import { Viewport } from '../viewport/Viewport';
 import { Scene } from '../scene/Scene';
 import { Element } from '../types/element';
-import { ElementType } from '../types/ElementType';
+import { RendererRegistry } from './RendererRegistry';
 
 /**
  * 渲染器
@@ -12,18 +12,21 @@ export class Renderer {
   private context: RenderContext | null = null;
   private animationFrameId: number | null = null;
   private isRendering: boolean = false;
+  private registry: RendererRegistry;
 
   constructor(
     private canvas: HTMLCanvasElement,
     private scene: Scene,
     private viewport: Viewport,
-    private dpr: number = 1
+    private dpr: number = 1,
+    registry?: RendererRegistry
   ) {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       throw new Error('Failed to get 2D context from canvas');
     }
     this.context = new RenderContext(ctx);
+    this.registry = registry ?? new RendererRegistry();
 
     // 监听 Scene 变化
     this.scene.on('elementAdded', () => this.requestRender());
@@ -59,6 +62,13 @@ export class Renderer {
     if (!this.isRendering) {
       this.render();
     }
+  }
+
+  /**
+   * 获取渲染器注册表
+   */
+  getRegistry(): RendererRegistry {
+    return this.registry;
   }
 
   /**
@@ -102,6 +112,14 @@ export class Renderer {
    * 渲染单个元素
    */
   private renderElement(ctx: RenderContext, element: Element): void {
+    // 获取对应的渲染器
+    const renderer = this.registry.get(element.type);
+    if (!renderer) {
+      // 如果没有注册的渲染器，跳过
+      console.warn(`No renderer registered for element type: ${element.type}`);
+      return;
+    }
+
     ctx.save();
 
     // 应用元素变换
@@ -109,149 +127,16 @@ export class Renderer {
 
     // 移动到元素中心
     ctx.getRawContext().translate(x + width / 2, y + height / 2);
-    ctx.getRawContext().rotate(rotation);
-
-    // 根据类型渲染
-    switch (element.type) {
-      case ElementType.RECTANGLE:
-        this.renderRectangle(ctx, element);
-        break;
-      case ElementType.ELLIPSE:
-        this.renderEllipse(ctx, element);
-        break;
-      case ElementType.TEXT:
-        this.renderText(ctx, element);
-        break;
-      case ElementType.IMAGE:
-        this.renderImage(ctx, element);
-        break;
-      // GROUP 暂时不渲染（后续实现）
+    
+    // 应用旋转
+    if (rotation !== 0) {
+      ctx.getRawContext().rotate(rotation);
     }
+
+    // 使用注册的渲染器渲染
+    renderer.render(ctx, element);
 
     ctx.restore();
-  }
-
-  /**
-   * 渲染矩形
-   */
-  private renderRectangle(ctx: RenderContext, element: Element): void {
-    const { width, height } = element.transform;
-    const { fill, stroke, strokeWidth, opacity, borderRadius } = element.style;
-
-    ctx.getRawContext().globalAlpha = opacity ?? 1;
-
-    // 绘制矩形
-    if (borderRadius && borderRadius > 0) {
-      // 圆角矩形
-      this.renderRoundedRect(ctx, -width / 2, -height / 2, width, height, borderRadius);
-    } else {
-      // 普通矩形
-      ctx.beginPath();
-      ctx.moveTo(-width / 2, -height / 2);
-      ctx.lineTo(width / 2, -height / 2);
-      ctx.lineTo(width / 2, height / 2);
-      ctx.lineTo(-width / 2, height / 2);
-      ctx.closePath();
-    }
-
-    // 填充
-    if (fill) {
-      ctx.setFillStyle(fill);
-      ctx.fill();
-    }
-
-    // 描边
-    if (stroke && strokeWidth) {
-      ctx.setStrokeStyle(stroke);
-      ctx.setLineWidth(strokeWidth);
-      ctx.stroke();
-    }
-  }
-
-  /**
-   * 渲染圆角矩形
-   */
-  private renderRoundedRect(
-    ctx: RenderContext,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    radius: number
-  ): void {
-    const r = Math.min(radius, width / 2, height / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + width - r, y);
-    ctx.arc(x + width - r, y + r, r, -Math.PI / 2, 0, false);
-    ctx.lineTo(x + width, y + height - r);
-    ctx.arc(x + width - r, y + height - r, r, 0, Math.PI / 2, false);
-    ctx.lineTo(x + r, y + height);
-    ctx.arc(x + r, y + height - r, r, Math.PI / 2, Math.PI, false);
-    ctx.lineTo(x, y + r);
-    ctx.arc(x + r, y + r, r, Math.PI, -Math.PI / 2, false);
-    ctx.closePath();
-  }
-
-  /**
-   * 渲染椭圆
-   */
-  private renderEllipse(ctx: RenderContext, element: Element): void {
-    const { width, height } = element.transform;
-    const { fill, stroke, strokeWidth, opacity } = element.style;
-
-    ctx.getRawContext().globalAlpha = opacity ?? 1;
-
-    // 绘制椭圆
-    ctx.beginPath();
-    const radiusX = width / 2;
-    const radiusY = height / 2;
-    
-    // 使用 ellipse 方法绘制真正的椭圆
-    ctx.getRawContext().ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
-
-    // 填充
-    if (fill) {
-      ctx.setFillStyle(fill);
-      ctx.fill();
-    }
-
-    // 描边
-    if (stroke && strokeWidth) {
-      ctx.setStrokeStyle(stroke);
-      ctx.setLineWidth(strokeWidth);
-      ctx.stroke();
-    }
-  }
-
-  /**
-   * 渲染文字（基础版）
-   */
-  private renderText(ctx: RenderContext, element: Element): void {
-    const { width } = element.transform;
-    const { fill, fontSize, fontFamily, fontWeight, text, opacity } = element.style;
-
-    ctx.getRawContext().globalAlpha = opacity ?? 1;
-
-    const rawCtx = ctx.getRawContext();
-    rawCtx.font = `${fontWeight ?? 'normal'} ${fontSize ?? 16}px ${fontFamily ?? 'Arial'}`;
-    rawCtx.textAlign = 'center';
-    rawCtx.textBaseline = 'middle';
-
-    if (fill) {
-      ctx.setFillStyle(fill);
-      rawCtx.fillText(text ?? '', 0, 0, width);
-    }
-  }
-
-  /**
-   * 渲染图片（占位，后续实现）
-   */
-  private renderImage(ctx: RenderContext, element: Element): void {
-    // TODO: 实现图片渲染
-    const { width, height } = element.transform;
-    ctx.setFillStyle('#cccccc');
-    ctx.fillRect(-width / 2, -height / 2, width, height);
   }
 
   /**
@@ -262,4 +147,3 @@ export class Renderer {
     this.context = null;
   }
 }
-
