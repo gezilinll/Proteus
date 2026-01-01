@@ -8,6 +8,7 @@ import { InteractionManager } from '../interaction/InteractionManager';
 import { ToolManager } from '../tools/ToolManager';
 import { SelectionOverlay } from './overlays/SelectionOverlay';
 import { MarqueeOverlay } from './overlays/MarqueeOverlay';
+import { GuideOverlay } from './overlays/GuideOverlay';
 
 /**
  * 渲染器
@@ -20,6 +21,7 @@ export class Renderer {
   private registry: RendererRegistry;
   private selectionOverlay: SelectionOverlay;
   private marqueeOverlay: MarqueeOverlay;
+  private guideOverlay: GuideOverlay;
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -39,6 +41,7 @@ export class Renderer {
     this.registry = registry ?? new RendererRegistry();
     this.selectionOverlay = new SelectionOverlay();
     this.marqueeOverlay = new MarqueeOverlay();
+    this.guideOverlay = new GuideOverlay(viewport);
 
     // 监听 Scene 变化
     this.scene.on('elementAdded', () => this.requestRender());
@@ -199,6 +202,15 @@ export class Renderer {
       const marqueeBounds = this.interactionManager.getMarqueeBoundsForRender();
       if (marqueeBounds) {
         this.marqueeOverlay.render(ctx, marqueeBounds);
+      }
+
+      // 渲染对齐线（拖拽时）
+      const dragHandler = (this.interactionManager as any).dragHandler;
+      if (dragHandler && dragHandler.isActive()) {
+        const snapResult = dragHandler.getSnapResult();
+        if (snapResult && snapResult.guides.length > 0) {
+          this.guideOverlay.render(ctx, snapResult.guides);
+        }
       }
     }
   }

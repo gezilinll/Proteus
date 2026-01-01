@@ -2,6 +2,8 @@ import { Transform } from '../../types/transform';
 import { UpdateElementCommand } from '../../command/commands/UpdateElementCommand';
 import { BatchCommand } from '../../command/commands/BatchCommand';
 import { Scene } from '../../scene/Scene';
+import { SnapGuide, SnapResult } from '../SnapGuide';
+import { Element } from '../../types/element';
 
 /**
  * 拖拽移动处理器
@@ -10,8 +12,19 @@ export class DragHandler {
   private startPositions: Map<string, Transform> = new Map();
   private startMousePos: { x: number; y: number } | null = null;
   private currentPositions: Map<string, Transform> = new Map();
+  private snapGuide: SnapGuide;
+  private currentSnapResult: SnapResult | null = null;
 
-  constructor(private scene: Scene) {}
+  constructor(private scene: Scene) {
+    this.snapGuide = new SnapGuide(5); // 5 像素吸附阈值
+  }
+
+  /**
+   * 获取当前吸附结果（用于渲染对齐线）
+   */
+  getSnapResult(): SnapResult | null {
+    return this.currentSnapResult;
+  }
 
   /**
    * 开始拖拽
@@ -45,6 +58,26 @@ export class DragHandler {
     const deltaX = mouseX - this.startMousePos.x;
     const deltaY = mouseY - this.startMousePos.y;
 
+    // 获取第一个元素的初始位置（用于计算吸附）
+    const firstId = Array.from(this.startPositions.keys())[0];
+    const firstStartTransform = this.startPositions.get(firstId);
+    if (!firstStartTransform) return;
+
+    // 计算新位置（未吸附）
+    const newX = firstStartTransform.x + deltaX;
+    const newY = firstStartTransform.y + deltaY;
+
+    // 计算吸附位置
+    const draggedElements = Array.from(this.startPositions.keys())
+      .map((id) => this.scene.get(id))
+      .filter((el) => el !== undefined) as Element[];
+    const allElements = this.scene.getAll();
+    const snapResult = this.snapGuide.snap(newX, newY, draggedElements, allElements);
+
+    // 使用吸附后的位置
+    const snappedDeltaX = snapResult.x - firstStartTransform.x;
+    const snappedDeltaY = snapResult.y - firstStartTransform.y;
+
     // 更新所有选中元素的位置
     for (const [id, startTransform] of this.startPositions) {
       const element = this.scene.get(id);
@@ -52,8 +85,8 @@ export class DragHandler {
 
       const newTransform: Transform = {
         ...element.transform,
-        x: startTransform.x + deltaX,
-        y: startTransform.y + deltaY,
+        x: startTransform.x + snappedDeltaX,
+        y: startTransform.y + snappedDeltaY,
       };
 
       // 实时更新 Scene
@@ -64,6 +97,9 @@ export class DragHandler {
       // 保存当前位置
       this.currentPositions.set(id, newTransform);
     }
+
+    // 保存吸附结果（用于渲染对齐线）
+    this.currentSnapResult = snapResult.snapped ? snapResult : null;
   }
 
   /**
@@ -108,6 +144,7 @@ export class DragHandler {
     this.startPositions.clear();
     this.currentPositions.clear();
     this.startMousePos = null;
+    this.currentSnapResult = null;
 
     if (commands.length === 0) return null;
 
@@ -136,6 +173,7 @@ export class DragHandler {
     this.startPositions.clear();
     this.currentPositions.clear();
     this.startMousePos = null;
+    this.currentSnapResult = null;
   }
 
   /**

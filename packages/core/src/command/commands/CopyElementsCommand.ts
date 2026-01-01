@@ -12,7 +12,10 @@ export class CopyElementsCommand implements Command {
   ) {}
 
   execute(): void {
-    this.clipboardManager.copy(this.elements);
+    // 异步执行，但不阻塞命令历史
+    this.clipboardManager.copy(this.elements).catch((err) => {
+      console.warn('Failed to sync to system clipboard:', err);
+    });
   }
 
   undo(): void {

@@ -23,8 +23,10 @@ export class CutElementsCommand implements Command {
   }
 
   execute(): void {
-    // 先复制到剪贴板
-    this.clipboardManager.cut(this.elements);
+    // 先复制到剪贴板（异步执行，不阻塞）
+    this.clipboardManager.cut(this.elements).catch((err) => {
+      console.warn('Failed to sync to system clipboard:', err);
+    });
     // 然后删除元素
     this.removeCommand.execute();
   }
