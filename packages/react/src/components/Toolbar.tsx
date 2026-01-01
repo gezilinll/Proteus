@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Editor } from '@proteus/core';
 
 export interface ToolbarProps {
@@ -9,8 +10,24 @@ export interface ToolbarProps {
  * 显示所有可用工具，允许切换工具
  */
 export function Toolbar({ editor }: ToolbarProps) {
+  const [currentToolName, setCurrentToolName] = useState<string | null>(
+    editor.toolManager.getCurrentTool()?.name ?? null
+  );
+
+  // 监听工具变化
+  useEffect(() => {
+    const handleToolChanged = (tool: { name: string }) => {
+      setCurrentToolName(tool.name);
+    };
+
+    editor.toolManager.on('toolChanged', handleToolChanged);
+
+    return () => {
+      editor.toolManager.off('toolChanged', handleToolChanged);
+    };
+  }, [editor.toolManager]);
+
   const tools = editor.toolManager.getAllTools();
-  const currentTool = editor.toolManager.getCurrentTool();
 
   const handleToolClick = (toolName: string) => {
     editor.toolManager.setTool(toolName);
@@ -19,7 +36,7 @@ export function Toolbar({ editor }: ToolbarProps) {
   return (
     <div className="flex gap-2 p-2 bg-white border-b border-gray-200 shadow-sm">
       {tools.map((tool) => {
-        const isActive = currentTool?.name === tool.name;
+        const isActive = currentToolName === tool.name;
         return (
           <button
             key={tool.name}
