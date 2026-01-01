@@ -1,5 +1,6 @@
 import { MoreHorizontal, Upload, Users } from 'lucide-react';
 import { Editor } from '@proteus/core';
+import { runPerformanceSuite, checkMemoryLeak } from '../utils/performanceTest';
 
 interface TopBarProps {
   editor: Editor;
@@ -9,7 +10,24 @@ interface TopBarProps {
  * 顶部导航栏 - Miro 风格
  * 分区域的浮动设计
  */
-export function TopBar({ editor: _editor }: TopBarProps) {
+export function TopBar({ editor }: TopBarProps) {
+  const handlePerformanceTest = async () => {
+    console.log('开始性能测试...');
+    const results = await runPerformanceSuite(editor, [10, 50, 100]);
+    console.log('性能测试结果:', results);
+    alert(`性能测试完成！\n${results.map(r => `${r.elementCount}个元素: ${r.fps.toFixed(1)} FPS`).join('\n')}`);
+  };
+
+  const handleMemoryLeakTest = async () => {
+    console.log('开始内存泄漏检测...');
+    const result = await checkMemoryLeak(editor, 100);
+    console.log('内存泄漏检测结果:', result);
+    if (result.leakDetected) {
+      alert(`⚠️ 检测到潜在内存泄漏！\n初始内存: ${result.initialMemory?.toFixed(2)} MB\n最终内存: ${result.finalMemory?.toFixed(2)} MB`);
+    } else {
+      alert(`✅ 未检测到内存泄漏\n初始内存: ${result.initialMemory?.toFixed(2)} MB\n最终内存: ${result.finalMemory?.toFixed(2)} MB`);
+    }
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -68,6 +86,26 @@ export function TopBar({ editor: _editor }: TopBarProps) {
         <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg shadow-md transition-colors">
           Share
         </button>
+
+        {/* 开发工具：性能测试按钮（仅开发环境） */}
+        {import.meta.env.DEV && (
+          <>
+            <button
+              onClick={handlePerformanceTest}
+              className="px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white text-xs font-medium rounded-lg shadow-md transition-colors"
+              title="性能测试"
+            >
+              ⚡ Test
+            </button>
+            <button
+              onClick={handleMemoryLeakTest}
+              className="px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded-lg shadow-md transition-colors"
+              title="内存泄漏检测"
+            >
+              🧪 Memory
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
