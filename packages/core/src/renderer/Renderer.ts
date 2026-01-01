@@ -5,6 +5,7 @@ import { Element } from '../types/element';
 import { RendererRegistry } from './RendererRegistry';
 import { SelectionManager } from '../selection/SelectionManager';
 import { InteractionManager } from '../interaction/InteractionManager';
+import { ToolManager } from '../tools/ToolManager';
 import { SelectionOverlay } from './overlays/SelectionOverlay';
 import { MarqueeOverlay } from './overlays/MarqueeOverlay';
 
@@ -27,7 +28,8 @@ export class Renderer {
     private dpr: number = 1,
     registry?: RendererRegistry,
     private selectionManager?: SelectionManager,
-    private interactionManager?: InteractionManager
+    private interactionManager?: InteractionManager,
+    private toolManager?: ToolManager
   ) {
     const ctx = canvas.getContext('2d');
     if (!ctx) {
@@ -118,6 +120,15 @@ export class Renderer {
     for (const element of elements) {
       if (!element.meta.visible) continue;
       this.renderElement(ctx, element);
+    }
+
+    // 渲染预览元素（在元素之上，但在 Overlay 之下）
+    if (this.toolManager) {
+      const currentTool = this.toolManager.getCurrentTool();
+      const previewElement = currentTool?.getPreviewElement();
+      if (previewElement) {
+        this.renderElement(ctx, previewElement);
+      }
     }
 
     // 渲染 Overlay（在元素之上）

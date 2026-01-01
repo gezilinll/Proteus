@@ -91,6 +91,17 @@ export function EditorCanvas({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
         spaceKeyRef.current = true;
+        return;
+      }
+
+      // 工具快捷键（仅在非输入状态下）
+      if (!e.target || (e.target as HTMLElement).tagName !== 'INPUT' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
+        const key = e.key.toUpperCase();
+        const tool = editor.toolManager.getToolByShortcut(key);
+        if (tool) {
+          e.preventDefault();
+          editor.toolManager.setTool(tool.name);
+        }
       }
     };
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -106,7 +117,7 @@ export function EditorCanvas({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, []);
+  }, [editor]);
 
   // 获取画布坐标
   const getCanvasCoordinates = useCallback((clientX: number, clientY: number) => {
@@ -142,14 +153,17 @@ export function EditorCanvas({
       return;
     }
 
-    // 左键 = 选择或框选
+    // 左键 = 使用当前工具
     if (e.button === 0) {
       const coords = getCanvasCoordinates(e.clientX, e.clientY);
-      editor.interactionManager.handleMouseDown(coords.x, coords.y, {
-        ctrlKey: e.ctrlKey || e.metaKey,
-        shiftKey: e.shiftKey,
-        altKey: e.altKey,
-      });
+      const currentTool = editor.toolManager.getCurrentTool();
+      if (currentTool) {
+        currentTool.onMouseDown(coords.x, coords.y, {
+          ctrlKey: e.ctrlKey || e.metaKey,
+          shiftKey: e.shiftKey,
+          altKey: e.altKey,
+        });
+      }
     }
   };
 
@@ -164,9 +178,12 @@ export function EditorCanvas({
         dragStartRef.current.offsetY + deltaY
       );
     } else {
-      // 框选或交互
+      // 使用当前工具
       const coords = getCanvasCoordinates(e.clientX, e.clientY);
-      editor.interactionManager.handleMouseMove(coords.x, coords.y);
+      const currentTool = editor.toolManager.getCurrentTool();
+      if (currentTool) {
+        currentTool.onMouseMove(coords.x, coords.y);
+      }
     }
   };
 
@@ -177,7 +194,10 @@ export function EditorCanvas({
       dragStartRef.current = null;
     } else {
       const coords = getCanvasCoordinates(e.clientX, e.clientY);
-      editor.interactionManager.handleMouseUp(coords.x, coords.y);
+      const currentTool = editor.toolManager.getCurrentTool();
+      if (currentTool) {
+        currentTool.onMouseUp(coords.x, coords.y);
+      }
     }
   };
 

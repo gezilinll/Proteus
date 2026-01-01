@@ -20,3 +20,4 @@ export * from './renderer';
 export * from './Editor';
 export * from './selection';
 export * from './interaction';
+export * from './tools';

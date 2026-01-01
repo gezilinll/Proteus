@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { EditorCanvas } from '@proteus/react';
-import { Editor, createElement, ElementType, AddElementCommand } from '@proteus/core';
+import { EditorCanvas, Toolbar } from '@proteus/react';
+import { Editor } from '@proteus/core';
 
 function App() {
   const [editor] = useState(() => new Editor());
@@ -11,41 +11,6 @@ function App() {
     forceUpdate({});
   }, []);
 
-  // 添加测试元素
-  const addRectangle = () => {
-    const element = createElement(ElementType.RECTANGLE, {
-      transform: { x: 100, y: 100, width: 200, height: 150 },
-      style: { fill: '#3b82f6', stroke: '#1e40af', strokeWidth: 2 },
-    });
-    const command = new AddElementCommand(editor.scene, element);
-    editor.executeCommand(command);
-    refreshUI();
-  };
-
-  const addCircle = () => {
-    const element = createElement(ElementType.ELLIPSE, {
-      transform: { x: 300, y: 200, width: 150, height: 150 },
-      style: { fill: '#ef4444', stroke: '#dc2626', strokeWidth: 2 },
-    });
-    const command = new AddElementCommand(editor.scene, element);
-    editor.executeCommand(command);
-    refreshUI();
-  };
-
-  const addText = () => {
-    const element = createElement(ElementType.TEXT, {
-      transform: { x: 150, y: 300, width: 200, height: 50 },
-      style: {
-        fill: '#000000',
-        fontSize: 24,
-        fontFamily: 'Arial',
-        text: 'Hello Proteus!',
-      },
-    });
-    const command = new AddElementCommand(editor.scene, element);
-    editor.executeCommand(command);
-    refreshUI();
-  };
 
   const handleUndo = () => {
     editor.undo();
@@ -60,25 +25,8 @@ function App() {
   return (
     <div className="h-screen flex flex-col bg-gray-100">
       {/* 工具栏 */}
-      <div className="bg-white border-b border-gray-200 p-4 flex gap-2">
-        <button
-          onClick={addRectangle}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          添加矩形
-        </button>
-        <button
-          onClick={addCircle}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          添加圆形
-        </button>
-        <button
-          onClick={addText}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-        >
-          添加文字
-        </button>
+      <div className="bg-white border-b border-gray-200 p-4 flex gap-2 items-center">
+        <Toolbar editor={editor} />
         <div className="ml-auto flex gap-2">
           <button
             onClick={handleUndo}

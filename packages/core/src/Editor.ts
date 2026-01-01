@@ -5,6 +5,10 @@ import { CommandHistory } from './command/CommandHistory';
 import { Command } from './command/Command';
 import { SelectionManager } from './selection/SelectionManager';
 import { InteractionManager } from './interaction/InteractionManager';
+import { ToolManager } from './tools/ToolManager';
+import { SelectTool } from './tools/tools/SelectTool';
+import { RectangleTool } from './tools/tools/RectangleTool';
+import { EllipseTool } from './tools/tools/EllipseTool';
 
 /**
  * Editor 主类
@@ -16,6 +20,7 @@ export class Editor {
   public readonly commandHistory: CommandHistory;
   public readonly selectionManager: SelectionManager;
   public readonly interactionManager: InteractionManager;
+  public readonly toolManager: ToolManager;
   private renderer: Renderer | null = null;
 
   constructor(options?: {
@@ -34,6 +39,15 @@ export class Editor {
       this.selectionManager,
       this
     );
+    
+    // 初始化工具管理器
+    this.toolManager = new ToolManager();
+    this.toolManager.register(new SelectTool(this.interactionManager));
+    this.toolManager.register(new RectangleTool(this.scene, this));
+    this.toolManager.register(new EllipseTool(this.scene, this));
+    
+    // 设置默认工具
+    this.toolManager.setTool('select');
   }
 
   /**
@@ -55,7 +69,8 @@ export class Editor {
       devicePixelRatio,
       undefined,
       this.selectionManager,
-      this.interactionManager
+      this.interactionManager,
+      this.toolManager
     );
     this.renderer.start();
   }
