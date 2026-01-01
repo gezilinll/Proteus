@@ -8,6 +8,7 @@
     "dev": "pnpm --filter proteus-web dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
+    "test:integration": "pnpm --filter @proteus/core test Editor.integration.test.ts",
     "lint": "pnpm -r lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "pnpm -r type-check"
