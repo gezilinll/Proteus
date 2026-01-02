@@ -28,7 +28,7 @@ export function generateTestElements(count: number): ReturnType<typeof createEle
 
     // 随机选择元素类型
     const typeIndex = i % 4;
-    let element;
+    let element: ReturnType<typeof createElement>;
 
     switch (typeIndex) {
       case 0:
@@ -103,6 +103,12 @@ export function generateTestElements(count: number): ReturnType<typeof createEle
           },
         });
         break;
+      default:
+        // 默认矩形（实际上不会执行到这里）
+        element = createElement(ElementType.RECTANGLE, {
+          transform: { x, y, width: 100, height: 100, rotation: 0 },
+          style: { fill: '#000', stroke: '#000', strokeWidth: 2, opacity: 1 },
+        });
     }
 
     elements.push(element);
@@ -131,41 +137,7 @@ export async function measureRenderPerformance(
   // 等待渲染完成
   await new Promise((resolve) => setTimeout(resolve, 100));
 
-  // 测量渲染时间
-  const renderTimes: number[] = [];
-  let frameCount = 0;
-  const startTime = performance.now();
-
-  const measureFrame = () => {
-    const frameStart = performance.now();
-    editor.requestRender();
-    const frameEnd = performance.now();
-    renderTimes.push(frameEnd - frameStart);
-    frameCount++;
-
-    if (frameCount < iterations) {
-      requestAnimationFrame(measureFrame);
-    } else {
-      const totalTime = performance.now() - startTime;
-      const avgRenderTime = renderTimes.reduce((a, b) => a + b, 0) / renderTimes.length;
-      const fps = 1000 / avgRenderTime;
-
-      // 获取内存使用（如果可用）
-      let memoryUsage: number | undefined;
-      if ('memory' in performance) {
-        memoryUsage = (performance as any).memory.usedJSHeapSize / 1024 / 1024; // MB
-      }
-
-      return {
-        renderTime: avgRenderTime,
-        fps,
-        memoryUsage,
-        elementCount,
-      };
-    }
-  };
-
-  return new Promise((resolve) => {
+  return new Promise<PerformanceMetrics>((resolve) => {
     const originalRequestRender = editor.requestRender.bind(editor);
     let frameCount = 0;
     const renderTimes: number[] = [];
@@ -287,7 +259,7 @@ export async function checkMemoryLeak(
     finalMemory = (performance as any).memory.usedJSHeapSize / 1024 / 1024;
   }
 
-  const leakDetected = initialMemory && finalMemory && finalMemory > initialMemory * 1.5;
+  const leakDetected = !!(initialMemory && finalMemory && finalMemory > initialMemory * 1.5);
 
   return {
     initialMemory,
