@@ -58,6 +58,7 @@
 | 渲染 | Canvas 渲染、视觉表现问题 | `rendering/` |
 | 依赖 | 依赖版本兼容性、升级问题 | `dependencies/` |
 | 性能 | 性能瓶颈、优化策略 | `performance/` |
+| 交互 | 拖拽、事件处理问题 | `interaction/` |
 | 浏览器兼容性 | 跨浏览器差异问题 | `browser-compatibility/` |
 
 ---
@@ -73,6 +74,9 @@
 
 ### 依赖相关
 - [ESLint 9 Flat Config 迁移](./dependencies/eslint9-flat-config-migration.md)
+
+### 交互相关
+- [拖拽指示线闪烁导致 Drop 失效](./interaction/drag-indicator-flicker.md)
 
 ---
 

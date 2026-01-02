@@ -6,7 +6,7 @@
 
 *An open experiment in human-AI collaborative development*
 
-[中文](./README.md) · [Live Demo](https://proteus.gezilinll.com) · [Tech Blog](./articles/)
+[中文](./README.md) · [Live Demo](https://proteus.gezilinll.com/) · [Tech Articles](./articles/)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -51,7 +51,7 @@ pnpm install
 pnpm dev
 ```
 
-Visit `http://localhost:5173` to start exploring.
+Visit `http://localhost:3000` to start exploring.
 
 ## Development Progress
 

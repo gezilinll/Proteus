@@ -6,7 +6,7 @@
 
 *一场人机协作开发的公开实验*
 
-[English](./README.en.md) · [在线体验](https://proteus.gezilinll.com) · [技术博客](./articles/)
+[English](./README.en.md) · [在线体验](https://proteus.gezilinll.com/) · [技术文章](./articles/)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -51,7 +51,7 @@ pnpm install
 pnpm dev
 ```
 
-访问 `http://localhost:5173` 开始体验。
+访问 `http://localhost:3000` 开始体验。
 
 ## 开发进度
 
